@@ -18,5 +18,8 @@ ImageView img;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         tvTest = findViewById(R.id.tv_test);
+        
+        tvTest.setText("Test github");
+        
     }
 }
