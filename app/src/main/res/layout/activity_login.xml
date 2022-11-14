@@ -46,7 +46,7 @@
                 android:layout_height="wrap_content"
                 android:text="Đăng nhập"
                 android:textColor="@color/Orenge"
-                android:textSize="30dp"
+                android:textSize="25dp"
                 android:textStyle="bold" />
 
             <TextView
@@ -54,7 +54,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
                 android:text="Chào bạn quay lại"
-                android:textSize="20dp" />
+                android:textSize="18dp" />
 
         </LinearLayout>
 
@@ -87,7 +87,8 @@
 
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
-            android:layout_height="50dp"
+            android:layout_height="wrap_content"
+            android:padding="0dp"
             android:hint="Nhập SĐT của bạn"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             >
@@ -97,13 +98,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:inputType="phone"
+
                 />
 
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
-            android:layout_height="50dp"
+            android:layout_height="wrap_content"
             android:hint="Nhập mật khẩu của bạn"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_marginTop="20dp"
@@ -181,7 +183,7 @@
             android:id="@+id/img_login_zalo"
             android:layout_width="45dp"
             android:layout_height="45dp"
-            android:src="@drawable/Logo_Zalo"
+            android:src="@drawable/logo_zalooo"
             android:layout_marginLeft="15dp"
             />
 

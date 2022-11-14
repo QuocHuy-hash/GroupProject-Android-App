@@ -2,12 +2,14 @@ package com.example.duan1;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -35,6 +37,7 @@ public class Login extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 //code back
+                Toast.makeText(Login.this, "Back from Login", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -43,6 +46,7 @@ public class Login extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 //code login facebook
+                Toast.makeText(Login.this, "Login fb from Login", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -51,6 +55,7 @@ public class Login extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 //code login google
+                Toast.makeText(Login.this, "Login google from Login", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -59,6 +64,7 @@ public class Login extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 //code login zalo
+                Toast.makeText(Login.this, "Login zalo from Login", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -67,6 +73,7 @@ public class Login extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 //code reset password
+                Toast.makeText(Login.this, "reset Password from Login", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -75,6 +82,7 @@ public class Login extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 //code register
+                startActivity(new Intent(Login.this, Register.class));
             }
         });
 
@@ -83,6 +91,7 @@ public class Login extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 //code login
+                Toast.makeText(Login.this, "Login from Login", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -96,6 +105,7 @@ public class Login extends AppCompatActivity {
         tvResetPassword = findViewById(R.id.tv_reset_password);
         tvRegister = findViewById(R.id.tv_register);
         edtNumberPhone = findViewById(R.id.edt_numberphone);
+        edtPassword = findViewById(R.id.edt_password);
         btnLogin = findViewById(R.id.btn_login);
 
     }
