@@ -19,7 +19,7 @@ public class Register extends AppCompatActivity {
     private CircleImageView imgLoginFacebook, imgLoginGoole, imgLoginZalo;
     private TextView tvTermsOfUse, tvLogin;
     private EditText edtNumberPhone, edtPassword;
-    private Button btnLogin;
+    private Button btnRegister;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,7 +35,7 @@ public class Register extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 //code back
-                Toast.makeText(Register.this, "Back from register", Toast.LENGTH_SHORT).show();
+                finish();
             }
         });
 
@@ -71,16 +71,15 @@ public class Register extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 //code register
-                Toast.makeText(Register.this, "Login from register", Toast.LENGTH_SHORT).show();
+                finish();
             }
         });
 
         //click login
-        btnLogin.setOnClickListener(new View.OnClickListener() {
+        btnRegister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 //code login
-                startActivity(new Intent(Register.this, Login.class));
             }
         });
 
@@ -89,7 +88,7 @@ public class Register extends AppCompatActivity {
             public void onClick(View view) {
                 //code terms of use
                 Toast.makeText(Register.this, "Terms of use from register", Toast.LENGTH_SHORT).show();
-                finish();
+
             }
         });
 
@@ -103,7 +102,7 @@ public class Register extends AppCompatActivity {
         tvLogin = findViewById(R.id.tv_login);
         edtNumberPhone = findViewById(R.id.edt_numberphone_register);
         edtPassword = findViewById(R.id.edt_password_register);
-        btnLogin = findViewById(R.id.btn_register);
+        btnRegister = findViewById(R.id.btn_register);
         tvTermsOfUse = findViewById(R.id.tv_terms_of_use);
 
 
