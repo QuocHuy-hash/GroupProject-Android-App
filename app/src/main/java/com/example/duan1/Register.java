@@ -13,22 +13,20 @@ import android.widget.Toast;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class Login extends AppCompatActivity {
+public class Register extends AppCompatActivity {
 
     private ImageView imgBack;
     private CircleImageView imgLoginFacebook, imgLoginGoole, imgLoginZalo;
-    private TextView tvResetPassword, tvRegister;
+    private TextView tvTermsOfUse, tvLogin;
     private EditText edtNumberPhone, edtPassword;
     private Button btnLogin;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
+        setContentView(R.layout.activity_register);
         initUi();
         initListenerClick();
-
-
     }
 
     private void initListenerClick() {
@@ -37,7 +35,7 @@ public class Login extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 //code back
-                Toast.makeText(Login.this, "Back from Login", Toast.LENGTH_SHORT).show();
+                Toast.makeText(Register.this, "Back from register", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -46,7 +44,7 @@ public class Login extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 //code login facebook
-                Toast.makeText(Login.this, "Login fb from Login", Toast.LENGTH_SHORT).show();
+                Toast.makeText(Register.this, "Login fb from register", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -55,7 +53,7 @@ public class Login extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 //code login google
-                Toast.makeText(Login.this, "Login google from Login", Toast.LENGTH_SHORT).show();
+                Toast.makeText(Register.this, "Login google from register", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -64,25 +62,16 @@ public class Login extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 //code login zalo
-                Toast.makeText(Login.this, "Login zalo from Login", Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        //click reset password
-        tvResetPassword.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //code reset password
-                Toast.makeText(Login.this, "reset Password from Login", Toast.LENGTH_SHORT).show();
+                Toast.makeText(Register.this, "Login zalo from register", Toast.LENGTH_SHORT).show();
             }
         });
 
         //click register
-        tvRegister.setOnClickListener(new View.OnClickListener() {
+        tvLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 //code register
-                startActivity(new Intent(Login.this, Register.class));
+                Toast.makeText(Register.this, "Login from register", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -91,22 +80,33 @@ public class Login extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 //code login
-                Toast.makeText(Login.this, "Login from Login", Toast.LENGTH_SHORT).show();
+                startActivity(new Intent(Register.this, Login.class));
+            }
+        });
+
+        tvTermsOfUse.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //code terms of use
+                Toast.makeText(Register.this, "Terms of use from register", Toast.LENGTH_SHORT).show();
+                finish();
             }
         });
 
     }
 
     private void initUi() {
-        imgBack = findViewById(R.id.img_back);
-        imgLoginFacebook = findViewById(R.id.img_login_facebook);
-        imgLoginGoole = findViewById(R.id.img_login_google);
-        imgLoginZalo = findViewById(R.id.img_login_zalo);
-        tvResetPassword = findViewById(R.id.tv_reset_password);
-        tvRegister = findViewById(R.id.tv_register);
-        edtNumberPhone = findViewById(R.id.edt_numberphone);
-        edtPassword = findViewById(R.id.edt_password);
-        btnLogin = findViewById(R.id.btn_login);
+        imgBack = findViewById(R.id.img_back_register);
+        imgLoginFacebook = findViewById(R.id.img_register_facebook);
+        imgLoginGoole = findViewById(R.id.img_register_google);
+        imgLoginZalo = findViewById(R.id.img_register_zalo);
+        tvLogin = findViewById(R.id.tv_login);
+        edtNumberPhone = findViewById(R.id.edt_numberphone_register);
+        edtPassword = findViewById(R.id.edt_password_register);
+        btnLogin = findViewById(R.id.btn_register);
+        tvTermsOfUse = findViewById(R.id.tv_terms_of_use);
+
 
     }
+
 }
