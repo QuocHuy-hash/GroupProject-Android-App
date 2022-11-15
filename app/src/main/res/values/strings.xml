@@ -1,6 +1,8 @@
 <resources>
-    <string name="app_name">duAn1</string>
+    <string name="app_name">Chợ tốt 2</string>
     <string name="register">Đăng kí</string>
     <string name="login">Đăng nhập</string>
     <string name="reset_password">Bạn quên mật khẩu?</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
