@@ -90,9 +90,9 @@
                 android:id="@+id/edt_numberphone_register"
                 android:layout_width="match_parent"
                 android:layout_height="38dp"
-                android:inputType="phone"
+                android:inputType="textEmailAddress"
                 android:background="@drawable/bg_input"
-                android:hint="Nhập SĐT của bạn"
+                android:hint="Nhập Email của bạn"
                 android:paddingStart="10dp"
                 android:textSize="14dp"
                 />

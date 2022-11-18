@@ -18,51 +18,50 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class Login extends AppCompatActivity {
+public class Register extends AppCompatActivity {
 
     private ImageView imgBack;
     private CircleImageView imgLoginFacebook, imgLoginGoole, imgLoginZalo;
-    private TextView tvResetPassword, tvRegister;
+    private TextView tvTermsAndUse, tvLogin;
     private EditText edtNumberPhone, edtPassword;
-    private Button btnLogin;
+    private Button btnRegister;
 
-    private FirebaseAuth mAuth;
     private ProgressDialog progressDialog;
+    private FirebaseAuth mAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
+        setContentView(R.layout.activity_register);
         initUi();
+
 
 
         initListenerClick();
 
-
     }
 
     private void initUi() {
-        imgBack = findViewById(R.id.img_back);
-        imgLoginFacebook = findViewById(R.id.img_login_facebook);
-        imgLoginGoole = findViewById(R.id.img_login_google);
-        imgLoginZalo = findViewById(R.id.img_login_zalo);
-        tvResetPassword = findViewById(R.id.tv_reset_password);
-        tvRegister = findViewById(R.id.tv_register);
-        edtNumberPhone = findViewById(R.id.edt_numberphone);
-        edtPassword = findViewById(R.id.edt_password);
-        btnLogin = findViewById(R.id.btn_login);
+        imgBack = findViewById(R.id.img_back_register);
+        imgLoginFacebook = findViewById(R.id.img_register_facebook);
+        imgLoginGoole = findViewById(R.id.img_register_google);
+        imgLoginZalo = findViewById(R.id.img_register_zalo);
+        tvLogin = findViewById(R.id.tv_login);
+        tvTermsAndUse = findViewById(R.id.tv_terms_of_use);
+        edtNumberPhone = findViewById(R.id.edt_numberphone_register);
+        edtPassword = findViewById(R.id.edt_password_register);
+        btnRegister = findViewById(R.id.btn_register);
 
         // Initialize Firebase Auth
         mAuth = FirebaseAuth.getInstance();
         progressDialog = new ProgressDialog(this);
-
     }
 
     private void initListenerClick() {
+
         //click back
         imgBack.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -77,7 +76,7 @@ public class Login extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 //code login facebook
-                Toast.makeText(Login.this, "Login fb from Login", Toast.LENGTH_SHORT).show();
+                Toast.makeText(Register.this, "Login fb from Login", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -86,7 +85,7 @@ public class Login extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 //code login google
-                Toast.makeText(Login.this, "Login google from Login", Toast.LENGTH_SHORT).show();
+                Toast.makeText(Register.this, "Login google from Login", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -95,30 +94,30 @@ public class Login extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 //code login zalo
-                Toast.makeText(Login.this, "Login zalo from Login", Toast.LENGTH_SHORT).show();
+                Toast.makeText(Register.this, "Login zalo from Login", Toast.LENGTH_SHORT).show();
             }
         });
 
         //click reset password
-        tvResetPassword.setOnClickListener(new View.OnClickListener() {
+        tvTermsAndUse.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 //code reset password
-                Toast.makeText(Login.this, "reset Password from Login", Toast.LENGTH_SHORT).show();
+                Toast.makeText(Register.this, "Terms and use from Login", Toast.LENGTH_SHORT).show();
             }
         });
 
         //click register
-        tvRegister.setOnClickListener(new View.OnClickListener() {
+        tvLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 //code register
-                startActivity(new Intent(Login.this, Register.class));
+                finish();
             }
         });
 
         //click login
-        btnLogin.setOnClickListener(new View.OnClickListener() {
+        btnRegister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 //code login
@@ -137,42 +136,30 @@ public class Login extends AppCompatActivity {
                 }
                 progressDialog.setTitle("Xin chờ!");
                 progressDialog.show();
-
-                mAuth.signInWithEmailAndPassword(email, password)
-                        .addOnCompleteListener(Login.this, new OnCompleteListener<AuthResult>() {
+                mAuth.createUserWithEmailAndPassword(email, password)
+                        .addOnCompleteListener(Register.this, new OnCompleteListener<AuthResult>() {
                             @Override
                             public void onComplete(@NonNull Task<AuthResult> task) {
-
                                 Handler handler = new Handler();
                                 handler.postDelayed(new Runnable() {
                                     @Override
                                     public void run() {
+                                        progressDialog.dismiss();
                                         if (task.isSuccessful()) {
                                             // Sign in success, update UI with the signed-in user's information
-                                            Toast.makeText(Login.this, "Đăng nhập thành công!", Toast.LENGTH_SHORT).show();
+                                            Toast.makeText(Register.this, "Tạo tài khoản thành công!", Toast.LENGTH_SHORT).show();
                                             finish();
                                         } else {
-                                            // If sign in fails, display a message to the user.
-                                            Toast.makeText(Login.this, "Đăng nhập thất bại!", Toast.LENGTH_SHORT).show();
+                                            Toast.makeText(Register.this, "Tạo tài khoản thất bại!.",Toast.LENGTH_SHORT).show();
                                         }
                                     }
                                 },2000);
                             }
                         });
-
             }
         });
 
     }
 
-//check đã đăng nhập hay chưa
-//    @Override
-//    public void onStart() {
-//        super.onStart();
-//        // Check if user is signed in (non-null) and update UI accordingly.
-//        FirebaseUser currentUser = mAuth.getCurrentUser();
-//        if(currentUser != null){
-//            //code
-//        }
-//    }
+
 }
