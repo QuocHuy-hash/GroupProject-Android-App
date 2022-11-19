@@ -1,7 +1,6 @@
 package com.example.duan1.Fragment;
 
 import android.os.Bundle;
-
 import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.ViewPager;
 
@@ -10,16 +9,20 @@ import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
 import android.widget.ScrollView;
 
 import com.example.duan1.R;
 import com.example.duan1.model.photosSlider;
 import com.example.duan1.slidersAdapter;
 
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
+
+
 
 import me.relex.circleindicator.CircleIndicator;
 
@@ -32,10 +35,18 @@ public class FragmentTrangChu extends Fragment {
         private Timer mTimer;
 
 
+    private ViewPager viewPager;
+    private CircleIndicator circleIndicator;
+    private slidersAdapter slidersAdapter;
+    private List<photosSlider> mListPhoto = new ArrayList<>();
+    private Timer mTimer;
+
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_trang_chu, container, false);
+
 
             viewPager = view.findViewById(R.id.viewPager_slide);
             circleIndicator = view.findViewById(R.id.circle_indicator);
@@ -47,6 +58,7 @@ public class FragmentTrangChu extends Fragment {
             slidersAdapter.registerDataSetObserver(circleIndicator.getDataSetObserver());
 
             autoSliderImg();
+
         return view;
     }
 
@@ -85,6 +97,9 @@ public class FragmentTrangChu extends Fragment {
             mTimer.cancel();
             mTimer = null;
         }
+
+    }
+
     }
 
     private List<photosSlider> getListPhoto() {
