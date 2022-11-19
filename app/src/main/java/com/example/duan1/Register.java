@@ -32,7 +32,7 @@ public class Register extends AppCompatActivity {
     private ImageView imgBack;
     private CircleImageView imgLoginFacebook, imgLoginGoole, imgLoginZalo;
 
-    private TextView tvTermsAndUse, tvLogin;
+    private TextView tvTermsAndUse, tvLogin ;
     private EditText edtNumberPhone, edtPassword;
     private Button btnRegister;
 
@@ -40,47 +40,18 @@ public class Register extends AppCompatActivity {
     private FirebaseAuth mAuth;
 
 
-    private TextView tvTermsOfUse, tvLogin;
-    private EditText edtNumberPhone, edtPassword;
-    private Button btnRegister;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
         initUi();
-
-
-
-
         initListenerClick();
 
     }
 
-    private void initUi() {
-        imgBack = findViewById(R.id.img_back_register);
-        imgLoginFacebook = findViewById(R.id.img_register_facebook);
-        imgLoginGoole = findViewById(R.id.img_register_google);
-        imgLoginZalo = findViewById(R.id.img_register_zalo);
-        tvLogin = findViewById(R.id.tv_login);
-        tvTermsAndUse = findViewById(R.id.tv_terms_of_use);
-        edtNumberPhone = findViewById(R.id.edt_numberphone_register);
-        edtPassword = findViewById(R.id.edt_password_register);
-        btnRegister = findViewById(R.id.btn_register);
 
-        // Initialize Firebase Auth
-        mAuth = FirebaseAuth.getInstance();
-        progressDialog = new ProgressDialog(this);
-    }
-
-    private void initListenerClick() {
-
-
-        initListenerClick();
-    }
-
-    private void initListenerClick() {
+    private void initListenerClick(){
 
         //click back
         imgBack.setOnClickListener(new View.OnClickListener() {
@@ -192,7 +163,7 @@ public class Register extends AppCompatActivity {
             }
         });
 
-        tvTermsOfUse.setOnClickListener(new View.OnClickListener() {
+        tvTermsAndUse.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 //code terms of use
@@ -206,7 +177,7 @@ public class Register extends AppCompatActivity {
 
 
 
-}
+
 
     private void initUi() {
         imgBack = findViewById(R.id.img_back_register);
@@ -214,13 +185,16 @@ public class Register extends AppCompatActivity {
         imgLoginGoole = findViewById(R.id.img_register_google);
         imgLoginZalo = findViewById(R.id.img_register_zalo);
         tvLogin = findViewById(R.id.tv_login);
+        tvTermsAndUse = findViewById(R.id.tv_terms_of_use);
         edtNumberPhone = findViewById(R.id.edt_numberphone_register);
         edtPassword = findViewById(R.id.edt_password_register);
         btnRegister = findViewById(R.id.btn_register);
-        tvTermsOfUse = findViewById(R.id.tv_terms_of_use);
 
-
+        // Initialize Firebase Auth
+        mAuth = FirebaseAuth.getInstance();
+        progressDialog = new ProgressDialog(this);
     }
 
 }
+
 

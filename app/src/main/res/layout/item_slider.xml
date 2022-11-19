@@ -12,12 +12,12 @@
         android:scaleType="centerCrop"
         />
 
-<ImageView
-    android:id="@+id/img_slide"
-    android:layout_width="match_parent"
-    android:layout_height="230dp"
-    android:src="@drawable/img_slider1"
-    android:scaleType="centerCrop"
-    />
+
+    <ImageView
+        android:id="@+id/img_slide"
+        android:layout_width="match_parent"
+        android:layout_height="230dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/img_slider1" />
 
 </LinearLayout>

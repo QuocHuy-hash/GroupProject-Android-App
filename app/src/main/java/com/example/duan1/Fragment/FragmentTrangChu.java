@@ -10,11 +10,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import android.widget.ScrollView;
-
+import com.example.duan1.Adapter.slidersAdapter;
 import com.example.duan1.R;
 import com.example.duan1.model.photosSlider;
-import com.example.duan1.slidersAdapter;
 
 
 import java.util.ArrayList;
@@ -28,13 +26,6 @@ import me.relex.circleindicator.CircleIndicator;
 
 
 public class FragmentTrangChu extends Fragment {
-        private ViewPager viewPager;
-        private CircleIndicator circleIndicator;
-        private slidersAdapter slidersAdapter;
-        private List<photosSlider> mListPhoto = new ArrayList<>();
-        private Timer mTimer;
-
-
     private ViewPager viewPager;
     private CircleIndicator circleIndicator;
     private slidersAdapter slidersAdapter;
@@ -48,23 +39,23 @@ public class FragmentTrangChu extends Fragment {
         View view = inflater.inflate(R.layout.fragment_trang_chu, container, false);
 
 
-            viewPager = view.findViewById(R.id.viewPager_slide);
-            circleIndicator = view.findViewById(R.id.circle_indicator);
+        viewPager = view.findViewById(R.id.viewPager_slide);
+        circleIndicator = view.findViewById(R.id.circle_indicator);
 
-            slidersAdapter = new slidersAdapter(getContext() , getListPhoto());
-            viewPager.setAdapter(slidersAdapter);
+        slidersAdapter = new slidersAdapter(getContext(), getListPhoto());
+        viewPager.setAdapter(slidersAdapter);
 
-            circleIndicator.setViewPager(viewPager);
-            slidersAdapter.registerDataSetObserver(circleIndicator.getDataSetObserver());
+        circleIndicator.setViewPager(viewPager);
+        slidersAdapter.registerDataSetObserver(circleIndicator.getDataSetObserver());
 
-            autoSliderImg();
+        autoSliderImg();
 
         return view;
     }
 
     private void autoSliderImg() {
 
-        if(mTimer == null) {
+        if (mTimer == null) {
             mTimer = new Timer();
         }
 
@@ -80,27 +71,27 @@ public class FragmentTrangChu extends Fragment {
                         if (currentitem < totalItem) {
                             currentitem++;
                             viewPager.setCurrentItem(currentitem);
-                        }else {
+                        } else {
                             viewPager.setCurrentItem(0);
                         }
                     }
                 });
             }
-        }, 500 , 3000);
+        }, 500, 3000);
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
 
-        if(mTimer != null) {
+        if (mTimer != null) {
             mTimer.cancel();
             mTimer = null;
         }
 
     }
 
-    }
+
 
     private List<photosSlider> getListPhoto() {
 //    List<photosSlider> list = new ArrayList<>();
