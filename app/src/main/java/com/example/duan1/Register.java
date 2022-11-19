@@ -1,3 +1,4 @@
+
 package com.example.duan1;
 
 import androidx.annotation.NonNull;
@@ -7,6 +8,9 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+
+
+
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -14,10 +18,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -25,6 +31,7 @@ public class Register extends AppCompatActivity {
 
     private ImageView imgBack;
     private CircleImageView imgLoginFacebook, imgLoginGoole, imgLoginZalo;
+
     private TextView tvTermsAndUse, tvLogin;
     private EditText edtNumberPhone, edtPassword;
     private Button btnRegister;
@@ -32,11 +39,18 @@ public class Register extends AppCompatActivity {
     private ProgressDialog progressDialog;
     private FirebaseAuth mAuth;
 
+
+    private TextView tvTermsOfUse, tvLogin;
+    private EditText edtNumberPhone, edtPassword;
+    private Button btnRegister;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
         initUi();
+
 
 
 
@@ -62,6 +76,12 @@ public class Register extends AppCompatActivity {
 
     private void initListenerClick() {
 
+
+        initListenerClick();
+    }
+
+    private void initListenerClick() {
+
         //click back
         imgBack.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -76,8 +96,11 @@ public class Register extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 //code login facebook
+
                 Toast.makeText(Register.this, "Login fb from Login", Toast.LENGTH_SHORT).show();
-            }
+
+                Toast.makeText(Register.this, "Login fb from register", Toast.LENGTH_SHORT).show();
+         }
         });
 
         //click login google
@@ -85,7 +108,11 @@ public class Register extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 //code login google
+
                 Toast.makeText(Register.this, "Login google from Login", Toast.LENGTH_SHORT).show();
+
+                Toast.makeText(Register.this, "Login google from register", Toast.LENGTH_SHORT).show();
+
             }
         });
 
@@ -94,6 +121,7 @@ public class Register extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 //code login zalo
+
                 Toast.makeText(Register.this, "Login zalo from Login", Toast.LENGTH_SHORT).show();
             }
         });
@@ -104,6 +132,9 @@ public class Register extends AppCompatActivity {
             public void onClick(View view) {
                 //code reset password
                 Toast.makeText(Register.this, "Terms and use from Login", Toast.LENGTH_SHORT).show();
+
+                Toast.makeText(Register.this, "Login zalo from register", Toast.LENGTH_SHORT).show();
+
             }
         });
 
@@ -121,6 +152,7 @@ public class Register extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 //code login
+
 
                 String email = edtNumberPhone.getText().toString().trim();
                 if (edtNumberPhone == null || email.isEmpty()){
@@ -156,10 +188,39 @@ public class Register extends AppCompatActivity {
                                 },2000);
                             }
                         });
+
+            }
+        });
+
+        tvTermsOfUse.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //code terms of use
+                Toast.makeText(Register.this, "Terms of use from register", Toast.LENGTH_SHORT).show();
+
+
             }
         });
 
     }
 
 
+
 }
+
+    private void initUi() {
+        imgBack = findViewById(R.id.img_back_register);
+        imgLoginFacebook = findViewById(R.id.img_register_facebook);
+        imgLoginGoole = findViewById(R.id.img_register_google);
+        imgLoginZalo = findViewById(R.id.img_register_zalo);
+        tvLogin = findViewById(R.id.tv_login);
+        edtNumberPhone = findViewById(R.id.edt_numberphone_register);
+        edtPassword = findViewById(R.id.edt_password_register);
+        btnRegister = findViewById(R.id.btn_register);
+        tvTermsOfUse = findViewById(R.id.tv_terms_of_use);
+
+
+    }
+
+}
+

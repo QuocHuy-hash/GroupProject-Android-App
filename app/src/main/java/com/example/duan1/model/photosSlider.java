@@ -1,7 +1,9 @@
 package com.example.duan1.model;
 
 public class photosSlider {
-    private int imgSlider;
+
+        private int imgSlider;
+
 
     public photosSlider(int imgSlider) {
         this.imgSlider = imgSlider;

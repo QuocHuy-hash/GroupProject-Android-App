@@ -3,22 +3,36 @@ package com.example.duan1.Fragment;
 import android.os.Bundle;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.ViewPager;
+
 import android.os.Handler;
 import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import com.example.duan1.Adapter.slidersAdapter;
+
+import android.widget.ScrollView;
+
 import com.example.duan1.R;
 import com.example.duan1.model.photosSlider;
+import com.example.duan1.slidersAdapter;
+
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
+
+
+
 import me.relex.circleindicator.CircleIndicator;
 
 
 public class FragmentTrangChu extends Fragment {
+        private ViewPager viewPager;
+        private CircleIndicator circleIndicator;
+        private slidersAdapter slidersAdapter;
+        private List<photosSlider> mListPhoto = new ArrayList<>();
+        private Timer mTimer;
 
 
     private ViewPager viewPager;
@@ -33,16 +47,18 @@ public class FragmentTrangChu extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_trang_chu, container, false);
 
-        viewPager = view.findViewById(R.id.viewPager_slide);
-        circleIndicator = view.findViewById(R.id.circle_indicator);
 
-        slidersAdapter = new slidersAdapter(getContext() , getListPhoto());
-        viewPager.setAdapter(slidersAdapter);
+            viewPager = view.findViewById(R.id.viewPager_slide);
+            circleIndicator = view.findViewById(R.id.circle_indicator);
 
-        circleIndicator.setViewPager(viewPager);
-        slidersAdapter.registerDataSetObserver(circleIndicator.getDataSetObserver());
+            slidersAdapter = new slidersAdapter(getContext() , getListPhoto());
+            viewPager.setAdapter(slidersAdapter);
 
-        autoSliderImg();
+            circleIndicator.setViewPager(viewPager);
+            slidersAdapter.registerDataSetObserver(circleIndicator.getDataSetObserver());
+
+            autoSliderImg();
+
         return view;
     }
 
@@ -81,6 +97,9 @@ public class FragmentTrangChu extends Fragment {
             mTimer.cancel();
             mTimer = null;
         }
+
+    }
+
     }
 
     private List<photosSlider> getListPhoto() {
@@ -93,4 +112,5 @@ public class FragmentTrangChu extends Fragment {
 
         return  mListPhoto;
     }
+
 }
