@@ -1,0 +1,99 @@
+Index: app/src/main/res/layout/item_slider.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<LinearLayout\r\n    xmlns:android=\"http://schemas.android.com/apk/res/android\"\r\n    android:layout_width=\"match_parent\"\r\n    android:layout_height=\"match_parent\">\r\n<ImageView\r\n    android:id=\"@+id/img_slide\"\r\n    android:layout_width=\"match_parent\"\r\n    android:layout_height=\"230dp\"\r\n    android:src=\"@drawable/img_slider1\"\r\n    android:scaleType=\"centerCrop\"\r\n    />\r\n</LinearLayout>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/layout/item_slider.xml b/app/src/main/res/layout/item_slider.xml
+--- a/app/src/main/res/layout/item_slider.xml	(revision fdc25982840bcfcdfea627a90481e16383b2c9b0)
++++ b/app/src/main/res/layout/item_slider.xml	(date 1668831216409)
+@@ -3,11 +3,11 @@
+     xmlns:android="http://schemas.android.com/apk/res/android"
+     android:layout_width="match_parent"
+     android:layout_height="match_parent">
+-<ImageView
+-    android:id="@+id/img_slide"
+-    android:layout_width="match_parent"
+-    android:layout_height="230dp"
+-    android:src="@drawable/img_slider1"
+-    android:scaleType="centerCrop"
+-    />
++
++    <ImageView
++        android:id="@+id/img_slide"
++        android:layout_width="match_parent"
++        android:layout_height="230dp"
++        android:scaleType="centerCrop"
++        android:src="@drawable/img_slider1" />
+ </LinearLayout>
+\ No newline at end of file
+Index: app/src/main/res/layout/fragment_trang_chu.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<LinearLayout xmlns:android=\"http://schemas.android.com/apk/res/android\"\r\n    xmlns:tools=\"http://schemas.android.com/tools\"\r\n    android:layout_width=\"match_parent\"\r\n    android:layout_height=\"match_parent\"\r\n    tools:context=\".Fragment.FragmentTrangChu\"\r\n    android:orientation=\"vertical\"\r\n    android:background=\"@color/white\"\r\n    >\r\n\r\n    <androidx.viewpager.widget.ViewPager\r\n        android:id=\"@+id/viewPager_slide\"\r\n        android:layout_width=\"match_parent\"\r\n        android:layout_height=\"220dp\"/>\r\n    <me.relex.circleindicator.CircleIndicator\r\n        android:id=\"@+id/circle_indicator\"\r\n        android:layout_width=\"100dp\"\r\n        android:layout_height=\"30dp\"\r\n        android:layout_gravity=\"center_horizontal\"\r\n        android:layout_marginTop=\"5dp\"\r\n    />\r\n\r\n<HorizontalScrollView\r\n    android:id=\"@+id/scrollView\"\r\n    android:layout_width=\"match_parent\"\r\n    android:layout_height=\"wrap_content\"\r\n    >\r\n    <LinearLayout\r\n        android:layout_width=\"match_parent\"\r\n        android:layout_height=\"wrap_content\"\r\n        android:orientation=\"horizontal\">\r\n    <LinearLayout\r\n        android:layout_width=\"120dp\"\r\n        android:layout_height=\"120dp\"\r\n        android:orientation=\"vertical\"\r\n        android:gravity=\"center_horizontal\"\r\n        >\r\n        <ImageView\r\n            android:layout_width=\"45dp\"\r\n            android:layout_height=\"45dp\"\r\n            android:src=\"@drawable/transport\"/>\r\n        <TextView\r\n            android:layout_width=\"120dp\"\r\n            android:layout_height=\"wrap_content\"\r\n            android:layout_marginTop=\"5dp\"\r\n            android:gravity=\"center\"\r\n            android:textColor=\"#020202\"\r\n            android:text=\"Miễn phí vận chuyển\"\r\n            android:textSize=\"16dp\"/>\r\n    </LinearLayout>\r\n        <!-- 2-->\r\n        <LinearLayout\r\n            android:layout_width=\"120dp\"\r\n            android:layout_height=\"120dp\"\r\n            android:orientation=\"vertical\"\r\n            android:gravity=\"center_horizontal\"\r\n            >\r\n            <ImageView\r\n                android:layout_width=\"45dp\"\r\n                android:layout_height=\"45dp\"\r\n                android:src=\"@drawable/tin_da_luu\"/>\r\n            <TextView\r\n                android:layout_width=\"100dp\"\r\n                android:layout_height=\"wrap_content\"\r\n                android:layout_marginTop=\"5dp\"\r\n                android:gravity=\"center\"\r\n                android:textColor=\"#020202\"\r\n                android:text=\"Tin đăng đã lưu\"\r\n                android:textSize=\"16dp\"/>\r\n        </LinearLayout>\r\n<!--        3-->\r\n        <LinearLayout\r\n            android:layout_width=\"100dp\"\r\n            android:layout_height=\"120dp\"\r\n            android:orientation=\"vertical\"\r\n            android:gravity=\"center_horizontal\"\r\n            >\r\n            <ImageView\r\n                android:layout_width=\"45dp\"\r\n                android:layout_height=\"45dp\"\r\n                android:src=\"@drawable/danh_gia\"/>\r\n            <TextView\r\n                android:layout_width=\"90dp\"\r\n                android:layout_height=\"wrap_content\"\r\n                android:layout_marginTop=\"5dp\"\r\n                android:gravity=\"center\"\r\n                android:textColor=\"#020202\"\r\n                android:text=\"Đánh giá từ tôi\"\r\n                android:textSize=\"16dp\"/>\r\n        </LinearLayout>\r\n<!--        4-->\r\n        <LinearLayout\r\n            android:layout_width=\"120dp\"\r\n            android:layout_height=\"120dp\"\r\n            android:orientation=\"vertical\"\r\n            android:gravity=\"center_horizontal\"\r\n            >\r\n            <ImageView\r\n                android:layout_width=\"45dp\"\r\n                android:layout_height=\"45dp\"\r\n                android:src=\"@drawable/history_search\"/>\r\n            <TextView\r\n                android:layout_width=\"100dp\"\r\n                android:layout_height=\"wrap_content\"\r\n                android:layout_marginTop=\"5dp\"\r\n                android:gravity=\"center\"\r\n                android:textColor=\"#020202\"\r\n                android:text=\"Tìm kiếm đã lưu\"\r\n                android:textSize=\"16dp\"/>\r\n        </LinearLayout>\r\n<!--        5-->\r\n        <LinearLayout\r\n            android:layout_width=\"120dp\"\r\n            android:layout_height=\"120dp\"\r\n            android:orientation=\"vertical\"\r\n            android:gravity=\"center_horizontal\"\r\n            >\r\n            <ImageView\r\n                android:layout_width=\"45dp\"\r\n                android:layout_height=\"45dp\"\r\n                android:src=\"@drawable/history_search\"/>\r\n            <TextView\r\n                android:layout_width=\"90dp\"\r\n                android:layout_height=\"wrap_content\"\r\n                android:layout_marginTop=\"5dp\"\r\n                android:gravity=\"center\"\r\n                android:textColor=\"#020202\"\r\n                android:text=\"Chia sẻ\"\r\n                android:textSize=\"16dp\"/>\r\n        </LinearLayout>\r\n    </LinearLayout>\r\n</HorizontalScrollView>\r\n\r\n</LinearLayout>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/layout/fragment_trang_chu.xml b/app/src/main/res/layout/fragment_trang_chu.xml
+--- a/app/src/main/res/layout/fragment_trang_chu.xml	(revision fdc25982840bcfcdfea627a90481e16383b2c9b0)
++++ b/app/src/main/res/layout/fragment_trang_chu.xml	(date 1668787837008)
+@@ -23,6 +23,7 @@
+ <HorizontalScrollView
+     android:id="@+id/scrollView"
+     android:layout_width="match_parent"
++    android:scrollbars="none"
+     android:layout_height="wrap_content"
+     >
+     <LinearLayout
+@@ -126,9 +127,30 @@
+                 android:gravity="center"
+                 android:textColor="#020202"
+                 android:text="Chia sẻ"
++                android:textSize="16dp"/>
++        </LinearLayout>
++<!--        6-->
++        <LinearLayout
++            android:layout_width="120dp"
++            android:layout_height="120dp"
++            android:orientation="vertical"
++            android:gravity="center_horizontal"
++            >
++            <ImageView
++                android:layout_width="45dp"
++                android:layout_height="45dp"
++                android:src="@drawable/img_vong_quay"/>
++            <TextView
++                android:layout_width="90dp"
++                android:layout_height="wrap_content"
++                android:layout_marginTop="5dp"
++                android:gravity="center"
++                android:textColor="#020202"
++                android:text="Vòng quay may mắn"
+                 android:textSize="16dp"/>
+         </LinearLayout>
+     </LinearLayout>
+ </HorizontalScrollView>
+ 
++
+ </LinearLayout>
+\ No newline at end of file
+Index: .idea/misc.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<project version=\"4\">\r\n  <component name=\"DesignSurface\">\r\n    <option name=\"filePathToZoomLevelMap\">\r\n      <map>\r\n        <entry key=\"..\\:/FPT_HoangQuocHuy/Du_An_1(LTMT)/QLDA_android1/app/src/main/res/drawable/bg_button_login.xml\" value=\"0.142\" />\r\n        <entry key=\"..\\:/FPT_HoangQuocHuy/Du_An_1(LTMT)/QLDA_android1/app/src/main/res/drawable/bg_button_register.xml\" value=\"0.1\" />\r\n        <entry key=\"..\\:/FPT_HoangQuocHuy/Du_An_1(LTMT)/QLDA_android1/app/src/main/res/drawable/bg_overlay.xml\" value=\"0.128\" />\r\n        <entry key=\"..\\:/FPT_HoangQuocHuy/Du_An_1(LTMT)/QLDA_android1/app/src/main/res/drawable/ic_baseline_add_24.xml\" value=\"0.128\" />\r\n        <entry key=\"..\\:/FPT_HoangQuocHuy/Du_An_1(LTMT)/QLDA_android1/app/src/main/res/drawable/ic_baseline_home_24.xml\" value=\"0.128\" />\r\n        <entry key=\"..\\:/FPT_HoangQuocHuy/Du_An_1(LTMT)/QLDA_android1/app/src/main/res/drawable/ic_baseline_more_horiz_24.xml\" value=\"0.128\" />\r\n        <entry key=\"..\\:/FPT_HoangQuocHuy/Du_An_1(LTMT)/QLDA_android1/app/src/main/res/drawable/ic_baseline_newspaper_24.xml\" value=\"0.128\" />\r\n        <entry key=\"..\\:/FPT_HoangQuocHuy/Du_An_1(LTMT)/QLDA_android1/app/src/main/res/drawable/ic_baseline_shopping_basket_24.xml\" value=\"0.128\" />\r\n        <entry key=\"..\\:/FPT_HoangQuocHuy/Du_An_1(LTMT)/QLDA_android1/app/src/main/res/drawable/transparent_background.xml\" value=\"0.128\" />\r\n        <entry key=\"..\\:/FPT_HoangQuocHuy/Du_An_1(LTMT)/QLDA_android1/app/src/main/res/layout/activity_dang_tin.xml\" value=\"0.17028985507246377\" />\r\n        <entry key=\"..\\:/FPT_HoangQuocHuy/Du_An_1(LTMT)/QLDA_android1/app/src/main/res/layout/activity_login.xml\" value=\"0.25\" />\r\n        <entry key=\"..\\:/FPT_HoangQuocHuy/Du_An_1(LTMT)/QLDA_android1/app/src/main/res/layout/activity_main.xml\" value=\"0.17028985507246377\" />\r\n        <entry key=\"..\\:/FPT_HoangQuocHuy/Du_An_1(LTMT)/QLDA_android1/app/src/main/res/layout/activity_register.xml\" value=\"0.25\" />\r\n        <entry key=\"..\\:/FPT_HoangQuocHuy/Du_An_1(LTMT)/QLDA_android1/app/src/main/res/layout/activity_splash_screen.xml\" value=\"0.17028985507246377\" />\r\n        <entry key=\"..\\:/FPT_HoangQuocHuy/Du_An_1(LTMT)/QLDA_android1/app/src/main/res/layout/fragment_trang_chu.xml\" value=\"0.13541666666666666\" />\r\n        <entry key=\"..\\:/FPT_HoangQuocHuy/Du_An_1(LTMT)/QLDA_android1/app/src/main/res/layout/item_slider.xml\" value=\"0.26277372262773724\" />\r\n        <entry key=\"..\\:/FPT_HoangQuocHuy/Du_An_1(LTMT)/QLDA_android1/app/src/main/res/layout/slider_item_layout.xml\" value=\"0.17028985507246377\" />\r\n      </map>\r\n    </option>\r\n  </component>\r\n  <component name=\"ProjectRootManager\" version=\"2\" languageLevel=\"JDK_11\" default=\"true\" project-jdk-name=\"Android Studio default JDK\" project-jdk-type=\"JavaSDK\">\r\n    <output url=\"file://$PROJECT_DIR$/build/classes\" />\r\n  </component>\r\n  <component name=\"ProjectType\">\r\n    <option name=\"id\" value=\"Android\" />\r\n  </component>\r\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/misc.xml b/.idea/misc.xml
+--- a/.idea/misc.xml	(revision fdc25982840bcfcdfea627a90481e16383b2c9b0)
++++ b/.idea/misc.xml	(date 1668831216755)
+@@ -18,7 +18,7 @@
+         <entry key="..\:/FPT_HoangQuocHuy/Du_An_1(LTMT)/QLDA_android1/app/src/main/res/layout/activity_register.xml" value="0.25" />
+         <entry key="..\:/FPT_HoangQuocHuy/Du_An_1(LTMT)/QLDA_android1/app/src/main/res/layout/activity_splash_screen.xml" value="0.17028985507246377" />
+         <entry key="..\:/FPT_HoangQuocHuy/Du_An_1(LTMT)/QLDA_android1/app/src/main/res/layout/fragment_trang_chu.xml" value="0.13541666666666666" />
+-        <entry key="..\:/FPT_HoangQuocHuy/Du_An_1(LTMT)/QLDA_android1/app/src/main/res/layout/item_slider.xml" value="0.26277372262773724" />
++        <entry key="..\:/FPT_HoangQuocHuy/Du_An_1(LTMT)/QLDA_android1/app/src/main/res/layout/item_slider.xml" value="0.2" />
+         <entry key="..\:/FPT_HoangQuocHuy/Du_An_1(LTMT)/QLDA_android1/app/src/main/res/layout/slider_item_layout.xml" value="0.17028985507246377" />
+       </map>
+     </option>
