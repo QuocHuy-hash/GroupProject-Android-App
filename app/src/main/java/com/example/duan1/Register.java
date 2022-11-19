@@ -208,19 +208,7 @@ public class Register extends AppCompatActivity {
 
 }
 
-    private void initUi() {
-        imgBack = findViewById(R.id.img_back_register);
-        imgLoginFacebook = findViewById(R.id.img_register_facebook);
-        imgLoginGoole = findViewById(R.id.img_register_google);
-        imgLoginZalo = findViewById(R.id.img_register_zalo);
-        tvLogin = findViewById(R.id.tv_login);
-        edtNumberPhone = findViewById(R.id.edt_numberphone_register);
-        edtPassword = findViewById(R.id.edt_password_register);
-        btnRegister = findViewById(R.id.btn_register);
-        tvTermsOfUse = findViewById(R.id.tv_terms_of_use);
-
-
-    }
+   
 
 }
 
