@@ -174,12 +174,7 @@ public class Register extends AppCompatActivity {
         });
 
     }
-
-
-
-
-
-    private void initUi() {
+  private void initUi() {
         imgBack = findViewById(R.id.img_back_register);
         imgLoginFacebook = findViewById(R.id.img_register_facebook);
         imgLoginGoole = findViewById(R.id.img_register_google);
@@ -194,7 +189,6 @@ public class Register extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         progressDialog = new ProgressDialog(this);
     }
-
 }
 
 
