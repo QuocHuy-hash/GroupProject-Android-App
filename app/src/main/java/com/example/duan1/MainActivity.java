@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Intent;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.MenuItem;
@@ -45,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                showDialogChooseListProduct(Gravity.CENTER);
+                showDialogChooseListProduct();
             }
         });
 
@@ -79,7 +80,7 @@ public class MainActivity extends AppCompatActivity {
         
     }
 
-    private void showDialogChooseListProduct(int gravity) {
+    private void showDialogChooseListProduct() {
         final Dialog dialog = new Dialog(this);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.layout_dialog_chon_danh_muc);
@@ -89,9 +90,9 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
         window.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT);
-
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
         WindowManager.LayoutParams windowAttributes = window.getAttributes();
-        windowAttributes.gravity = gravity;
+        windowAttributes.gravity = Gravity.BOTTOM;
         window.setAttributes(windowAttributes);
 
         RelativeLayout layout_batDongSan = dialog.findViewById(R.id.layout_batDongSan);

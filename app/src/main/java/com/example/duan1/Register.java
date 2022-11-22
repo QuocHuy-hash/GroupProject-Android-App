@@ -70,7 +70,6 @@ public class Register extends AppCompatActivity {
 
                 Toast.makeText(Register.this, "Login fb from Login", Toast.LENGTH_SHORT).show();
 
-                Toast.makeText(Register.this, "Login fb from register", Toast.LENGTH_SHORT).show();
          }
         });
 
@@ -81,8 +80,6 @@ public class Register extends AppCompatActivity {
                 //code login google
 
                 Toast.makeText(Register.this, "Login google from Login", Toast.LENGTH_SHORT).show();
-
-                Toast.makeText(Register.this, "Login google from register", Toast.LENGTH_SHORT).show();
 
             }
         });
@@ -103,8 +100,6 @@ public class Register extends AppCompatActivity {
             public void onClick(View view) {
                 //code reset password
                 Toast.makeText(Register.this, "Terms and use from Login", Toast.LENGTH_SHORT).show();
-
-                Toast.makeText(Register.this, "Login zalo from register", Toast.LENGTH_SHORT).show();
 
             }
         });

@@ -6,8 +6,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".Fragment.FragmentQuanLiTin"
     android:orientation="vertical"
-    android:background="@color/gray_1"
-
     >
 
     <LinearLayout
@@ -28,6 +26,7 @@
             />
 
         <TextView
+            android:id="@+id/tvEmail"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -43,9 +42,11 @@
     </LinearLayout>
 
     <com.google.android.material.navigation.NavigationView
+        android:id="@+id/nav_them"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:menu="@menu/bottom_nav_menu"
+        app:menu="@menu/menu_them"
+        android:paddingBottom="60dp"
         />
 
 </LinearLayout>
