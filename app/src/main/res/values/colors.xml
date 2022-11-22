@@ -14,5 +14,6 @@
     <color name="gray_2">#BAB7AF</color>
     <color name="blue">#0679FB</color>
     <color name="blue_black">#084D9B</color>
+    <color name="trans...">#00000000</color>
 
 </resources>
