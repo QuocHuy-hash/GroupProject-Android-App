@@ -16,7 +16,7 @@
         android:background="@color/white"
         >
 
-        <ImageView
+        <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/img_login_register"
             android:layout_width="60dp"
             android:layout_height="60dp"
