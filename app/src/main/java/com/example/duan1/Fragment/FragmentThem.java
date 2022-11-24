@@ -61,29 +61,29 @@ public class FragmentThem extends Fragment implements NavigationView.OnNavigatio
             new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
                 @Override
                 public void onActivityResult(ActivityResult result) {
-                    Restart();
-//                    if (result.getResultCode() == RESULT_OK){
-//                        boolean isLoggedIn = accessToken != null && !accessToken.isExpired();
-//                        if (isLoggedIn){
-//
-//                        }else{
-//                            Intent intent = result.getData();
-//                            String strName = "";
-//                            String strImage = "";
-//                            if (intent != null){
-//                                strName = intent.getStringExtra("name");
-//                                strImage = intent.getStringExtra("image");
-//                                Picasso.with(mainActivity)
-//                                        .load(strImage)
-//                                        .resize(60,60)
-//                                        .placeholder(R.mipmap.ic_launcher)
-//                                        .error(R.mipmap.ic_launcher)
-//                                        .into(imgLoginRegister);
-//                            }
-//                            tvEmail.setText(strName);
-//                        }
 
-//                    }
+                    if (result.getResultCode() == RESULT_OK){
+                        boolean isLoggedIn = accessToken != null && !accessToken.isExpired();
+                        if (isLoggedIn){
+                            Restart();
+                        }else{
+                            Intent intent = result.getData();
+                            String strName = "";
+                            String strImage = "";
+                            if (intent != null){
+                                strName = intent.getStringExtra("name");
+                                strImage = intent.getStringExtra("image");
+                                Picasso.with(mainActivity)
+                                        .load(strImage)
+                                        .resize(60,60)
+                                        .placeholder(R.mipmap.ic_launcher)
+                                        .error(R.mipmap.ic_launcher)
+                                        .into(imgLoginRegister);
+                            }
+                            tvEmail.setText(strName);
+                        }
+
+                    }
                 }
             });
 
