@@ -2,6 +2,7 @@ package com.example.duan1;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
 
 import android.annotation.SuppressLint;
 import android.app.Dialog;
@@ -30,6 +31,7 @@ public class MainActivity extends AppCompatActivity {
     BottomNavigationView bottomNavigationView;
     FloatingActionButton floatingActionButton;
 
+    FragmentManager fragmentManager;
     FragmentTrangChu fragmentTrangChu = new FragmentTrangChu();
     FragmentQuanLiTin fragmentQuanLiTin = new FragmentQuanLiTin();
     FragmentDaoCho fragmentDaoCho = new FragmentDaoCho();
@@ -42,6 +44,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         initUi();
+
+
 
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
