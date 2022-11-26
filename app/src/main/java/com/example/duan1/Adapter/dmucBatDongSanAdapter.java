@@ -1,6 +1,7 @@
 package com.example.duan1.Adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,7 +12,12 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.duan1.Fragment.FragmentTrangChu;
+import com.example.duan1.MainActivity;
 import com.example.duan1.R;
+import com.example.duan1.dangTinBDSActivity;
+import com.example.duan1.dangTinBDSDatActivity;
+import com.example.duan1.dangTinBDSPhongTroActivity;
 import com.example.duan1.model.danhMucBatDongSan;
 
 import java.util.List;
@@ -19,6 +25,8 @@ import java.util.List;
 public class dmucBatDongSanAdapter extends RecyclerView.Adapter<dmucBatDongSanAdapter.ViewHolder> {
     private Context context;
     private List<danhMucBatDongSan> listDmBDS;
+    private MainActivity mainActivity;
+
 
     public dmucBatDongSanAdapter(Context context, List<danhMucBatDongSan> listDmBDS) {
         this.context = context;
@@ -30,6 +38,7 @@ public class dmucBatDongSanAdapter extends RecyclerView.Adapter<dmucBatDongSanAd
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.item_danh_muc_bds, parent, false);
+
         return new ViewHolder(view);
     }
 
@@ -43,7 +52,23 @@ public class dmucBatDongSanAdapter extends RecyclerView.Adapter<dmucBatDongSanAd
         holder.layout_item.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(context, "danh mục : " + dmBDS.getTenDanhMuc() , Toast.LENGTH_SHORT).show();
+                if(dmBDS.getTenDanhMuc().equalsIgnoreCase("Văn Phòng")
+                        || dmBDS.getTenDanhMuc().equalsIgnoreCase("Nhà ở")
+                        || dmBDS.getTenDanhMuc().equalsIgnoreCase("Căn hộ/Chung cư")
+                ) {
+                    Intent intent = new Intent(context, dangTinBDSActivity.class);
+                    intent.putExtra("tenDanhMuc" , dmBDS.getTenDanhMuc());
+                    context.startActivity(intent);
+                }else if(dmBDS.getTenDanhMuc().equalsIgnoreCase("Đất")) {
+                    Intent intent = new Intent(context, dangTinBDSDatActivity.class);
+                    intent.putExtra("tenDanhMuc" , dmBDS.getTenDanhMuc());
+                    context.startActivity(intent);
+                }else {
+                    Intent intent = new Intent(context, dangTinBDSPhongTroActivity.class);
+                    intent.putExtra("tenDanhMuc" , dmBDS.getTenDanhMuc());
+                    context.startActivity(intent);
+                }
+                
             }
         });
     }
