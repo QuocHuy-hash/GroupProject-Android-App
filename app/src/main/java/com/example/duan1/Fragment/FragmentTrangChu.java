@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.duan1.Adapter.slidersAdapter;
+import com.example.duan1.MainActivity;
 import com.example.duan1.R;
 import com.example.duan1.model.photosSlider;
 
@@ -31,13 +32,14 @@ public class FragmentTrangChu extends Fragment {
     private slidersAdapter slidersAdapter;
     private List<photosSlider> mListPhoto = new ArrayList<>();
     private Timer mTimer;
+     public MainActivity mainActivity;
 
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_trang_chu, container, false);
-
+        mainActivity = (MainActivity) getActivity();
 
         viewPager = view.findViewById(R.id.viewPager_slide);
         circleIndicator = view.findViewById(R.id.circle_indicator);

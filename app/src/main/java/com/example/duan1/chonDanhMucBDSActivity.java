@@ -39,7 +39,7 @@ public class chonDanhMucBDSActivity extends AppCompatActivity {
     private List<danhMucBatDongSan> createList() {
         listDm.add(new danhMucBatDongSan("Căn hộ/Chung cư"));
         listDm.add(new danhMucBatDongSan("Nhà ở"));
-        listDm.add(new danhMucBatDongSan("Đất "));
+        listDm.add(new danhMucBatDongSan("Đất"));
         listDm.add(new danhMucBatDongSan("Văn Phòng"));
         listDm.add(new danhMucBatDongSan("Phòng trọ"));
 
