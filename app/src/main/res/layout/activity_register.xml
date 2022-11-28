@@ -6,7 +6,6 @@
     android:layout_height="match_parent"
     tools:context=".Login"
     android:orientation="vertical"
-
     >
 
     <androidx.appcompat.widget.Toolbar
@@ -119,7 +118,7 @@
             android:layout_height="40dp"
             app:backgroundTint="@null"
             android:layout_marginTop="40dp"
-            android:background="@drawable/bg_button_register"
+            android:background="@drawable/bg_button_login"
             android:hint="@string/register"
             android:textColorHint="@color/white"
             android:textSize="14dp"
@@ -166,50 +165,6 @@
             android:textSize="11dp"
             android:textColor="@color/black"
             android:layout_gravity="center"
-            />
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="30dp"
-            android:text="hoặc sủ dụng"
-            android:gravity="center"
-            android:textColor="@color/gray_2"
-
-            />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center"
-        android:layout_marginTop="10dp"
-        >
-
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/img_register_facebook"
-            android:layout_width="45dp"
-            android:layout_height="45dp"
-            android:src="@drawable/facebook_logo"
-            />
-
-
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/img_register_google"
-            android:layout_width="45dp"
-            android:layout_height="45dp"
-            android:src="@drawable/logo_google"
-            android:layout_marginLeft="15dp"
-            />
-
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/img_register_zalo"
-            android:layout_width="45dp"
-            android:layout_height="45dp"
-            android:src="@drawable/logo_zalooo"
-            android:layout_marginLeft="15dp"
             />
 
     </LinearLayout>

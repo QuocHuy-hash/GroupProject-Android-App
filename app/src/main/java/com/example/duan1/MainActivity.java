@@ -31,7 +31,6 @@ public class MainActivity extends AppCompatActivity {
     BottomNavigationView bottomNavigationView;
     FloatingActionButton floatingActionButton;
 
-    FragmentManager fragmentManager;
     FragmentTrangChu fragmentTrangChu = new FragmentTrangChu();
     FragmentQuanLiTin fragmentQuanLiTin = new FragmentQuanLiTin();
     FragmentDaoCho fragmentDaoCho = new FragmentDaoCho();
