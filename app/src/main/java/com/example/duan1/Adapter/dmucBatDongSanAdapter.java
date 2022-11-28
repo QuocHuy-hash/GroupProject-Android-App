@@ -25,8 +25,6 @@ import java.util.List;
 public class dmucBatDongSanAdapter extends RecyclerView.Adapter<dmucBatDongSanAdapter.ViewHolder> {
     private Context context;
     private List<danhMucBatDongSan> listDmBDS;
-    private MainActivity mainActivity;
-
 
     public dmucBatDongSanAdapter(Context context, List<danhMucBatDongSan> listDmBDS) {
         this.context = context;

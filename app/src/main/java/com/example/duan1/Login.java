@@ -2,43 +2,47 @@ package com.example.duan1;
 
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
+
+import android.os.PersistableBundle;
+import android.text.Editable;
+import android.text.TextUtils;
+import android.text.TextWatcher;
+import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
-import com.facebook.FacebookSdk;
-import com.facebook.appevents.AppEventsLogger;
-import com.google.firebase.auth.FirebaseUser;
-
-
 import java.util.Arrays;
-
 import de.hdodenhof.circleimageview.CircleImageView;
+
 
 public class Login extends AppCompatActivity {
 
+    private static final int RC_SIGN_IN = 1000;
     private ImageView imgBack;
     private CircleImageView imgLoginFacebook, imgLoginGoole, imgLoginZalo;
     private TextView tvResetPassword, tvRegister;
@@ -46,28 +50,24 @@ public class Login extends AppCompatActivity {
     private Button btnLogin;
 
     private FirebaseAuth mAuth;
-    private ProgressDialog progressDialog;
-    CallbackManager callbackManager;
+    private CallbackManager callbackManager;
+    private GoogleSignInClient mGoogleSignInClient;
+    private GoogleSignInOptions gso;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         initUi();
 
+        //login Facebook
         callbackManager = CallbackManager.Factory.create();
         LoginManager.getInstance().registerCallback(callbackManager,
                 new FacebookCallback<LoginResult>() {
                     @Override
                     public void onSuccess(LoginResult loginResult) {
-//                        handleFacebookAccessToken(loginResult.getAccessToken());
                         Toast.makeText(Login.this, "Đăng nhập thành công!", Toast.LENGTH_SHORT).show();
                         Intent intent = new Intent(Login.this, MainActivity.class);
-//                                FirebaseUser currentUser = mAuth.getCurrentUser();
-//                                String name = currentUser.getDisplayName();
-//                                String image = String.valueOf(currentUser.getPhotoUrl());
-//                                intent.putExtra("name",name );
-//                                intent.putExtra("image", image);
                         setResult(RESULT_OK,intent );
                         finish();
                     }
@@ -83,10 +83,19 @@ public class Login extends AppCompatActivity {
                     }
                 });
 
+        //login Goolgle
+        gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestEmail()
+                .build();
+        mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
+
         initListenerClick();
+        initListenerTextChange();
 
 
     }
+
+
 
     private void initUi() {
         imgBack = findViewById(R.id.img_back);
@@ -101,7 +110,6 @@ public class Login extends AppCompatActivity {
 
         // Initialize Firebase Auth
         mAuth = FirebaseAuth.getInstance();
-        progressDialog = new ProgressDialog(this);
 
     }
 
@@ -129,7 +137,7 @@ public class Login extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 //code login google
-                Toast.makeText(Login.this, "Login google from Login", Toast.LENGTH_SHORT).show();
+                LoginGoogle();
             }
         });
 
@@ -160,25 +168,81 @@ public class Login extends AppCompatActivity {
             }
         });
 
+
+
+    }
+
+    private void initListenerTextChange() {
+        edtNumberPhone.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                if (edtNumberPhone.getText().toString().trim().equals("") || edtPassword.getText().toString().trim().equals("")){
+                    btnLogin.setBackgroundResource(R.drawable.bg_button_login);
+                    return;
+                }else{
+                    btnLogin.setBackgroundResource(R.drawable.bg_button_register);
+                    OnLogin();
+                }
+            }
+        });
+
+        edtPassword.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                if (edtNumberPhone.getText().toString().trim().equals("") || edtPassword.getText().toString().trim().equals("")){
+                    btnLogin.setBackgroundResource(R.drawable.bg_button_login);
+                    return;
+                }else{
+                    btnLogin.setBackgroundResource(R.drawable.bg_button_register);
+                    OnLogin();
+                }
+            }
+        });
+    }
+
+    public static boolean isValidEmail(CharSequence target) {
+        return (!TextUtils.isEmpty(target) && Patterns.EMAIL_ADDRESS.matcher(target).matches());
+    }
+
+    private void OnLogin(){
         //click login
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 //code login
-
+                ProgressDialog progressDialog = new ProgressDialog(Login.this);
                 String email = edtNumberPhone.getText().toString().trim();
-                if (edtNumberPhone == null || email.isEmpty()){
-                    edtNumberPhone.setError("Email không được để trống!");
+                if (!isValidEmail(email)){
+                    edtNumberPhone.setError("Email không đúng!");
                     return;
                 }
                 String password = edtPassword.getText().toString().trim();
-                if (edtPassword == null || password.isEmpty()){
-                    edtPassword.setError("Mật khẩu không được để trống!");
-                }else if (password.length() < 6 ){
+                if (password.length() < 6 ){
                     edtPassword.setError("Mật khẩu phải bằng hoặc trên 6 kí tự");
                     return;
                 }
-                progressDialog.setTitle("Xin chờ!");
+
+                progressDialog.setTitle("xin chờ");
                 progressDialog.show();
 
                 mAuth.signInWithEmailAndPassword(email, password)
@@ -190,50 +254,62 @@ public class Login extends AppCompatActivity {
                                 handler.postDelayed(new Runnable() {
                                     @Override
                                     public void run() {
+                                        progressDialog.dismiss();
                                         if (task.isSuccessful()) {
                                             // Sign in success, update UI with the signed-in user's information
+
                                             Toast.makeText(Login.this, "Đăng nhập thành công!", Toast.LENGTH_SHORT).show();
                                             Intent intent = new Intent(Login.this, MainActivity.class);
-                                            intent.putExtra("name", email);
                                             setResult(RESULT_OK,intent );
                                             finish();
                                         } else {
                                             // If sign in fails, display a message to the user.
-                                            Toast.makeText(Login.this, "Đăng nhập thất bại!", Toast.LENGTH_SHORT).show();
+                                            Toast.makeText(Login.this, "Đăng nhập thất bại, tài khoản hoặc mật khẩu không đúng!", Toast.LENGTH_SHORT).show();
                                         }
+
                                     }
                                 },2000);
                             }
                         });
-
             }
         });
 
     }
 
-    private void handleFacebookAccessToken(AccessToken token) {
-        AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken());
-        mAuth.signInWithCredential(credential)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            // Sign in success, update UI with the signed-in user's information
-
-                        } else {
-                            // If sign in fails, display a message to the user.
-                            Toast.makeText(Login.this, "Authentication failed.",
-                                    Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
+    private void LoginGoogle() {
+        Intent signInIntent = mGoogleSignInClient.getSignInIntent();
+        startActivityForResult(signInIntent, RC_SIGN_IN);
     }
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         // Pass the activity result back to the Facebook SDK
         callbackManager.onActivityResult(requestCode, resultCode, data);
+
+        //google
+        if (requestCode == RC_SIGN_IN) {
+            Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
+            try {
+                task.getResult(ApiException.class);
+                Toast.makeText(Login.this, "Đăng nhập thành công!", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(Login.this, MainActivity.class);
+                setResult(RESULT_OK,intent);
+                finish();
+            } catch (ApiException e) {
+                Toast.makeText(this, "signInResult:failed code=" + e.getStatusCode(), Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
+        if (account != null){
+            finish();
+        }
+
+    }
 }

@@ -10,7 +10,10 @@ import android.os.Bundle;
 import android.os.Handler;
 
 
-
+import android.text.Editable;
+import android.text.TextUtils;
+import android.text.TextWatcher;
+import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -30,7 +33,6 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class Register extends AppCompatActivity {
 
     private ImageView imgBack;
-    private CircleImageView imgLoginFacebook, imgLoginGoole, imgLoginZalo;
 
     private TextView tvTermsAndUse, tvLogin ;
     private EditText edtNumberPhone, edtPassword;
@@ -50,6 +52,9 @@ public class Register extends AppCompatActivity {
 
     }
 
+    public static boolean isValidEmail(CharSequence target) {
+        return (!TextUtils.isEmpty(target) && Patterns.EMAIL_ADDRESS.matcher(target).matches());
+    }
 
     private void initListenerClick(){
 
@@ -59,38 +64,6 @@ public class Register extends AppCompatActivity {
             public void onClick(View view) {
                 //code back
                 finish();
-            }
-        });
-
-        //click login facebook
-        imgLoginFacebook.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //code login facebook
-
-                Toast.makeText(Register.this, "Login fb from Login", Toast.LENGTH_SHORT).show();
-
-         }
-        });
-
-        //click login google
-        imgLoginGoole.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //code login google
-
-                Toast.makeText(Register.this, "Login google from Login", Toast.LENGTH_SHORT).show();
-
-            }
-        });
-
-        //click login zalo
-        imgLoginZalo.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //code login zalo
-
-                Toast.makeText(Register.this, "Login zalo from Login", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -113,67 +86,81 @@ public class Register extends AppCompatActivity {
             }
         });
 
-        //click login
-        btnRegister.setOnClickListener(new View.OnClickListener() {
+        edtNumberPhone.addTextChangedListener(new TextWatcher() {
             @Override
-            public void onClick(View view) {
-                //code login
-
-
-                String email = edtNumberPhone.getText().toString().trim();
-                if (edtNumberPhone == null || email.isEmpty()){
-                    edtNumberPhone.setError("Email không được để trống!");
-                    return;
-                }
-                String password = edtPassword.getText().toString().trim();
-                if (edtPassword == null || password.isEmpty()){
-                    edtPassword.setError("Mật khẩu không được để trống!");
-                }else if (password.length() < 6 ){
-                    edtPassword.setError("Mật khẩu phải bằng hoặc trên 6 kí tự");
-                    return;
-                }
-                progressDialog.setTitle("Xin chờ!");
-                progressDialog.show();
-                mAuth.createUserWithEmailAndPassword(email, password)
-                        .addOnCompleteListener(Register.this, new OnCompleteListener<AuthResult>() {
-                            @Override
-                            public void onComplete(@NonNull Task<AuthResult> task) {
-                                Handler handler = new Handler();
-                                handler.postDelayed(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        progressDialog.dismiss();
-                                        if (task.isSuccessful()) {
-                                            // Sign in success, update UI with the signed-in user's information
-                                            Toast.makeText(Register.this, "Tạo tài khoản thành công!", Toast.LENGTH_SHORT).show();
-                                            finish();
-                                        } else {
-                                            Toast.makeText(Register.this, "Tạo tài khoản thất bại!.",Toast.LENGTH_SHORT).show();
-                                        }
-                                    }
-                                },2000);
-                            }
-                        });
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
             }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                if (edtNumberPhone.getText().toString().trim().equals("") || edtPassword.getText().toString().trim().equals("")){
+                    btnRegister.setBackgroundResource(R.drawable.bg_button_login);
+                    return;
+                }else{
+                    btnRegister.setBackgroundResource(R.drawable.bg_button_register);
+
+                    //click login
+                    btnRegister.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            //code login
+                            String email = edtNumberPhone.getText().toString().trim();
+                            if (isValidEmail(email)){
+                                edtNumberPhone.setError("Email không được để trống!");
+                                return;
+                            }
+                            String password = edtPassword.getText().toString().trim();
+                            if (password.length() < 6 ){
+                                edtPassword.setError("Mật khẩu phải bằng hoặc trên 6 kí tự");
+                                return;
+                            }
+                            progressDialog.setTitle("Xin chờ!");
+                            progressDialog.show();
+                            mAuth.createUserWithEmailAndPassword(email, password)
+                                    .addOnCompleteListener(Register.this, new OnCompleteListener<AuthResult>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<AuthResult> task) {
+                                            Handler handler = new Handler();
+                                            handler.postDelayed(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    progressDialog.dismiss();
+                                                    if (task.isSuccessful()) {
+                                                        // Sign in success, update UI with the signed-in user's information
+                                                        Toast.makeText(Register.this, "Tạo tài khoản thành công!", Toast.LENGTH_SHORT).show();
+                                                        finish();
+                                                    } else {
+                                                        Toast.makeText(Register.this, "Tạo tài khoản thất bại!.",Toast.LENGTH_SHORT).show();
+                                                    }
+                                                }
+                                            },2000);
+                                        }
+                                    });
+
+                        }
+                    });
+                }
+            }
         });
+
 
         tvTermsAndUse.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 //code terms of use
                 Toast.makeText(Register.this, "Terms of use from register", Toast.LENGTH_SHORT).show();
-
-
             }
         });
 
     }
   private void initUi() {
         imgBack = findViewById(R.id.img_back_register);
-        imgLoginFacebook = findViewById(R.id.img_register_facebook);
-        imgLoginGoole = findViewById(R.id.img_register_google);
-        imgLoginZalo = findViewById(R.id.img_register_zalo);
         tvLogin = findViewById(R.id.tv_login);
         tvTermsAndUse = findViewById(R.id.tv_terms_of_use);
         edtNumberPhone = findViewById(R.id.edt_numberphone_register);
