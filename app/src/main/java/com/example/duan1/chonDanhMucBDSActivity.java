@@ -28,7 +28,7 @@ public class chonDanhMucBDSActivity extends AppCompatActivity {
         initUi();
         clickBackPage();
         listDm = new ArrayList<>();
-        dmucBatDongSanAdapter = new dmucBatDongSanAdapter(getApplicationContext() , createList());
+        dmucBatDongSanAdapter = new dmucBatDongSanAdapter(this , createList());
 
         rcvChonDanhMuc.setAdapter(dmucBatDongSanAdapter);
         rcvChonDanhMuc.setLayoutManager(new LinearLayoutManager(this));

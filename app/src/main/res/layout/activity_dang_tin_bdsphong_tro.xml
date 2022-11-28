@@ -6,7 +6,8 @@
     android:layout_height="match_parent"
     tools:context=".dangTinBDSPhongTroActivity"
     android:orientation="vertical">
-    <LinearLayout
+
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="10dp"
@@ -18,20 +19,26 @@
             android:layout_height="35dp"
             android:src="@drawable/ic_back_page"/>
         <TextView
-            android:layout_width="320dp"
+            android:id="@+id/tv_title_phong_tro"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Đăng tin"
             android:textStyle="bold"
             android:textSize="20dp"
             android:gravity="center"
-            android:textColor="#0B0B0B"/>
+            android:textColor="#0B0B0B"
+            android:layout_toRightOf="@+id/icon_back"
+            android:layout_marginEnd="35dp"
+            />
         <ImageView
             android:id="@+id/iconCloser"
             android:layout_width="35dp"
             android:layout_height="35dp"
             android:src="@drawable/ic_close"
-            android:layout_marginLeft="10dp"/>
-    </LinearLayout>
+            android:layout_marginLeft="10dp"
+            android:layout_alignParentEnd="true"
+            />
+    </RelativeLayout>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

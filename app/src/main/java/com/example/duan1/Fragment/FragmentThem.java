@@ -2,9 +2,12 @@ package com.example.duan1.Fragment;
 
 import static android.app.Activity.RESULT_OK;
 
+import static com.facebook.FacebookSdk.getApplicationContext;
+
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.activity.result.ActivityResult;
@@ -18,6 +21,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import android.os.Handler;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -30,10 +34,18 @@ import com.example.duan1.Account;
 import com.example.duan1.Login;
 import com.example.duan1.MainActivity;
 import com.example.duan1.R;
+import com.example.duan1.Register;
 import com.facebook.AccessToken;
+import com.facebook.FacebookSdk;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
 import com.facebook.login.LoginManager;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -42,6 +54,8 @@ import com.squareup.picasso.Picasso;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
 
 
 public class FragmentThem extends Fragment implements NavigationView.OnNavigationItemSelectedListener{
@@ -54,35 +68,16 @@ public class FragmentThem extends Fragment implements NavigationView.OnNavigatio
     private FirebaseUser currentUser;
     private NavigationView nav;
     private ProgressDialog progressDialog;
-    private AccessToken accessToken = AccessToken.getCurrentAccessToken();
-    boolean isLoggedIn = accessToken != null && !accessToken.isExpired();
+    private GoogleSignInClient mGoogleSignInClient;
+    private GoogleSignInOptions gso;
+    GoogleSignInAccount acct;
 
     private ActivityResultLauncher<Intent> mActivityResultLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
                 @Override
                 public void onActivityResult(ActivityResult result) {
-
                     if (result.getResultCode() == RESULT_OK){
-                        boolean isLoggedIn = accessToken != null && !accessToken.isExpired();
-                        if (isLoggedIn){
                             Restart();
-                        }else{
-                            Intent intent = result.getData();
-                            String strName = "";
-                            String strImage = "";
-                            if (intent != null){
-                                strName = intent.getStringExtra("name");
-                                strImage = intent.getStringExtra("image");
-                                Picasso.with(mainActivity)
-                                        .load(strImage)
-                                        .resize(60,60)
-                                        .placeholder(R.mipmap.ic_launcher)
-                                        .error(R.mipmap.ic_launcher)
-                                        .into(imgLoginRegister);
-                            }
-                            tvEmail.setText(strName);
-                        }
-
                     }
                 }
             });
@@ -92,6 +87,9 @@ public class FragmentThem extends Fragment implements NavigationView.OnNavigatio
         View view = inflater.inflate(R.layout.fragment_them, container, false);
         mainActivity = (MainActivity) getActivity();
         initUi(view);
+        //facebook
+
+
 
         nav.setItemIconTintList(null);
         nav.setNavigationItemSelectedListener((NavigationView.OnNavigationItemSelectedListener) this );
@@ -101,29 +99,47 @@ public class FragmentThem extends Fragment implements NavigationView.OnNavigatio
         return view;
     }
 
+    private String checkname(String s){
+
+        if (s.isEmpty()){
+            return null;
+        }
+        String name = "";
+        if (s.length() > 20){
+            for (String s1: s.split("")){
+                name+=s1;
+                System.out.println(s1);
+                if (name.length() == 20){
+                    break;
+                }
+            };
+        }
+
+        return name+"...";
+    }
+
     private void initUi(View view) {
         imgLoginRegister = view.findViewById(R.id.img_login_register);
         tvEmail = view.findViewById(R.id.tvEmail);
         nav = view.findViewById(R.id.nav_them);
 
         progressDialog = new ProgressDialog(mainActivity);
-
-        mAuth = FirebaseAuth.getInstance();
     }
 
     private void initListenerClick() {
         imgLoginRegister.setOnClickListener(new View.OnClickListener() {
-
-
             @Override
             public void onClick(View view) {
                 //check đã đăng nhập hay chưa
                 currentUser = mAuth.getCurrentUser();
                 // Check if user is signed in (non-null) and update UI accordingly.
-                if(currentUser != null || isLoggedIn){
+                AccessToken accessToken = AccessToken.getCurrentAccessToken();
+                boolean isLoggedIn = accessToken != null && !accessToken.isExpired();
+
+                if(currentUser != null || isLoggedIn || acct != null){
                     startActivity(new Intent(mainActivity, Account.class));
                 }else {
-                    mActivityResultLauncher.launch(new Intent(mainActivity, Login.class));
+                    startActivity(new Intent(mainActivity, Login.class));
                 }
 
             }
@@ -137,6 +153,7 @@ public class FragmentThem extends Fragment implements NavigationView.OnNavigatio
         int id = item.getItemId();
 
         if(id == R.id.logout){
+
             progressDialog.setTitle("Đang đăng xuất...");
             progressDialog.show();
             Handler handler = new Handler();
@@ -146,6 +163,8 @@ public class FragmentThem extends Fragment implements NavigationView.OnNavigatio
                     progressDialog.dismiss();
                     FirebaseAuth.getInstance().signOut();
                     LoginManager.getInstance().logOut();
+                    AccessToken.setCurrentAccessToken(null);
+                    mGoogleSignInClient.signOut();
                     Toast.makeText(mainActivity, "Đăng xuất thành công", Toast.LENGTH_SHORT).show();
                     Restart();
 
@@ -166,35 +185,20 @@ public class FragmentThem extends Fragment implements NavigationView.OnNavigatio
 
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
+    private void updateUI() {
 
-        // Check if user is signed in (non-null) and update UI accordingly.
-        if (isLoggedIn){
-            getProfileUser();
-        }else{
-            FirebaseUser currentUser = mAuth.getCurrentUser();
-            updateUI(currentUser);
-        }
-
-    }
-
-    private void updateUI(FirebaseUser currentUser) {
-        currentUser = mAuth.getCurrentUser();
-        if(currentUser != null){
-            tvEmail.setText(currentUser.getDisplayName());
+            tvEmail.setText(currentUser.getEmail());
             String strImage = String.valueOf(currentUser.getPhotoUrl());
             Picasso.with(mainActivity)
                     .load(strImage)
                     .placeholder(R.mipmap.ic_launcher)
                     .error(R.mipmap.ic_launcher)
                     .into(imgLoginRegister);
-        }
+
     }
 
     private void getProfileUser() {
-
+        AccessToken accessToken = AccessToken.getCurrentAccessToken();
         GraphRequest request = GraphRequest.newMeRequest(
                 accessToken,
                 new GraphRequest.GraphJSONObjectCallback() {
@@ -203,7 +207,6 @@ public class FragmentThem extends Fragment implements NavigationView.OnNavigatio
                                 try {
                                     String fullName = object.getString("name");
                                     String image = object.getJSONObject("picture").getJSONObject("data").getString("url");
-
                                     tvEmail.setText(fullName);
                                     Picasso.with(mainActivity)
                                             .load(image)
@@ -224,4 +227,49 @@ public class FragmentThem extends Fragment implements NavigationView.OnNavigatio
         request.executeAsync();
     }
 
+    private void getProfileUserGoogle() {
+        String personName = acct.getDisplayName();
+        String personEmail = acct.getEmail();
+//        String personId = acct.getId();
+        String personPhoto = String.valueOf(acct.getPhotoUrl());
+
+        tvEmail.setText(checkname(personName+" ("+personEmail+")"));
+        System.out.println(personPhoto);
+        Picasso.with(mainActivity)
+                .load(personPhoto)
+                .placeholder(R.mipmap.ic_launcher)
+                .error(R.mipmap.ic_launcher)
+                .into(imgLoginRegister);
+
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        //firebase
+        mAuth = FirebaseAuth.getInstance();
+        currentUser = mAuth.getCurrentUser();
+
+        //facebook
+        AccessToken accessToken = AccessToken.getCurrentAccessToken();
+        boolean isLoggedIn = accessToken != null && !accessToken.isExpired();
+        System.out.println(isLoggedIn);
+        if (isLoggedIn){
+            getProfileUser();
+        }
+
+        //firebase
+        if (currentUser != null){
+            updateUI();
+        }
+
+        //google
+        gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build();
+        mGoogleSignInClient = GoogleSignIn.getClient(mainActivity, gso);
+        acct = GoogleSignIn.getLastSignedInAccount(mainActivity);
+        if (acct != null) {
+            getProfileUserGoogle();
+        }
+    }
 }

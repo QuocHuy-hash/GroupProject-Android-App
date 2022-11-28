@@ -3,11 +3,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
-        <LinearLayout
+
+
+
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="10dp"
@@ -24,11 +23,12 @@
                 android:text="Chọn danh mục"
                 android:textStyle="bold"
                 android:textSize="20dp"
-
+                android:layout_toRightOf="@+id/icon_back"
+                android:layout_marginEnd="35dp"
                 android:gravity="center"
                 android:textColor="#0B0B0B"/>
-        </LinearLayout>
-    </LinearLayout>
+        </RelativeLayout>
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rcvChonDanhMucDienMay"
         android:layout_width="match_parent"
