@@ -1,0 +1,896 @@
+Index: .idea/shelf/Uncommitted_changes_before_Update_at_21_11_2022_6_44_CH__Changes_.xml
+===================================================================
+diff --git a/.idea/shelf/Uncommitted_changes_before_Update_at_21_11_2022_6_44_CH__Changes_.xml b/.idea/shelf/Uncommitted_changes_before_Update_at_21_11_2022_6_44_CH__Changes_.xml
+deleted file mode 100644
+--- a/.idea/shelf/Uncommitted_changes_before_Update_at_21_11_2022_6_44_CH__Changes_.xml	(revision e643a6090f9997f9ebf07a8c626aceb5cad42312)
++++ /dev/null	(revision e643a6090f9997f9ebf07a8c626aceb5cad42312)
+@@ -1,29 +0,0 @@
+-<changelist name="Uncommitted_changes_before_Update_at_21_11_2022_6_44_CH_[Changes]" date="1669031070861" recycled="true" deleted="true">
+-  <option name="PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_21_11_2022_6_44_CH_[Changes]/shelved.patch" />
+-  <option name="DESCRIPTION" value="Uncommitted changes before Update at 21/11/2022 6:44 CH [Changes]" />
+-  <binary>
+-    <option name="BEFORE_PATH" value="app/src/main/res/drawable-v24/img_vong_quay.png" />
+-    <option name="AFTER_PATH" />
+-    <option name="SHELVED_PATH" />
+-  </binary>
+-  <binary>
+-    <option name="BEFORE_PATH" value="app/src/main/res/drawable-v24/danh_gia.png" />
+-    <option name="AFTER_PATH" />
+-    <option name="SHELVED_PATH" />
+-  </binary>
+-  <binary>
+-    <option name="BEFORE_PATH" value="app/src/main/res/drawable-v24/history_search.png" />
+-    <option name="AFTER_PATH" />
+-    <option name="SHELVED_PATH" />
+-  </binary>
+-  <binary>
+-    <option name="BEFORE_PATH" value="app/src/main/res/drawable-v24/transport.png" />
+-    <option name="AFTER_PATH" />
+-    <option name="SHELVED_PATH" />
+-  </binary>
+-  <binary>
+-    <option name="BEFORE_PATH" value="app/src/main/res/drawable-v24/tin_da_luu.png" />
+-    <option name="AFTER_PATH" />
+-    <option name="SHELVED_PATH" />
+-  </binary>
+-</changelist>
+\ No newline at end of file
+Index: .idea/shelf/Uncommitted_changes_before_Update_at_21_11_2022_6_44_CH_[Changes]/shelved.patch
+===================================================================
+diff --git a/.idea/shelf/Uncommitted_changes_before_Update_at_21_11_2022_6_44_CH_[Changes]/shelved.patch b/.idea/shelf/Uncommitted_changes_before_Update_at_21_11_2022_6_44_CH_[Changes]/shelved.patch
+deleted file mode 100644
+--- a/.idea/shelf/Uncommitted_changes_before_Update_at_21_11_2022_6_44_CH_[Changes]/shelved.patch	(revision e643a6090f9997f9ebf07a8c626aceb5cad42312)
++++ /dev/null	(revision e643a6090f9997f9ebf07a8c626aceb5cad42312)
+@@ -1,393 +0,0 @@
+-Index: app/src/main/java/com/example/duan1/Fragment/FragmentThem.java
+-IDEA additional info:
+-Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+-<+>package com.example.duan1.Fragment;\r\n\r\nimport android.content.Intent;\r\nimport android.os.Bundle;\r\n\r\nimport androidx.fragment.app.Fragment;\r\n\r\nimport android.view.LayoutInflater;\r\nimport android.view.View;\r\nimport android.view.ViewGroup;\r\nimport android.widget.ImageView;\r\n\r\nimport com.example.duan1.Login;\r\nimport com.example.duan1.MainActivity;\r\nimport com.example.duan1.R;\r\n\r\n\r\npublic class FragmentThem extends Fragment {\r\n\r\n    private ImageView imgLoginRegister;\r\n    private MainActivity mainActivity;\r\n\r\n    @Override\r\n    public View onCreateView(LayoutInflater inflater, ViewGroup container,\r\n                             Bundle savedInstanceState) {\r\n        View view = inflater.inflate(R.layout.fragment_them, container, false);\r\n        mainActivity = (MainActivity) getActivity();\r\n        initUi(view);\r\n        initListenerClick();\r\n\r\n        return view;\r\n    }\r\n\r\n    private void initUi(View view) {\r\n        imgLoginRegister = view.findViewById(R.id.img_login_register);\r\n    }\r\n\r\n    private void initListenerClick() {\r\n        imgLoginRegister.setOnClickListener(new View.OnClickListener() {\r\n            @Override\r\n            public void onClick(View view) {\r\n                startActivity(new Intent(mainActivity, Login.class));\r\n            }\r\n        });\r\n    }\r\n\r\n\r\n}
+-Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+-<+>UTF-8
+-===================================================================
+-diff --git a/app/src/main/java/com/example/duan1/Fragment/FragmentThem.java b/app/src/main/java/com/example/duan1/Fragment/FragmentThem.java
+---- a/app/src/main/java/com/example/duan1/Fragment/FragmentThem.java	(revision e1903f18d7432935edce4365f892ecd2558e02b5)
+-+++ b/app/src/main/java/com/example/duan1/Fragment/FragmentThem.java	(date 1668848136332)
+-@@ -1,24 +1,40 @@
+- package com.example.duan1.Fragment;
+- 
+-+import android.app.ProgressDialog;
+- import android.content.Intent;
+- import android.os.Bundle;
+- 
+-+import androidx.annotation.NonNull;
+- import androidx.fragment.app.Fragment;
+- 
+-+import android.os.Handler;
+- import android.view.LayoutInflater;
+-+import android.view.MenuItem;
+- import android.view.View;
+- import android.view.ViewGroup;
+- import android.widget.ImageView;
+-+import android.widget.TextView;
+-+import android.widget.Toast;
+- 
+-+import com.example.duan1.Account;
+- import com.example.duan1.Login;
+- import com.example.duan1.MainActivity;
+- import com.example.duan1.R;
+-+import com.google.android.material.navigation.NavigationView;
+-+import com.google.firebase.auth.FirebaseAuth;
+-+import com.google.firebase.auth.FirebaseUser;
+- 
+- 
+--public class FragmentThem extends Fragment {
+-+public class FragmentThem extends Fragment implements NavigationView.OnNavigationItemSelectedListener{
+- 
+-     private ImageView imgLoginRegister;
+-+    private TextView tvEmail;
+-+
+-     private MainActivity mainActivity;
+-+    private FirebaseAuth mAuth;
+-+    private FirebaseUser currentUser;
+-+    private NavigationView nav;
+-+    private ProgressDialog progressDialog;
+- 
+-     @Override
+-     public View onCreateView(LayoutInflater inflater, ViewGroup container,
+-@@ -26,6 +42,11 @@
+-         View view = inflater.inflate(R.layout.fragment_them, container, false);
+-         mainActivity = (MainActivity) getActivity();
+-         initUi(view);
+-+        currentUser = mAuth.getCurrentUser();
+-+        if(currentUser != null){
+-+            tvEmail.setText(currentUser.getEmail());
+-+        }
+-+
+-         initListenerClick();
+- 
+-         return view;
+-@@ -33,16 +54,60 @@
+- 
+-     private void initUi(View view) {
+-         imgLoginRegister = view.findViewById(R.id.img_login_register);
+-+        tvEmail = view.findViewById(R.id.tvEmail);
+-+        nav = view.findViewById(R.id.nav_them);
+-+        progressDialog = new ProgressDialog(mainActivity);
+-+
+-+        mAuth = FirebaseAuth.getInstance();
+-     }
+- 
+-     private void initListenerClick() {
+-         imgLoginRegister.setOnClickListener(new View.OnClickListener() {
+-             @Override
+-             public void onClick(View view) {
+--                startActivity(new Intent(mainActivity, Login.class));
+-+                //check đã đăng nhập hay chưa
+-+
+-+                // Check if user is signed in (non-null) and update UI accordingly.
+-+                if(currentUser != null){
+-+                    startActivity(new Intent(mainActivity, Account.class));
+-+                }else {
+-+                    startActivity(new Intent(mainActivity, Login.class));
+-+                }
+-+
+-             }
+-         });
+-+
+-     }
+- 
+-+    @Override
+-+    public void onResume() {
+-+        if(currentUser != null){
+-+            tvEmail.setText(currentUser.getEmail());
+-+        }
+-+        super.onResume();
+- 
+-+    }
+-+
+-+    @Override
+-+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+-+
+-+        int id = item.getItemId();
+-+
+-+        if(id == R.id.logout){
+-+            progressDialog.setTitle("Đang đăng xuất...");
+-+            progressDialog.show();
+-+            Handler handler = new Handler();
+-+            handler.postDelayed(new Runnable() {
+-+                @Override
+-+                public void run() {
+-+                    progressDialog.dismiss();
+-+                    FirebaseAuth.getInstance().signOut();
+-+                    Toast.makeText(mainActivity, "Đăng xuất thành công", Toast.LENGTH_SHORT).show();
+-+
+-+                }
+-+            }, 2000);
+-+        }
+-+
+-+        return true;
+-+    }
+- }
+-\ No newline at end of file
+-Index: app/src/main/AndroidManifest.xml
+-IDEA additional info:
+-Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+-<+><?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<manifest xmlns:android=\"http://schemas.android.com/apk/res/android\"\r\n    xmlns:tools=\"http://schemas.android.com/tools\"\r\n    package=\"com.example.duan1\">\r\n\r\n    <application\r\n        android:allowBackup=\"true\"\r\n        android:dataExtractionRules=\"@xml/data_extraction_rules\"\r\n        android:fullBackupContent=\"@xml/backup_rules\"\r\n        android:icon=\"@mipmap/ic_launcher\"\r\n        android:label=\"@string/app_name\"\r\n        android:roundIcon=\"@mipmap/ic_launcher_round\"\r\n        android:supportsRtl=\"true\"\r\n        android:theme=\"@style/Theme.DuAn1\"\r\n        tools:targetApi=\"31\">\r\n        <activity\r\n            android:name=\".Register\"\r\n            android:exported=\"false\">\r\n            <meta-data\r\n                android:name=\"android.app.lib_name\"\r\n                android:value=\"\" />\r\n        </activity>\r\n        <activity\r\n            android:name=\".DangTin\"\r\n            android:exported=\"false\">\r\n            <meta-data\r\n                android:name=\"android.app.lib_name\"\r\n                android:value=\"\" />\r\n        </activity>\r\n        <activity\r\n            android:name=\".Login\"\r\n            android:exported=\"false\">\r\n            <meta-data\r\n                android:name=\"android.app.lib_name\"\r\n                android:value=\"\" />\r\n        </activity>\r\n        <activity\r\n            android:name=\".MainActivity\"\r\n            android:exported=\"true\">\r\n            <intent-filter>\r\n                <action android:name=\"android.intent.action.MAIN\" />\r\n\r\n                <category android:name=\"android.intent.category.LAUNCHER\" />\r\n            </intent-filter>\r\n        </activity>\r\n    </application>\r\n\r\n</manifest>
+-Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+-<+>UTF-8
+-===================================================================
+-diff --git a/app/src/main/AndroidManifest.xml b/app/src/main/AndroidManifest.xml
+---- a/app/src/main/AndroidManifest.xml	(revision e1903f18d7432935edce4365f892ecd2558e02b5)
+-+++ b/app/src/main/AndroidManifest.xml	(date 1668839357113)
+-@@ -14,6 +14,13 @@
+-         android:theme="@style/Theme.DuAn1"
+-         tools:targetApi="31">
+-         <activity
+-+            android:name=".Account"
+-+            android:exported="false">
+-+            <meta-data
+-+                android:name="android.app.lib_name"
+-+                android:value="" />
+-+        </activity>
+-+        <activity
+-             android:name=".Register"
+-             android:exported="false">
+-             <meta-data
+-Index: app/src/main/res/menu/menu_them.xml
+-IDEA additional info:
+-Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+-<+>UTF-8
+-===================================================================
+-diff --git a/app/src/main/res/menu/menu_them.xml b/app/src/main/res/menu/menu_them.xml
+-new file mode 100644
+---- /dev/null	(date 1668847948290)
+-+++ b/app/src/main/res/menu/menu_them.xml	(date 1668847948290)
+-@@ -0,0 +1,110 @@
+-+<?xml version="1.0" encoding="utf-8"?>
+-+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+-+    <item android:title="Quản lí đơn hàng"
+-+        >
+-+
+-+        <menu>
+-+
+-+            <item android:title="Đơn mua"
+-+                android:id="@+id/donmua"
+-+                />
+-+            <item android:title="Đơn bán"
+-+                android:id="@+id/donban"
+-+                />
+-+            <item android:title="Ví bán hàng"
+-+                android:id="@+id/vibanhang"
+-+                />
+-+
+-+        </menu>
+-+
+-+    </item>
+-+
+-+    <item android:title="Tiện ích"
+-+        >
+-+
+-+        <menu>
+-+
+-+            <item android:title="Tin đăng đã lưu"
+-+                android:id="@+id/tindangdaluu"
+-+                android:icon="@drawable/tin_da_luu"
+-+                />
+-+            <item android:title="Tìm kiếm đã lưu"
+-+                android:id="@+id/timkiemdaluu"
+-+                />
+-+            <item android:title="Đánh giá từ tôi"
+-+                android:id="@+id/danhgia"
+-+                android:icon="@drawable/danh_gia"
+-+                />
+-+
+-+        </menu>
+-+
+-+    </item>
+-+
+-+    <item android:title="Dịch vụ trả phí"
+-+        >
+-+
+-+        <menu>
+-+
+-+            <item android:title="Đồng tốt"
+-+                android:id="@+id/dongtot"
+-+                />
+-+            <item android:title="Gói PRO"
+-+                android:id="@+id/pro"
+-+                />
+-+            <item android:title="Lịch sử giao dịch"
+-+                android:id="@+id/lichsu"
+-+                />
+-+            <item android:title="Tạo cửa hàng/Chuyên trang"
+-+                android:id="@+id/taocuahang"
+-+                />
+-+
+-+        </menu>
+-+
+-+    </item>
+-+
+-+    <item android:title="Ưu đãi khuyến mãi"
+-+        >
+-+
+-+        <menu>
+-+
+-+            <item android:title="Chợ tốt ưu đãi"
+-+                android:id="@+id/uudaichotot"
+-+                />
+-+            <item android:title="Vòng quay may mắn"
+-+                android:id="@+id/vongquaymayman"
+-+                android:icon="@drawable/img_vong_quay"
+-+                />
+-+            <item android:title="Giới thiệu bạn bè"
+-+                android:id="@+id/gioithieu"
+-+                />
+-+
+-+
+-+        </menu>
+-+
+-+    </item>
+-+
+-+    <item android:title="Khác"
+-+        >
+-+
+-+        <menu>
+-+
+-+            <item android:title="Cài đặt tài khoản"
+-+                android:id="@+id/caidattaikhoan"
+-+                />
+-+            <item android:title="Trợ giúp"
+-+                android:id="@+id/trogiup"
+-+                />
+-+            <item android:title="Đóng góp ý kiến"
+-+                android:id="@+id/ykien"
+-+                />
+-+
+-+            <item android:title="Đăng xuất"
+-+                android:id="@+id/logout"
+-+                />
+-+
+-+        </menu>
+-+
+-+    </item>
+-+
+-+
+-+</menu>
+-\ No newline at end of file
+-Index: app/src/main/res/layout/fragment_them.xml
+-IDEA additional info:
+-Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+-<+><?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<LinearLayout xmlns:android=\"http://schemas.android.com/apk/res/android\"\r\n    xmlns:tools=\"http://schemas.android.com/tools\"\r\n    android:layout_width=\"match_parent\"\r\n    android:layout_height=\"match_parent\"\r\n    xmlns:app=\"http://schemas.android.com/apk/res-auto\"\r\n    tools:context=\".Fragment.FragmentQuanLiTin\"\r\n    android:orientation=\"vertical\"\r\n    android:background=\"@color/gray_1\"\r\n\r\n    >\r\n\r\n    <LinearLayout\r\n        android:layout_width=\"match_parent\"\r\n        android:layout_height=\"100dp\"\r\n        android:orientation=\"horizontal\"\r\n        android:paddingHorizontal=\"20dp\"\r\n        android:background=\"@color/white\"\r\n        >\r\n\r\n        <ImageView\r\n            android:id=\"@+id/img_login_register\"\r\n            android:layout_width=\"60dp\"\r\n            android:layout_height=\"60dp\"\r\n            android:src=\"@drawable/user_icon\"\r\n            android:layout_gravity=\"center\"\r\n\r\n            />\r\n\r\n        <TextView\r\n            android:layout_width=\"match_parent\"\r\n            android:layout_height=\"wrap_content\"\r\n            android:layout_gravity=\"center\"\r\n            android:gravity=\"start\"\r\n            android:paddingStart=\"30dp\"\r\n            android:text=\"Đăng nhập / Đăng kí\"\r\n            android:textColor=\"@color/black\"\r\n            android:textSize=\"20dp\"\r\n            android:textStyle=\"bold\"\r\n\r\n            />\r\n\r\n    </LinearLayout>\r\n\r\n    <com.google.android.material.navigation.NavigationView\r\n        android:layout_width=\"match_parent\"\r\n        android:layout_height=\"match_parent\"\r\n        app:menu=\"@menu/bottom_nav_menu\"\r\n        />\r\n\r\n</LinearLayout>
+-Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+-<+>UTF-8
+-===================================================================
+-diff --git a/app/src/main/res/layout/fragment_them.xml b/app/src/main/res/layout/fragment_them.xml
+---- a/app/src/main/res/layout/fragment_them.xml	(revision e1903f18d7432935edce4365f892ecd2558e02b5)
+-+++ b/app/src/main/res/layout/fragment_them.xml	(date 1668848082463)
+-@@ -6,8 +6,6 @@
+-     xmlns:app="http://schemas.android.com/apk/res-auto"
+-     tools:context=".Fragment.FragmentQuanLiTin"
+-     android:orientation="vertical"
+--    android:background="@color/gray_1"
+--
+-     >
+- 
+-     <LinearLayout
+-@@ -28,6 +26,7 @@
+-             />
+- 
+-         <TextView
+-+            android:id="@+id/tvEmail"
+-             android:layout_width="match_parent"
+-             android:layout_height="wrap_content"
+-             android:layout_gravity="center"
+-@@ -43,9 +42,11 @@
+-     </LinearLayout>
+- 
+-     <com.google.android.material.navigation.NavigationView
+-+        android:id="@+id/nav_them"
+-         android:layout_width="match_parent"
+-         android:layout_height="match_parent"
+--        app:menu="@menu/bottom_nav_menu"
+-+        app:menu="@menu/menu_them"
+-+        android:paddingBottom="60dp"
+-         />
+- 
+- </LinearLayout>
+-\ No newline at end of file
+-Index: app/src/main/java/com/example/duan1/Account.java
+-IDEA additional info:
+-Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+-<+>UTF-8
+-===================================================================
+-diff --git a/app/src/main/java/com/example/duan1/Account.java b/app/src/main/java/com/example/duan1/Account.java
+-new file mode 100644
+---- /dev/null	(date 1668839357194)
+-+++ b/app/src/main/java/com/example/duan1/Account.java	(date 1668839357194)
+-@@ -0,0 +1,14 @@
+-+package com.example.duan1;
+-+
+-+import androidx.appcompat.app.AppCompatActivity;
+-+
+-+import android.os.Bundle;
+-+
+-+public class Account extends AppCompatActivity {
+-+
+-+    @Override
+-+    protected void onCreate(Bundle savedInstanceState) {
+-+        super.onCreate(savedInstanceState);
+-+        setContentView(R.layout.activity_account);
+-+    }
+-+}
+-\ No newline at end of file
+-Index: app/src/main/res/layout/activity_account.xml
+-IDEA additional info:
+-Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+-<+>UTF-8
+-===================================================================
+-diff --git a/app/src/main/res/layout/activity_account.xml b/app/src/main/res/layout/activity_account.xml
+-new file mode 100644
+---- /dev/null	(date 1668839357132)
+-+++ b/app/src/main/res/layout/activity_account.xml	(date 1668839357132)
+-@@ -0,0 +1,9 @@
+-+<?xml version="1.0" encoding="utf-8"?>
+-+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+-+    xmlns:app="http://schemas.android.com/apk/res-auto"
+-+    xmlns:tools="http://schemas.android.com/tools"
+-+    android:layout_width="match_parent"
+-+    android:layout_height="match_parent"
+-+    tools:context=".Account">
+-+
+-+</androidx.constraintlayout.widget.ConstraintLayout>
+-\ No newline at end of file
+-Index: app/src/main/java/com/example/duan1/Login.java
+-IDEA additional info:
+-Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+-<+>package com.example.duan1;\r\n\r\nimport androidx.annotation.NonNull;\r\nimport androidx.appcompat.app.AppCompatActivity;\r\n\r\nimport android.app.ProgressDialog;\r\nimport android.content.Intent;\r\nimport android.os.Bundle;\r\nimport android.os.Handler;\r\nimport android.view.View;\r\nimport android.widget.Button;\r\nimport android.widget.EditText;\r\nimport android.widget.ImageView;\r\nimport android.widget.TextView;\r\nimport android.widget.Toast;\r\n\r\nimport com.google.android.gms.tasks.OnCompleteListener;\r\nimport com.google.android.gms.tasks.Task;\r\nimport com.google.firebase.auth.AuthResult;\r\nimport com.google.firebase.auth.FirebaseAuth;\r\nimport com.google.firebase.auth.FirebaseUser;\r\n\r\nimport de.hdodenhof.circleimageview.CircleImageView;\r\n\r\npublic class Login extends AppCompatActivity {\r\n\r\n    private ImageView imgBack;\r\n    private CircleImageView imgLoginFacebook, imgLoginGoole, imgLoginZalo;\r\n    private TextView tvResetPassword, tvRegister;\r\n    private EditText edtNumberPhone, edtPassword;\r\n    private Button btnLogin;\r\n\r\n    private FirebaseAuth mAuth;\r\n    private ProgressDialog progressDialog;\r\n\r\n    @Override\r\n    protected void onCreate(Bundle savedInstanceState) {\r\n        super.onCreate(savedInstanceState);\r\n        setContentView(R.layout.activity_login);\r\n        initUi();\r\n\r\n\r\n        initListenerClick();\r\n\r\n\r\n    }\r\n\r\n    private void initUi() {\r\n        imgBack = findViewById(R.id.img_back);\r\n        imgLoginFacebook = findViewById(R.id.img_login_facebook);\r\n        imgLoginGoole = findViewById(R.id.img_login_google);\r\n        imgLoginZalo = findViewById(R.id.img_login_zalo);\r\n        tvResetPassword = findViewById(R.id.tv_reset_password);\r\n        tvRegister = findViewById(R.id.tv_register);\r\n        edtNumberPhone = findViewById(R.id.edt_numberphone);\r\n        edtPassword = findViewById(R.id.edt_password);\r\n        btnLogin = findViewById(R.id.btn_login);\r\n\r\n        // Initialize Firebase Auth\r\n        mAuth = FirebaseAuth.getInstance();\r\n        progressDialog = new ProgressDialog(this);\r\n\r\n    }\r\n\r\n    private void initListenerClick() {\r\n        //click back\r\n        imgBack.setOnClickListener(new View.OnClickListener() {\r\n            @Override\r\n            public void onClick(View view) {\r\n                //code back\r\n                finish();\r\n            }\r\n        });\r\n\r\n        //click login facebook\r\n        imgLoginFacebook.setOnClickListener(new View.OnClickListener() {\r\n            @Override\r\n            public void onClick(View view) {\r\n                //code login facebook\r\n                Toast.makeText(Login.this, \"Login fb from Login\", Toast.LENGTH_SHORT).show();\r\n            }\r\n        });\r\n\r\n        //click login google\r\n        imgLoginGoole.setOnClickListener(new View.OnClickListener() {\r\n            @Override\r\n            public void onClick(View view) {\r\n                //code login google\r\n                Toast.makeText(Login.this, \"Login google from Login\", Toast.LENGTH_SHORT).show();\r\n            }\r\n        });\r\n\r\n        //click login zalo\r\n        imgLoginZalo.setOnClickListener(new View.OnClickListener() {\r\n            @Override\r\n            public void onClick(View view) {\r\n                //code login zalo\r\n                Toast.makeText(Login.this, \"Login zalo from Login\", Toast.LENGTH_SHORT).show();\r\n            }\r\n        });\r\n\r\n        //click reset password\r\n        tvResetPassword.setOnClickListener(new View.OnClickListener() {\r\n            @Override\r\n            public void onClick(View view) {\r\n                //code reset password\r\n                Toast.makeText(Login.this, \"reset Password from Login\", Toast.LENGTH_SHORT).show();\r\n            }\r\n        });\r\n\r\n        //click register\r\n        tvRegister.setOnClickListener(new View.OnClickListener() {\r\n            @Override\r\n            public void onClick(View view) {\r\n                //code register\r\n                startActivity(new Intent(Login.this, Register.class));\r\n            }\r\n        });\r\n\r\n        //click login\r\n        btnLogin.setOnClickListener(new View.OnClickListener() {\r\n            @Override\r\n            public void onClick(View view) {\r\n                //code login\r\n\r\n                String email = edtNumberPhone.getText().toString().trim();\r\n                if (edtNumberPhone == null || email.isEmpty()){\r\n                    edtNumberPhone.setError(\"Email không được để trống!\");\r\n                    return;\r\n                }\r\n                String password = edtPassword.getText().toString().trim();\r\n                if (edtPassword == null || password.isEmpty()){\r\n                    edtPassword.setError(\"Mật khẩu không được để trống!\");\r\n                }else if (password.length() < 6 ){\r\n                    edtPassword.setError(\"Mật khẩu phải bằng hoặc trên 6 kí tự\");\r\n                    return;\r\n                }\r\n                progressDialog.setTitle(\"Xin chờ!\");\r\n                progressDialog.show();\r\n\r\n                mAuth.signInWithEmailAndPassword(email, password)\r\n                        .addOnCompleteListener(Login.this, new OnCompleteListener<AuthResult>() {\r\n                            @Override\r\n                            public void onComplete(@NonNull Task<AuthResult> task) {\r\n\r\n                                Handler handler = new Handler();\r\n                                handler.postDelayed(new Runnable() {\r\n                                    @Override\r\n                                    public void run() {\r\n                                        if (task.isSuccessful()) {\r\n                                            // Sign in success, update UI with the signed-in user's information\r\n                                            Toast.makeText(Login.this, \"Đăng nhập thành công!\", Toast.LENGTH_SHORT).show();\r\n                                            finish();\r\n                                        } else {\r\n                                            // If sign in fails, display a message to the user.\r\n                                            Toast.makeText(Login.this, \"Đăng nhập thất bại!\", Toast.LENGTH_SHORT).show();\r\n                                        }\r\n                                    }\r\n                                },2000);\r\n                            }\r\n                        });\r\n\r\n            }\r\n        });\r\n\r\n    }\r\n\r\n//check đã đăng nhập hay chưa\r\n//    @Override\r\n//    public void onStart() {\r\n//        super.onStart();\r\n//        // Check if user is signed in (non-null) and update UI accordingly.\r\n//        FirebaseUser currentUser = mAuth.getCurrentUser();\r\n//        if(currentUser != null){\r\n//            //code\r\n//        }\r\n//    }\r\n}
+-Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+-<+>UTF-8
+-===================================================================
+-diff --git a/app/src/main/java/com/example/duan1/Login.java b/app/src/main/java/com/example/duan1/Login.java
+---- a/app/src/main/java/com/example/duan1/Login.java	(revision e1903f18d7432935edce4365f892ecd2558e02b5)
+-+++ b/app/src/main/java/com/example/duan1/Login.java	(date 1668844015083)
+-@@ -150,6 +150,7 @@
+-                                         if (task.isSuccessful()) {
+-                                             // Sign in success, update UI with the signed-in user's information
+-                                             Toast.makeText(Login.this, "Đăng nhập thành công!", Toast.LENGTH_SHORT).show();
+-+
+-                                             finish();
+-                                         } else {
+-                                             // If sign in fails, display a message to the user.
+-@@ -165,14 +166,5 @@
+- 
+-     }
+- 
+--//check đã đăng nhập hay chưa
+--//    @Override
+--//    public void onStart() {
+--//        super.onStart();
+--//        // Check if user is signed in (non-null) and update UI accordingly.
+--//        FirebaseUser currentUser = mAuth.getCurrentUser();
+--//        if(currentUser != null){
+--//            //code
+--//        }
+--//    }
+-+
+- }
+-\ No newline at end of file
+Index: .idea/shelf/Uncommitted_changes_before_Checkout_at_21_11_2022_6_45_CH__Changes_.xml
+===================================================================
+diff --git a/.idea/shelf/Uncommitted_changes_before_Checkout_at_21_11_2022_6_45_CH__Changes_.xml b/.idea/shelf/Uncommitted_changes_before_Checkout_at_21_11_2022_6_45_CH__Changes_.xml
+deleted file mode 100644
+--- a/.idea/shelf/Uncommitted_changes_before_Checkout_at_21_11_2022_6_45_CH__Changes_.xml	(revision e643a6090f9997f9ebf07a8c626aceb5cad42312)
++++ /dev/null	(revision e643a6090f9997f9ebf07a8c626aceb5cad42312)
+@@ -1,29 +0,0 @@
+-<changelist name="Uncommitted_changes_before_Checkout_at_21_11_2022_6_45_CH_[Changes]" date="1669031135657" recycled="true" deleted="true">
+-  <option name="PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_21_11_2022_6_45_CH_[Changes]/shelved.patch" />
+-  <option name="DESCRIPTION" value="Uncommitted changes before Checkout at 21/11/2022 6:45 CH [Changes]" />
+-  <binary>
+-    <option name="BEFORE_PATH" value="app/src/main/res/drawable-v24/img_vong_quay.png" />
+-    <option name="AFTER_PATH" />
+-    <option name="SHELVED_PATH" />
+-  </binary>
+-  <binary>
+-    <option name="BEFORE_PATH" value="app/src/main/res/drawable-v24/danh_gia.png" />
+-    <option name="AFTER_PATH" />
+-    <option name="SHELVED_PATH" />
+-  </binary>
+-  <binary>
+-    <option name="BEFORE_PATH" value="app/src/main/res/drawable-v24/history_search.png" />
+-    <option name="AFTER_PATH" />
+-    <option name="SHELVED_PATH" />
+-  </binary>
+-  <binary>
+-    <option name="BEFORE_PATH" value="app/src/main/res/drawable-v24/transport.png" />
+-    <option name="AFTER_PATH" />
+-    <option name="SHELVED_PATH" />
+-  </binary>
+-  <binary>
+-    <option name="BEFORE_PATH" value="app/src/main/res/drawable-v24/tin_da_luu.png" />
+-    <option name="AFTER_PATH" />
+-    <option name="SHELVED_PATH" />
+-  </binary>
+-</changelist>
+\ No newline at end of file
+Index: .idea/shelf/Uncommitted_changes_before_Checkout_at_21_11_2022_6_45_CH_[Changes]/shelved.patch
+===================================================================
+diff --git a/.idea/shelf/Uncommitted_changes_before_Checkout_at_21_11_2022_6_45_CH_[Changes]/shelved.patch b/.idea/shelf/Uncommitted_changes_before_Checkout_at_21_11_2022_6_45_CH_[Changes]/shelved.patch
+deleted file mode 100644
+--- a/.idea/shelf/Uncommitted_changes_before_Checkout_at_21_11_2022_6_45_CH_[Changes]/shelved.patch	(revision e643a6090f9997f9ebf07a8c626aceb5cad42312)
++++ /dev/null	(revision e643a6090f9997f9ebf07a8c626aceb5cad42312)
+@@ -1,415 +0,0 @@
+-Index: app/src/main/res/layout/fragment_trang_chu.xml
+-IDEA additional info:
+-Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+-<+><?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<LinearLayout xmlns:android=\"http://schemas.android.com/apk/res/android\"\r\n    xmlns:tools=\"http://schemas.android.com/tools\"\r\n    android:layout_width=\"match_parent\"\r\n    android:layout_height=\"match_parent\"\r\n    tools:context=\".Fragment.FragmentTrangChu\"\r\n    android:orientation=\"vertical\"\r\n    android:background=\"@color/white\"\r\n    >\r\n\r\n    <androidx.viewpager.widget.ViewPager\r\n        android:id=\"@+id/viewPager_slide\"\r\n        android:layout_width=\"match_parent\"\r\n        android:layout_height=\"220dp\"/>\r\n    <me.relex.circleindicator.CircleIndicator\r\n        android:id=\"@+id/circle_indicator\"\r\n        android:layout_width=\"100dp\"\r\n        android:layout_height=\"30dp\"\r\n        android:layout_gravity=\"center_horizontal\"\r\n        android:layout_marginTop=\"5dp\"\r\n\r\n        tools:ignore=\"MissingClass\" />\r\n\r\n    <HorizontalScrollView\r\n        android:id=\"@+id/scrollView\"\r\n        android:layout_width=\"match_parent\"\r\n        android:scrollbars=\"none\"\r\n        android:layout_height=\"wrap_content\"\r\n        >\r\n        <LinearLayout\r\n            android:layout_width=\"match_parent\"\r\n            android:layout_height=\"wrap_content\"\r\n            android:orientation=\"horizontal\">\r\n            <LinearLayout\r\n                android:layout_width=\"120dp\"\r\n                android:layout_height=\"120dp\"\r\n                android:orientation=\"vertical\"\r\n                android:gravity=\"center_horizontal\"\r\n                >\r\n                <ImageView\r\n                    android:layout_width=\"45dp\"\r\n                    android:layout_height=\"45dp\"\r\n                    android:src=\"@drawable/transport\"/>\r\n                <TextView\r\n                    android:layout_width=\"120dp\"\r\n                    android:layout_height=\"wrap_content\"\r\n                    android:layout_marginTop=\"5dp\"\r\n                    android:gravity=\"center\"\r\n                    android:textColor=\"#020202\"\r\n                    android:text=\"Miễn phí vận chuyển\"\r\n                    android:textSize=\"16dp\"/>\r\n            </LinearLayout>\r\n            <!-- 2-->\r\n            <LinearLayout\r\n                android:layout_width=\"120dp\"\r\n                android:layout_height=\"120dp\"\r\n                android:orientation=\"vertical\"\r\n                android:gravity=\"center_horizontal\"\r\n                >\r\n                <ImageView\r\n                    android:layout_width=\"45dp\"\r\n                    android:layout_height=\"45dp\"\r\n                    android:src=\"@drawable/tin_da_luu\"/>\r\n                <TextView\r\n                    android:layout_width=\"100dp\"\r\n                    android:layout_height=\"wrap_content\"\r\n                    android:layout_marginTop=\"5dp\"\r\n                    android:gravity=\"center\"\r\n                    android:textColor=\"#020202\"\r\n                    android:text=\"Tin đăng đã lưu\"\r\n                    android:textSize=\"16dp\"/>\r\n            </LinearLayout>\r\n            <!--        3-->\r\n            <LinearLayout\r\n                android:layout_width=\"100dp\"\r\n                android:layout_height=\"120dp\"\r\n                android:orientation=\"vertical\"\r\n                android:gravity=\"center_horizontal\"\r\n                >\r\n                <ImageView\r\n                    android:layout_width=\"45dp\"\r\n                    android:layout_height=\"45dp\"\r\n                    android:src=\"@drawable/danh_gia\"/>\r\n                <TextView\r\n                    android:layout_width=\"90dp\"\r\n                    android:layout_height=\"wrap_content\"\r\n                    android:layout_marginTop=\"5dp\"\r\n                    android:gravity=\"center\"\r\n                    android:textColor=\"#020202\"\r\n                    android:text=\"Đánh giá từ tôi\"\r\n                    android:textSize=\"16dp\"/>\r\n            </LinearLayout>\r\n            <!--        4-->\r\n            <LinearLayout\r\n                android:layout_width=\"120dp\"\r\n                android:layout_height=\"120dp\"\r\n                android:orientation=\"vertical\"\r\n                android:gravity=\"center_horizontal\"\r\n                >\r\n                <ImageView\r\n                    android:layout_width=\"45dp\"\r\n                    android:layout_height=\"45dp\"\r\n                    android:src=\"@drawable/history_search\"/>\r\n                <TextView\r\n                    android:layout_width=\"100dp\"\r\n                    android:layout_height=\"wrap_content\"\r\n                    android:layout_marginTop=\"5dp\"\r\n                    android:gravity=\"center\"\r\n                    android:textColor=\"#020202\"\r\n                    android:text=\"Tìm kiếm đã lưu\"\r\n                    android:textSize=\"16dp\"/>\r\n            </LinearLayout>\r\n            <!--        5-->\r\n            <LinearLayout\r\n                android:layout_width=\"120dp\"\r\n                android:layout_height=\"120dp\"\r\n                android:orientation=\"vertical\"\r\n                android:gravity=\"center_horizontal\"\r\n                >\r\n                <ImageView\r\n                    android:layout_width=\"45dp\"\r\n                    android:layout_height=\"45dp\"\r\n                    android:src=\"@drawable/history_search\"/>\r\n                <TextView\r\n                    android:layout_width=\"90dp\"\r\n                    android:layout_height=\"wrap_content\"\r\n                    android:layout_marginTop=\"5dp\"\r\n                    android:gravity=\"center\"\r\n                    android:textColor=\"#020202\"\r\n                    android:text=\"Chia sẻ\"\r\n                    android:textSize=\"16dp\"/>\r\n            </LinearLayout>\r\n            <!--        6-->\r\n            <LinearLayout\r\n                android:layout_width=\"120dp\"\r\n                android:layout_height=\"120dp\"\r\n                android:orientation=\"vertical\"\r\n                android:gravity=\"center_horizontal\"\r\n                >\r\n                <ImageView\r\n                    android:layout_width=\"45dp\"\r\n                    android:layout_height=\"45dp\"\r\n                    android:src=\"@drawable/img_vong_quay\"/>\r\n                <TextView\r\n                    android:layout_width=\"90dp\"\r\n                    android:layout_height=\"wrap_content\"\r\n                    android:layout_marginTop=\"5dp\"\r\n                    android:gravity=\"center\"\r\n                    android:textColor=\"#020202\"\r\n                    android:text=\"Vòng quay may mắn\"\r\n                    android:textSize=\"16dp\"/>\r\n            </LinearLayout>\r\n        </LinearLayout>\r\n    </HorizontalScrollView>\r\n\r\n    <TextView\r\n        android:layout_width=\"match_parent\"\r\n        android:layout_height=\"match_parent\"\r\n        android:background=\"@color/black\"\r\n        />\r\n\r\n</LinearLayout>
+-Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+-<+>UTF-8
+-===================================================================
+-diff --git a/app/src/main/res/layout/fragment_trang_chu.xml b/app/src/main/res/layout/fragment_trang_chu.xml
+---- a/app/src/main/res/layout/fragment_trang_chu.xml	(revision d75f755ee637ad6a5f4419871b211b8809e85a17)
+-+++ b/app/src/main/res/layout/fragment_trang_chu.xml	(date 1669031124898)
+-@@ -153,10 +153,4 @@
+-         </LinearLayout>
+-     </HorizontalScrollView>
+- 
+--    <TextView
+--        android:layout_width="match_parent"
+--        android:layout_height="match_parent"
+--        android:background="@color/black"
+--        />
+--
+- </LinearLayout>
+-\ No newline at end of file
+-Index: app/src/main/java/com/example/duan1/Fragment/FragmentThem.java
+-IDEA additional info:
+-Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+-<+>package com.example.duan1.Fragment;\r\n\r\nimport android.content.Intent;\r\nimport android.os.Bundle;\r\n\r\nimport androidx.fragment.app.Fragment;\r\n\r\nimport android.view.LayoutInflater;\r\nimport android.view.View;\r\nimport android.view.ViewGroup;\r\nimport android.widget.ImageView;\r\n\r\nimport com.example.duan1.Login;\r\nimport com.example.duan1.MainActivity;\r\nimport com.example.duan1.R;\r\n\r\n\r\npublic class FragmentThem extends Fragment {\r\n\r\n    private ImageView imgLoginRegister;\r\n    private MainActivity mainActivity;\r\n\r\n    @Override\r\n    public View onCreateView(LayoutInflater inflater, ViewGroup container,\r\n                             Bundle savedInstanceState) {\r\n        View view = inflater.inflate(R.layout.fragment_them, container, false);\r\n        mainActivity = (MainActivity) getActivity();\r\n        initUi(view);\r\n        initListenerClick();\r\n\r\n        return view;\r\n    }\r\n\r\n    private void initUi(View view) {\r\n        imgLoginRegister = view.findViewById(R.id.img_login_register);\r\n    }\r\n\r\n    private void initListenerClick() {\r\n        imgLoginRegister.setOnClickListener(new View.OnClickListener() {\r\n            @Override\r\n            public void onClick(View view) {\r\n                startActivity(new Intent(mainActivity, Login.class));\r\n            }\r\n        });\r\n    }\r\n\r\n\r\n}
+-Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+-<+>UTF-8
+-===================================================================
+-diff --git a/app/src/main/java/com/example/duan1/Fragment/FragmentThem.java b/app/src/main/java/com/example/duan1/Fragment/FragmentThem.java
+---- a/app/src/main/java/com/example/duan1/Fragment/FragmentThem.java	(revision d75f755ee637ad6a5f4419871b211b8809e85a17)
+-+++ b/app/src/main/java/com/example/duan1/Fragment/FragmentThem.java	(date 1669031070472)
+-@@ -1,24 +1,40 @@
+- package com.example.duan1.Fragment;
+- 
+-+import android.app.ProgressDialog;
+- import android.content.Intent;
+- import android.os.Bundle;
+- 
+-+import androidx.annotation.NonNull;
+- import androidx.fragment.app.Fragment;
+- 
+-+import android.os.Handler;
+- import android.view.LayoutInflater;
+-+import android.view.MenuItem;
+- import android.view.View;
+- import android.view.ViewGroup;
+- import android.widget.ImageView;
+-+import android.widget.TextView;
+-+import android.widget.Toast;
+- 
+-+import com.example.duan1.Account;
+- import com.example.duan1.Login;
+- import com.example.duan1.MainActivity;
+- import com.example.duan1.R;
+-+import com.google.android.material.navigation.NavigationView;
+-+import com.google.firebase.auth.FirebaseAuth;
+-+import com.google.firebase.auth.FirebaseUser;
+- 
+- 
+--public class FragmentThem extends Fragment {
+-+public class FragmentThem extends Fragment implements NavigationView.OnNavigationItemSelectedListener{
+- 
+-     private ImageView imgLoginRegister;
+-+    private TextView tvEmail;
+-+
+-     private MainActivity mainActivity;
+-+    private FirebaseAuth mAuth;
+-+    private FirebaseUser currentUser;
+-+    private NavigationView nav;
+-+    private ProgressDialog progressDialog;
+- 
+-     @Override
+-     public View onCreateView(LayoutInflater inflater, ViewGroup container,
+-@@ -26,6 +42,11 @@
+-         View view = inflater.inflate(R.layout.fragment_them, container, false);
+-         mainActivity = (MainActivity) getActivity();
+-         initUi(view);
+-+        currentUser = mAuth.getCurrentUser();
+-+        if(currentUser != null){
+-+            tvEmail.setText(currentUser.getEmail());
+-+        }
+-+
+-         initListenerClick();
+- 
+-         return view;
+-@@ -33,16 +54,60 @@
+- 
+-     private void initUi(View view) {
+-         imgLoginRegister = view.findViewById(R.id.img_login_register);
+-+        tvEmail = view.findViewById(R.id.tvEmail);
+-+        nav = view.findViewById(R.id.nav_them);
+-+        progressDialog = new ProgressDialog(mainActivity);
+-+
+-+        mAuth = FirebaseAuth.getInstance();
+-     }
+- 
+-     private void initListenerClick() {
+-         imgLoginRegister.setOnClickListener(new View.OnClickListener() {
+-             @Override
+-             public void onClick(View view) {
+--                startActivity(new Intent(mainActivity, Login.class));
+-+                //check đã đăng nhập hay chưa
+-+
+-+                // Check if user is signed in (non-null) and update UI accordingly.
+-+                if(currentUser != null){
+-+                    startActivity(new Intent(mainActivity, Account.class));
+-+                }else {
+-+                    startActivity(new Intent(mainActivity, Login.class));
+-+                }
+-+
+-             }
+-         });
+-+
+-     }
+- 
+-+    @Override
+-+    public void onResume() {
+-+        if(currentUser != null){
+-+            tvEmail.setText(currentUser.getEmail());
+-+        }
+-+        super.onResume();
+- 
+-+    }
+-+
+-+    @Override
+-+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+-+
+-+        int id = item.getItemId();
+-+
+-+        if(id == R.id.logout){
+-+            progressDialog.setTitle("Đang đăng xuất...");
+-+            progressDialog.show();
+-+            Handler handler = new Handler();
+-+            handler.postDelayed(new Runnable() {
+-+                @Override
+-+                public void run() {
+-+                    progressDialog.dismiss();
+-+                    FirebaseAuth.getInstance().signOut();
+-+                    Toast.makeText(mainActivity, "Đăng xuất thành công", Toast.LENGTH_SHORT).show();
+-+
+-+                }
+-+            }, 2000);
+-+        }
+-+
+-+        return true;
+-+    }
+- }
+-\ No newline at end of file
+-Index: app/src/main/AndroidManifest.xml
+-IDEA additional info:
+-Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+-<+><?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<manifest xmlns:android=\"http://schemas.android.com/apk/res/android\"\r\n    xmlns:tools=\"http://schemas.android.com/tools\"\r\n    package=\"com.example.duan1\">\r\n\r\n    <application\r\n        android:allowBackup=\"true\"\r\n        android:dataExtractionRules=\"@xml/data_extraction_rules\"\r\n        android:fullBackupContent=\"@xml/backup_rules\"\r\n        android:icon=\"@mipmap/ic_launcher\"\r\n        android:label=\"@string/app_name\"\r\n        android:roundIcon=\"@mipmap/ic_launcher_round\"\r\n        android:supportsRtl=\"true\"\r\n        android:theme=\"@style/Theme.DuAn1\"\r\n        tools:targetApi=\"31\">\r\n        <activity\r\n            android:name=\".chonDanhMucDienMayActivity\"\r\n            android:exported=\"false\" />\r\n        <activity\r\n            android:name=\".chonDanhMucGiaiTriActivity\"\r\n            android:exported=\"false\" />\r\n        <activity\r\n            android:name=\".chonDanhMucDoDienTuActivity\"\r\n            android:exported=\"false\" />\r\n        <activity\r\n            android:name=\".chonDanhMucThoiTrangAcrivity\"\r\n            android:exported=\"false\" />\r\n        <activity\r\n            android:name=\".chonDanhMucXeCoActivity\"\r\n            android:exported=\"false\" />\r\n        <activity\r\n            android:name=\".chonDanhMucBDSActivity\"\r\n            android:exported=\"false\" />\r\n        <activity\r\n            android:name=\".Register\"\r\n            android:exported=\"false\">\r\n            <meta-data\r\n                android:name=\"android.app.lib_name\"\r\n                android:value=\"\" />\r\n        </activity>\r\n        <activity\r\n            android:name=\".DangTin\"\r\n            android:exported=\"false\">\r\n            <meta-data\r\n                android:name=\"android.app.lib_name\"\r\n                android:value=\"\" />\r\n        </activity>\r\n        <activity\r\n            android:name=\".Login\"\r\n            android:exported=\"false\">\r\n            <meta-data\r\n                android:name=\"android.app.lib_name\"\r\n                android:value=\"\" />\r\n        </activity>\r\n        <activity\r\n            android:name=\".MainActivity\"\r\n            android:exported=\"true\">\r\n            <intent-filter>\r\n                <action android:name=\"android.intent.action.MAIN\" />\r\n\r\n                <category android:name=\"android.intent.category.LAUNCHER\" />\r\n            </intent-filter>\r\n        </activity>\r\n    </application>\r\n\r\n</manifest>
+-Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+-<+>UTF-8
+-===================================================================
+-diff --git a/app/src/main/AndroidManifest.xml b/app/src/main/AndroidManifest.xml
+---- a/app/src/main/AndroidManifest.xml	(revision d75f755ee637ad6a5f4419871b211b8809e85a17)
+-+++ b/app/src/main/AndroidManifest.xml	(date 1669031070498)
+-@@ -32,6 +32,13 @@
+-             android:name=".chonDanhMucBDSActivity"
+-             android:exported="false" />
+-         <activity
+-+            android:name=".Account"
+-+            android:exported="false">
+-+            <meta-data
+-+                android:name="android.app.lib_name"
+-+                android:value="" />
+-+        </activity>
+-+        <activity
+-             android:name=".Register"
+-             android:exported="false">
+-             <meta-data
+-Index: app/src/main/res/menu/menu_them.xml
+-IDEA additional info:
+-Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+-<+>UTF-8
+-===================================================================
+-diff --git a/app/src/main/res/menu/menu_them.xml b/app/src/main/res/menu/menu_them.xml
+-new file mode 100644
+---- /dev/null	(date 1669031070509)
+-+++ b/app/src/main/res/menu/menu_them.xml	(date 1669031070509)
+-@@ -0,0 +1,110 @@
+-+<?xml version="1.0" encoding="utf-8"?>
+-+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+-+    <item android:title="Quản lí đơn hàng"
+-+        >
+-+
+-+        <menu>
+-+
+-+            <item android:title="Đơn mua"
+-+                android:id="@+id/donmua"
+-+                />
+-+            <item android:title="Đơn bán"
+-+                android:id="@+id/donban"
+-+                />
+-+            <item android:title="Ví bán hàng"
+-+                android:id="@+id/vibanhang"
+-+                />
+-+
+-+        </menu>
+-+
+-+    </item>
+-+
+-+    <item android:title="Tiện ích"
+-+        >
+-+
+-+        <menu>
+-+
+-+            <item android:title="Tin đăng đã lưu"
+-+                android:id="@+id/tindangdaluu"
+-+                android:icon="@drawable/tin_da_luu"
+-+                />
+-+            <item android:title="Tìm kiếm đã lưu"
+-+                android:id="@+id/timkiemdaluu"
+-+                />
+-+            <item android:title="Đánh giá từ tôi"
+-+                android:id="@+id/danhgia"
+-+                android:icon="@drawable/danh_gia"
+-+                />
+-+
+-+        </menu>
+-+
+-+    </item>
+-+
+-+    <item android:title="Dịch vụ trả phí"
+-+        >
+-+
+-+        <menu>
+-+
+-+            <item android:title="Đồng tốt"
+-+                android:id="@+id/dongtot"
+-+                />
+-+            <item android:title="Gói PRO"
+-+                android:id="@+id/pro"
+-+                />
+-+            <item android:title="Lịch sử giao dịch"
+-+                android:id="@+id/lichsu"
+-+                />
+-+            <item android:title="Tạo cửa hàng/Chuyên trang"
+-+                android:id="@+id/taocuahang"
+-+                />
+-+
+-+        </menu>
+-+
+-+    </item>
+-+
+-+    <item android:title="Ưu đãi khuyến mãi"
+-+        >
+-+
+-+        <menu>
+-+
+-+            <item android:title="Chợ tốt ưu đãi"
+-+                android:id="@+id/uudaichotot"
+-+                />
+-+            <item android:title="Vòng quay may mắn"
+-+                android:id="@+id/vongquaymayman"
+-+                android:icon="@drawable/img_vong_quay"
+-+                />
+-+            <item android:title="Giới thiệu bạn bè"
+-+                android:id="@+id/gioithieu"
+-+                />
+-+
+-+
+-+        </menu>
+-+
+-+    </item>
+-+
+-+    <item android:title="Khác"
+-+        >
+-+
+-+        <menu>
+-+
+-+            <item android:title="Cài đặt tài khoản"
+-+                android:id="@+id/caidattaikhoan"
+-+                />
+-+            <item android:title="Trợ giúp"
+-+                android:id="@+id/trogiup"
+-+                />
+-+            <item android:title="Đóng góp ý kiến"
+-+                android:id="@+id/ykien"
+-+                />
+-+
+-+            <item android:title="Đăng xuất"
+-+                android:id="@+id/logout"
+-+                />
+-+
+-+        </menu>
+-+
+-+    </item>
+-+
+-+
+-+</menu>
+-\ No newline at end of file
+-Index: app/src/main/res/layout/fragment_them.xml
+-IDEA additional info:
+-Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+-<+><?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<LinearLayout xmlns:android=\"http://schemas.android.com/apk/res/android\"\r\n    xmlns:tools=\"http://schemas.android.com/tools\"\r\n    android:layout_width=\"match_parent\"\r\n    android:layout_height=\"match_parent\"\r\n    xmlns:app=\"http://schemas.android.com/apk/res-auto\"\r\n    tools:context=\".Fragment.FragmentQuanLiTin\"\r\n    android:orientation=\"vertical\"\r\n    android:background=\"@color/gray_1\"\r\n\r\n    >\r\n\r\n    <LinearLayout\r\n        android:layout_width=\"match_parent\"\r\n        android:layout_height=\"100dp\"\r\n        android:orientation=\"horizontal\"\r\n        android:paddingHorizontal=\"20dp\"\r\n        android:background=\"@color/white\"\r\n        >\r\n\r\n        <ImageView\r\n            android:id=\"@+id/img_login_register\"\r\n            android:layout_width=\"60dp\"\r\n            android:layout_height=\"60dp\"\r\n            android:src=\"@drawable/user_icon\"\r\n            android:layout_gravity=\"center\"\r\n\r\n            />\r\n\r\n        <TextView\r\n            android:layout_width=\"match_parent\"\r\n            android:layout_height=\"wrap_content\"\r\n            android:layout_gravity=\"center\"\r\n            android:gravity=\"start\"\r\n            android:paddingStart=\"30dp\"\r\n            android:text=\"Đăng nhập / Đăng kí\"\r\n            android:textColor=\"@color/black\"\r\n            android:textSize=\"20dp\"\r\n            android:textStyle=\"bold\"\r\n\r\n            />\r\n\r\n    </LinearLayout>\r\n\r\n    <com.google.android.material.navigation.NavigationView\r\n        android:layout_width=\"match_parent\"\r\n        android:layout_height=\"match_parent\"\r\n        app:menu=\"@menu/bottom_nav_menu\"\r\n        />\r\n\r\n</LinearLayout>
+-Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+-<+>UTF-8
+-===================================================================
+-diff --git a/app/src/main/res/layout/fragment_them.xml b/app/src/main/res/layout/fragment_them.xml
+---- a/app/src/main/res/layout/fragment_them.xml	(revision d75f755ee637ad6a5f4419871b211b8809e85a17)
+-+++ b/app/src/main/res/layout/fragment_them.xml	(date 1669031070519)
+-@@ -6,8 +6,6 @@
+-     xmlns:app="http://schemas.android.com/apk/res-auto"
+-     tools:context=".Fragment.FragmentQuanLiTin"
+-     android:orientation="vertical"
+--    android:background="@color/gray_1"
+--
+-     >
+- 
+-     <LinearLayout
+-@@ -28,6 +26,7 @@
+-             />
+- 
+-         <TextView
+-+            android:id="@+id/tvEmail"
+-             android:layout_width="match_parent"
+-             android:layout_height="wrap_content"
+-             android:layout_gravity="center"
+-@@ -43,9 +42,11 @@
+-     </LinearLayout>
+- 
+-     <com.google.android.material.navigation.NavigationView
+-+        android:id="@+id/nav_them"
+-         android:layout_width="match_parent"
+-         android:layout_height="match_parent"
+--        app:menu="@menu/bottom_nav_menu"
+-+        app:menu="@menu/menu_them"
+-+        android:paddingBottom="60dp"
+-         />
+- 
+- </LinearLayout>
+-\ No newline at end of file
+-Index: app/src/main/java/com/example/duan1/Account.java
+-IDEA additional info:
+-Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+-<+>UTF-8
+-===================================================================
+-diff --git a/app/src/main/java/com/example/duan1/Account.java b/app/src/main/java/com/example/duan1/Account.java
+-new file mode 100644
+---- /dev/null	(date 1669031070526)
+-+++ b/app/src/main/java/com/example/duan1/Account.java	(date 1669031070526)
+-@@ -0,0 +1,14 @@
+-+package com.example.duan1;
+-+
+-+import androidx.appcompat.app.AppCompatActivity;
+-+
+-+import android.os.Bundle;
+-+
+-+public class Account extends AppCompatActivity {
+-+
+-+    @Override
+-+    protected void onCreate(Bundle savedInstanceState) {
+-+        super.onCreate(savedInstanceState);
+-+        setContentView(R.layout.activity_account);
+-+    }
+-+}
+-\ No newline at end of file
+-Index: app/src/main/res/layout/activity_account.xml
+-IDEA additional info:
+-Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+-<+>UTF-8
+-===================================================================
+-diff --git a/app/src/main/res/layout/activity_account.xml b/app/src/main/res/layout/activity_account.xml
+-new file mode 100644
+---- /dev/null	(date 1669031070534)
+-+++ b/app/src/main/res/layout/activity_account.xml	(date 1669031070534)
+-@@ -0,0 +1,9 @@
+-+<?xml version="1.0" encoding="utf-8"?>
+-+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+-+    xmlns:app="http://schemas.android.com/apk/res-auto"
+-+    xmlns:tools="http://schemas.android.com/tools"
+-+    android:layout_width="match_parent"
+-+    android:layout_height="match_parent"
+-+    tools:context=".Account">
+-+
+-+</androidx.constraintlayout.widget.ConstraintLayout>
+-\ No newline at end of file
+-Index: app/src/main/java/com/example/duan1/Login.java
+-IDEA additional info:
+-Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+-<+>package com.example.duan1;\r\n\r\nimport androidx.annotation.NonNull;\r\nimport androidx.appcompat.app.AppCompatActivity;\r\n\r\nimport android.app.ProgressDialog;\r\nimport android.content.Intent;\r\nimport android.os.Bundle;\r\nimport android.os.Handler;\r\nimport android.view.View;\r\nimport android.widget.Button;\r\nimport android.widget.EditText;\r\nimport android.widget.ImageView;\r\nimport android.widget.TextView;\r\nimport android.widget.Toast;\r\n\r\nimport com.google.android.gms.tasks.OnCompleteListener;\r\nimport com.google.android.gms.tasks.Task;\r\nimport com.google.firebase.auth.AuthResult;\r\nimport com.google.firebase.auth.FirebaseAuth;\r\nimport com.google.firebase.auth.FirebaseUser;\r\n\r\nimport de.hdodenhof.circleimageview.CircleImageView;\r\n\r\npublic class Login extends AppCompatActivity {\r\n\r\n    private ImageView imgBack;\r\n    private CircleImageView imgLoginFacebook, imgLoginGoole, imgLoginZalo;\r\n    private TextView tvResetPassword, tvRegister;\r\n    private EditText edtNumberPhone, edtPassword;\r\n    private Button btnLogin;\r\n\r\n    private FirebaseAuth mAuth;\r\n    private ProgressDialog progressDialog;\r\n\r\n    @Override\r\n    protected void onCreate(Bundle savedInstanceState) {\r\n        super.onCreate(savedInstanceState);\r\n        setContentView(R.layout.activity_login);\r\n        initUi();\r\n\r\n\r\n        initListenerClick();\r\n\r\n\r\n    }\r\n\r\n    private void initUi() {\r\n        imgBack = findViewById(R.id.img_back);\r\n        imgLoginFacebook = findViewById(R.id.img_login_facebook);\r\n        imgLoginGoole = findViewById(R.id.img_login_google);\r\n        imgLoginZalo = findViewById(R.id.img_login_zalo);\r\n        tvResetPassword = findViewById(R.id.tv_reset_password);\r\n        tvRegister = findViewById(R.id.tv_register);\r\n        edtNumberPhone = findViewById(R.id.edt_numberphone);\r\n        edtPassword = findViewById(R.id.edt_password);\r\n        btnLogin = findViewById(R.id.btn_login);\r\n\r\n        // Initialize Firebase Auth\r\n        mAuth = FirebaseAuth.getInstance();\r\n        progressDialog = new ProgressDialog(this);\r\n\r\n    }\r\n\r\n    private void initListenerClick() {\r\n        //click back\r\n        imgBack.setOnClickListener(new View.OnClickListener() {\r\n            @Override\r\n            public void onClick(View view) {\r\n                //code back\r\n                finish();\r\n            }\r\n        });\r\n\r\n        //click login facebook\r\n        imgLoginFacebook.setOnClickListener(new View.OnClickListener() {\r\n            @Override\r\n            public void onClick(View view) {\r\n                //code login facebook\r\n                Toast.makeText(Login.this, \"Login fb from Login\", Toast.LENGTH_SHORT).show();\r\n            }\r\n        });\r\n\r\n        //click login google\r\n        imgLoginGoole.setOnClickListener(new View.OnClickListener() {\r\n            @Override\r\n            public void onClick(View view) {\r\n                //code login google\r\n                Toast.makeText(Login.this, \"Login google from Login\", Toast.LENGTH_SHORT).show();\r\n            }\r\n        });\r\n\r\n        //click login zalo\r\n        imgLoginZalo.setOnClickListener(new View.OnClickListener() {\r\n            @Override\r\n            public void onClick(View view) {\r\n                //code login zalo\r\n                Toast.makeText(Login.this, \"Login zalo from Login\", Toast.LENGTH_SHORT).show();\r\n            }\r\n        });\r\n\r\n        //click reset password\r\n        tvResetPassword.setOnClickListener(new View.OnClickListener() {\r\n            @Override\r\n            public void onClick(View view) {\r\n                //code reset password\r\n                Toast.makeText(Login.this, \"reset Password from Login\", Toast.LENGTH_SHORT).show();\r\n            }\r\n        });\r\n\r\n        //click register\r\n        tvRegister.setOnClickListener(new View.OnClickListener() {\r\n            @Override\r\n            public void onClick(View view) {\r\n                //code register\r\n                startActivity(new Intent(Login.this, Register.class));\r\n            }\r\n        });\r\n\r\n        //click login\r\n        btnLogin.setOnClickListener(new View.OnClickListener() {\r\n            @Override\r\n            public void onClick(View view) {\r\n                //code login\r\n\r\n                String email = edtNumberPhone.getText().toString().trim();\r\n                if (edtNumberPhone == null || email.isEmpty()){\r\n                    edtNumberPhone.setError(\"Email không được để trống!\");\r\n                    return;\r\n                }\r\n                String password = edtPassword.getText().toString().trim();\r\n                if (edtPassword == null || password.isEmpty()){\r\n                    edtPassword.setError(\"Mật khẩu không được để trống!\");\r\n                }else if (password.length() < 6 ){\r\n                    edtPassword.setError(\"Mật khẩu phải bằng hoặc trên 6 kí tự\");\r\n                    return;\r\n                }\r\n                progressDialog.setTitle(\"Xin chờ!\");\r\n                progressDialog.show();\r\n\r\n                mAuth.signInWithEmailAndPassword(email, password)\r\n                        .addOnCompleteListener(Login.this, new OnCompleteListener<AuthResult>() {\r\n                            @Override\r\n                            public void onComplete(@NonNull Task<AuthResult> task) {\r\n\r\n                                Handler handler = new Handler();\r\n                                handler.postDelayed(new Runnable() {\r\n                                    @Override\r\n                                    public void run() {\r\n                                        if (task.isSuccessful()) {\r\n                                            // Sign in success, update UI with the signed-in user's information\r\n                                            Toast.makeText(Login.this, \"Đăng nhập thành công!\", Toast.LENGTH_SHORT).show();\r\n                                            finish();\r\n                                        } else {\r\n                                            // If sign in fails, display a message to the user.\r\n                                            Toast.makeText(Login.this, \"Đăng nhập thất bại!\", Toast.LENGTH_SHORT).show();\r\n                                        }\r\n                                    }\r\n                                },2000);\r\n                            }\r\n                        });\r\n\r\n            }\r\n        });\r\n\r\n    }\r\n\r\n//check đã đăng nhập hay chưa\r\n//    @Override\r\n//    public void onStart() {\r\n//        super.onStart();\r\n//        // Check if user is signed in (non-null) and update UI accordingly.\r\n//        FirebaseUser currentUser = mAuth.getCurrentUser();\r\n//        if(currentUser != null){\r\n//            //code\r\n//        }\r\n//    }\r\n}
+-Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+-<+>UTF-8
+-===================================================================
+-diff --git a/app/src/main/java/com/example/duan1/Login.java b/app/src/main/java/com/example/duan1/Login.java
+---- a/app/src/main/java/com/example/duan1/Login.java	(revision d75f755ee637ad6a5f4419871b211b8809e85a17)
+-+++ b/app/src/main/java/com/example/duan1/Login.java	(date 1669031070540)
+-@@ -150,6 +150,7 @@
+-                                         if (task.isSuccessful()) {
+-                                             // Sign in success, update UI with the signed-in user's information
+-                                             Toast.makeText(Login.this, "Đăng nhập thành công!", Toast.LENGTH_SHORT).show();
+-+
+-                                             finish();
+-                                         } else {
+-                                             // If sign in fails, display a message to the user.
+-@@ -165,14 +166,5 @@
+- 
+-     }
+- 
+--//check đã đăng nhập hay chưa
+--//    @Override
+--//    public void onStart() {
+--//        super.onStart();
+--//        // Check if user is signed in (non-null) and update UI accordingly.
+--//        FirebaseUser currentUser = mAuth.getCurrentUser();
+--//        if(currentUser != null){
+--//            //code
+--//        }
+--//    }
+-+
+- }
+-\ No newline at end of file

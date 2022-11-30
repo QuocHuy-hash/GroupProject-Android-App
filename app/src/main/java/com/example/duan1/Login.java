@@ -22,6 +22,8 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.example.duan1.model.Users;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
@@ -36,7 +38,17 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+
 import de.hdodenhof.circleimageview.CircleImageView;
 
 
@@ -225,6 +237,7 @@ public class Login extends AppCompatActivity {
     }
 
     private void OnLogin(){
+
         //click login
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -242,7 +255,7 @@ public class Login extends AppCompatActivity {
                     return;
                 }
 
-                progressDialog.setTitle("xin chờ");
+                progressDialog.setTitle("Xin chờ");
                 progressDialog.show();
 
                 mAuth.signInWithEmailAndPassword(email, password)
@@ -254,19 +267,49 @@ public class Login extends AppCompatActivity {
                                 handler.postDelayed(new Runnable() {
                                     @Override
                                     public void run() {
-                                        progressDialog.dismiss();
+
                                         if (task.isSuccessful()) {
                                             // Sign in success, update UI with the signed-in user's information
+                                            List<Users> mListUser = new ArrayList<>();
+                                            FirebaseDatabase database = FirebaseDatabase.getInstance();
+                                            DatabaseReference myRef = database.getReference("Users");
+                    
+                                            myRef.addValueEventListener(new ValueEventListener() {
+                                                @Override
+                                                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                                    mListUser.clear();
+                                                    for (DataSnapshot snapshot1 : snapshot.getChildren()){
+                                                        Users user = snapshot1.getValue(Users.class);
+                                                        mListUser.add(user);
 
-                                            Toast.makeText(Login.this, "Đăng nhập thành công!", Toast.LENGTH_SHORT).show();
-                                            Intent intent = new Intent(Login.this, MainActivity.class);
-                                            setResult(RESULT_OK,intent );
-                                            finish();
+                                                    }
+                                                    for (int i = 0; i < mListUser.size(); i++){
+                                                        if (mListUser.get(i).getEmail().equals(email) && mListUser.get(i).getPassword().equals(password)){
+                                                            Toast.makeText(Login.this, "Đăng nhập thành công!", Toast.LENGTH_SHORT).show();
+                                                            Intent intent = new Intent(Login.this, MainActivity.class);
+                                                            setResult(RESULT_OK,intent );
+                                                            finish();
+
+                                                        }
+                                                    }
+                                                }
+
+                                                @Override
+                                                public void onCancelled(@NonNull DatabaseError error) {
+                                                    FirebaseAuth.getInstance().signOut();
+                                                    Toast.makeText(Login.this, "Đăng nhập thất bại!", Toast.LENGTH_SHORT).show();
+                                                }
+                                            });
+//                                            int dem = 0;
+//
+//                                            if (dem == 0){
+//                                                Toast.makeText(Login.this, "Đăng nhập thất bại!", Toast.LENGTH_SHORT).show();
+//                                            }
                                         } else {
                                             // If sign in fails, display a message to the user.
                                             Toast.makeText(Login.this, "Đăng nhập thất bại, tài khoản hoặc mật khẩu không đúng!", Toast.LENGTH_SHORT).show();
                                         }
-
+                                        progressDialog.dismiss();
                                     }
                                 },2000);
                             }

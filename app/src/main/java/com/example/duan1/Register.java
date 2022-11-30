@@ -4,6 +4,7 @@ package com.example.duan1;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
@@ -22,11 +23,21 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
+import com.example.duan1.model.Users;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -56,6 +67,19 @@ public class Register extends AppCompatActivity {
         return (!TextUtils.isEmpty(target) && Patterns.EMAIL_ADDRESS.matcher(target).matches());
     }
 
+  private void initUi() {
+        imgBack = findViewById(R.id.img_back_register);
+        tvLogin = findViewById(R.id.tv_login);
+        tvTermsAndUse = findViewById(R.id.tv_terms_of_use);
+        edtNumberPhone = findViewById(R.id.edt_numberphone_register);
+        edtPassword = findViewById(R.id.edt_password_register);
+        btnRegister = findViewById(R.id.btn_register);
+
+        // Initialize Firebase Auth
+        mAuth = FirebaseAuth.getInstance();
+        progressDialog = new ProgressDialog(this);
+    }
+
     private void initListenerClick(){
 
         //click back
@@ -77,7 +101,7 @@ public class Register extends AppCompatActivity {
             }
         });
 
-        //click register
+        //click login
         tvLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -91,12 +115,10 @@ public class Register extends AppCompatActivity {
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
             }
-
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
             }
-
             @Override
             public void afterTextChanged(Editable editable) {
                 if (edtNumberPhone.getText().toString().trim().equals("") || edtPassword.getText().toString().trim().equals("")){
@@ -104,51 +126,33 @@ public class Register extends AppCompatActivity {
                     return;
                 }else{
                     btnRegister.setBackgroundResource(R.drawable.bg_button_register);
-
-                    //click login
-                    btnRegister.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            //code login
-                            String email = edtNumberPhone.getText().toString().trim();
-                            if (isValidEmail(email)){
-                                edtNumberPhone.setError("Email không được để trống!");
-                                return;
-                            }
-                            String password = edtPassword.getText().toString().trim();
-                            if (password.length() < 6 ){
-                                edtPassword.setError("Mật khẩu phải bằng hoặc trên 6 kí tự");
-                                return;
-                            }
-                            progressDialog.setTitle("Xin chờ!");
-                            progressDialog.show();
-                            mAuth.createUserWithEmailAndPassword(email, password)
-                                    .addOnCompleteListener(Register.this, new OnCompleteListener<AuthResult>() {
-                                        @Override
-                                        public void onComplete(@NonNull Task<AuthResult> task) {
-                                            Handler handler = new Handler();
-                                            handler.postDelayed(new Runnable() {
-                                                @Override
-                                                public void run() {
-                                                    progressDialog.dismiss();
-                                                    if (task.isSuccessful()) {
-                                                        // Sign in success, update UI with the signed-in user's information
-                                                        Toast.makeText(Register.this, "Tạo tài khoản thành công!", Toast.LENGTH_SHORT).show();
-                                                        finish();
-                                                    } else {
-                                                        Toast.makeText(Register.this, "Tạo tài khoản thất bại!.",Toast.LENGTH_SHORT).show();
-                                                    }
-                                                }
-                                            },2000);
-                                        }
-                                    });
-
-                        }
-                    });
+                    //code register
+                    OnRegister(getListData());
                 }
             }
         });
 
+        edtPassword.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+            @Override
+            public void afterTextChanged(Editable editable) {
+                if (edtNumberPhone.getText().toString().trim().equals("") || edtPassword.getText().toString().trim().equals("")){
+                    btnRegister.setBackgroundResource(R.drawable.bg_button_login);
+                    return;
+                }else{
+                    btnRegister.setBackgroundResource(R.drawable.bg_button_register);
+                    //code Register
+                    OnRegister(getListData());
+                }
+            }
+        });
 
         tvTermsAndUse.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -159,17 +163,85 @@ public class Register extends AppCompatActivity {
         });
 
     }
-  private void initUi() {
-        imgBack = findViewById(R.id.img_back_register);
-        tvLogin = findViewById(R.id.tv_login);
-        tvTermsAndUse = findViewById(R.id.tv_terms_of_use);
-        edtNumberPhone = findViewById(R.id.edt_numberphone_register);
-        edtPassword = findViewById(R.id.edt_password_register);
-        btnRegister = findViewById(R.id.btn_register);
 
-        // Initialize Firebase Auth
-        mAuth = FirebaseAuth.getInstance();
-        progressDialog = new ProgressDialog(this);
+    private void OnRegister(List<Users> listUsers){
+
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference myRef = database.getReference();
+
+
+        //click register
+        btnRegister.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //code register
+                String email = edtNumberPhone.getText().toString().trim();
+//                if (isValidEmail(email)){
+//                    edtNumberPhone.setError("Email không được để trống!");
+//                    return;
+//                }
+                String password = edtPassword.getText().toString().trim();
+                if (password.length() < 6 ){
+                    edtPassword.setError("Mật khẩu phải bằng hoặc trên 6 kí tự");
+                    return;
+                }
+                progressDialog.setTitle("Xin chờ!");
+                progressDialog.show();
+                mAuth.createUserWithEmailAndPassword(email, password)
+                        .addOnCompleteListener(Register.this, new OnCompleteListener<AuthResult>() {
+                            @Override
+                            public void onComplete(@NonNull Task<AuthResult> task) {
+                                Handler handler = new Handler();
+                                handler.postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        progressDialog.dismiss();
+                                        if (task.isSuccessful()) {
+                                            // Sign in success, update UI with the signed-in user's information
+
+                                            int size = listUsers.size();
+                                            int IDcuoi = -1;
+                                            if (size != 0){
+                                                IDcuoi = listUsers.get(size-1).getId();
+                                            }
+
+                                            Users users = new Users(IDcuoi+1, " ", email, " ", " ", password);
+                                            myRef.child("Users/"+(IDcuoi+1)).setValue(users);
+                                            Toast.makeText(Register.this, "Tạo tài khoản thành công!", Toast.LENGTH_SHORT).show();
+                                            finish();
+                                        } else {
+                                            Toast.makeText(Register.this, "Tạo tài khoản thất bại!.",Toast.LENGTH_SHORT).show();
+                                        }
+                                    }
+                                },2000);
+                            }
+                        });
+
+            }
+        });
+    }
+
+    private List<Users> getListData() {
+        List<Users> list  = new ArrayList<>();
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference myRef = database.getReference("Users");
+        myRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                list.clear();
+                for (DataSnapshot snapshot1 : snapshot.getChildren() ){
+                    Users users = snapshot1.getValue(Users.class);
+                    list.add(users);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Toast.makeText(Register.this, "Tải thông tin tài khoản thất bại!", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        return list;
     }
 }
 
