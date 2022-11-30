@@ -35,6 +35,7 @@ import com.example.duan1.Login;
 import com.example.duan1.MainActivity;
 import com.example.duan1.R;
 import com.example.duan1.Register;
+import com.example.duan1.model.Users;
 import com.facebook.AccessToken;
 import com.facebook.FacebookSdk;
 import com.facebook.GraphRequest;
@@ -49,6 +50,11 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.squareup.picasso.Picasso;
 
@@ -56,6 +62,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.List;
 
 
 public class FragmentThem extends Fragment implements NavigationView.OnNavigationItemSelectedListener{
@@ -87,8 +94,16 @@ public class FragmentThem extends Fragment implements NavigationView.OnNavigatio
         View view = inflater.inflate(R.layout.fragment_them, container, false);
         mainActivity = (MainActivity) getActivity();
         initUi(view);
-        //facebook
 
+        ProgressDialog progressDialog1 = new ProgressDialog(mainActivity);
+        progressDialog1.setTitle("Đang tải dữ liệu");
+        progressDialog1.show();
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                progressDialog1.dismiss();
+            }
+        },2500);
 
 
         nav.setItemIconTintList(null);
@@ -108,8 +123,7 @@ public class FragmentThem extends Fragment implements NavigationView.OnNavigatio
         if (s.length() > 20){
             for (String s1: s.split("")){
                 name+=s1;
-                System.out.println(s1);
-                if (name.length() == 20){
+                if (name.length() == 30){
                     break;
                 }
             };
@@ -182,18 +196,52 @@ public class FragmentThem extends Fragment implements NavigationView.OnNavigatio
         fragmentTransaction1.replace(R.id.container, new FragmentThem());
         fragmentTransaction1.detach(FragmentThem.this);
         fragmentTransaction1.commit();
-
     }
 
     private void updateUI() {
 
-            tvEmail.setText(currentUser.getEmail());
-            String strImage = String.valueOf(currentUser.getPhotoUrl());
-            Picasso.with(mainActivity)
-                    .load(strImage)
-                    .placeholder(R.mipmap.ic_launcher)
-                    .error(R.mipmap.ic_launcher)
-                    .into(imgLoginRegister);
+        String email = currentUser.getEmail();
+        List<Users> mListUser = new ArrayList<>();
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference myRef = database.getReference("Users");
+        myRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                mListUser.clear();
+                for (DataSnapshot snapshot1 : snapshot.getChildren()){
+                    Users user = snapshot1.getValue(Users.class);
+                    mListUser.add(user);
+                }
+                for (int i = 0; i < mListUser.size(); i++){
+                    if (mListUser.get(i).getEmail().equals(email)){
+                        if (mListUser.get(i).getName() == null){
+
+                        }
+                        if (mListUser.get(i).getName().length() > 30){
+                            tvEmail.setText(checkname(mListUser.get(i).getName()));
+                        }else{
+                            tvEmail.setText(mListUser.get(i).getName());
+                        }
+                        String strImage = mListUser.get(i).getImage().trim();
+                        if (strImage.isEmpty()){
+                            return;
+                        }
+                        Picasso.with(mainActivity)
+                                .load(strImage)
+                                .placeholder(R.drawable.user_icon)
+                                .error(R.drawable.user_icon)
+                                .into(imgLoginRegister);
+                        return;
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
 
     }
 
@@ -207,12 +255,18 @@ public class FragmentThem extends Fragment implements NavigationView.OnNavigatio
                                 try {
                                     String fullName = object.getString("name");
                                     String image = object.getJSONObject("picture").getJSONObject("data").getString("url");
-                                    tvEmail.setText(fullName);
+
                                     Picasso.with(mainActivity)
                                             .load(image)
-                                            .placeholder(R.mipmap.ic_launcher)
-                                            .error(R.mipmap.ic_launcher)
+                                            .placeholder(R.drawable.user_icon)
+                                            .error(R.drawable.user_icon)
                                             .into(imgLoginRegister);
+                                    if (fullName.length() > 30){
+                                        tvEmail.setText(checkname(fullName));
+                                    }else{
+                                        tvEmail.setText(fullName);
+                                    }
+
 
                                 } catch (JSONException e) {
                                     Toast.makeText(mainActivity, "Lỗi login fb", Toast.LENGTH_SHORT).show();
@@ -232,13 +286,16 @@ public class FragmentThem extends Fragment implements NavigationView.OnNavigatio
         String personEmail = acct.getEmail();
 //        String personId = acct.getId();
         String personPhoto = String.valueOf(acct.getPhotoUrl());
+        if ((personName+" ("+personEmail+")").length() > 30 ){
+            tvEmail.setText(checkname(personName+" ("+personEmail+")"));
+        }else{
+            tvEmail.setText(personName+" ("+personEmail+")");
+        }
 
-        tvEmail.setText(checkname(personName+" ("+personEmail+")"));
-        System.out.println(personPhoto);
         Picasso.with(mainActivity)
                 .load(personPhoto)
-                .placeholder(R.mipmap.ic_launcher)
-                .error(R.mipmap.ic_launcher)
+                .placeholder(R.drawable.user_icon)
+                .error(R.drawable.user_icon)
                 .into(imgLoginRegister);
 
     }
@@ -247,6 +304,7 @@ public class FragmentThem extends Fragment implements NavigationView.OnNavigatio
     public void onStart() {
         super.onStart();
 
+
         //firebase
         mAuth = FirebaseAuth.getInstance();
         currentUser = mAuth.getCurrentUser();
@@ -254,7 +312,6 @@ public class FragmentThem extends Fragment implements NavigationView.OnNavigatio
         //facebook
         AccessToken accessToken = AccessToken.getCurrentAccessToken();
         boolean isLoggedIn = accessToken != null && !accessToken.isExpired();
-        System.out.println(isLoggedIn);
         if (isLoggedIn){
             getProfileUser();
         }
@@ -271,5 +328,7 @@ public class FragmentThem extends Fragment implements NavigationView.OnNavigatio
         if (acct != null) {
             getProfileUserGoogle();
         }
+
+
     }
 }
