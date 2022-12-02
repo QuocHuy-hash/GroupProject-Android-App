@@ -1,5 +1,6 @@
 package com.example.duan1;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -31,8 +32,11 @@ import com.example.duan1.model.direction;
 import com.example.duan1.model.giaiTriNews;
 import com.example.duan1.model.product_type;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -55,7 +59,7 @@ public class dagTinGiaiTriActivity extends AppCompatActivity implements com.exam
     private ArrayList<Uri> imageUri;
     private int REQUEST_PERMISSION_CODE = 35;
     private int PICK_IMAGE = 1;
-    private int update_count = 0;
+    private int update_count = 0 , maxID = 0;
     private ProgressDialog progressDialog;
     DatabaseReference myData;
     StorageReference imageFolder;
@@ -72,6 +76,7 @@ public class dagTinGiaiTriActivity extends AppCompatActivity implements com.exam
         clickBackPage();
         eventClickSPN();
         clickAddImageFashion();
+        getId();
         clickDangTin();
 
     }
@@ -214,8 +219,8 @@ public class dagTinGiaiTriActivity extends AppCompatActivity implements com.exam
                         });
                     }
                     int size = imageUri.size() + 1;
-                    String strId = String.valueOf(size);
-                    myData.child(tenDanhMuc).child(strId + 1).setValue(new giaiTriNews(size ,strTitlePost , strDescription ,strAddress, dbPrice
+                    String strId = String.valueOf(maxID);
+                    myData.child(tenDanhMuc).child(strId ).setValue(new giaiTriNews(maxID ,strTitlePost , strDescription ,strAddress, dbPrice
                                       ,strLoaiSanPham ))
                             .addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
@@ -229,6 +234,21 @@ public class dagTinGiaiTriActivity extends AppCompatActivity implements com.exam
             }
         });
 
+    }
+    public void getId() {
+        myData.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if(snapshot.exists()){
+                    maxID = (int) snapshot.getChildrenCount();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
     }
 
     private void StoreLick(String url) {
