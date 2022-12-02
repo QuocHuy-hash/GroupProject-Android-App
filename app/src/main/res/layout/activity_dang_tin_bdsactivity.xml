@@ -154,6 +154,14 @@
                     android:text="Đăng từ 03 đến 06 hình"
                     android:layout_marginTop="5dp"
                     android:textColor="#7E7A7A"/>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rcvView_select_img_BDS"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="start"
+                    android:scrollbarStyle="outsideInset"
+                    android:scrollbars="horizontal" />
             </LinearLayout>
             </LinearLayout>
 
@@ -260,7 +268,7 @@
 
             </LinearLayout>
             <Button
-                android:id="@+id/dangTin"
+                android:id="@+id/dangTinBDS"
                 android:layout_width="match_parent"
                 android:layout_margin="20dp"
                 android:padding="6dp"

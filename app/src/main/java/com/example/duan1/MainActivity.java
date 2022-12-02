@@ -5,7 +5,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -169,5 +171,11 @@ public class MainActivity extends AppCompatActivity {
         floatingActionButton = findViewById(R.id.fab);
 
         getSupportFragmentManager().beginTransaction().replace(R.id.container, fragmentTrangChu).commit();
+    }
+    public static void showDiaLogWarning(Context context , String text) {
+        final AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);
+        alertDialog.setMessage(text).setTitle("Warning").setIcon(R.drawable.ic_warning)
+                .setNegativeButton("Ok" , null);
+        alertDialog.show();
     }
 }
