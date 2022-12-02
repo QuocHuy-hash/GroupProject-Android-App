@@ -1,0 +1,313 @@
+package com.example.duan1;
+
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+
+import android.Manifest;
+import android.app.AlertDialog;
+import android.app.ProgressDialog;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
+import android.os.Build;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.Spinner;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.example.duan1.Adapter.photoAdapter;
+import com.example.duan1.model.Users;
+import com.example.duan1.model.product_type;
+import com.example.duan1.model.thoiTrangNews;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
+
+public class dangTinThoiTrangActivity extends AppCompatActivity implements photoAdapter.CountOfImageWhenRemove {
+    private TextView tvTenDanhMuc;
+    private ImageView imgBackPage, addImageProduct;
+    private Spinner spn_product_type;
+    private EditText edtTitlePost, edtDescription, edtPrice, edtAddress;
+    private Button btnDangTin;
+    private com.example.duan1.Adapter.photoAdapter photoAdapter;
+    private RecyclerView rcvView_select_img_fashion;
+    StorageReference imageFolder;
+    private String strTitlePost, strDescription, strPrice, strLoaiSanPham, strAddress;
+    private double dbPrice;
+
+
+    private int REQUEST_PERMISSION_CODE = 35;
+    private int PICK_IMAGE = 1;
+    private int update_count = 0;
+    private ArrayList<Uri> imageUri;
+    private ProgressDialog progressDialog;
+    DatabaseReference myData;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_dang_tin_thoi_trang);
+        imageFolder = FirebaseStorage.getInstance().getReference().child("Image.jpg");
+        myData = FirebaseDatabase.getInstance().getReference("Tin");
+        initUi();
+        clickBAckPage();
+        eventClickSPN();
+        clickAddImageFashion();
+        clickDangTin();
+
+    }
+
+    private void clickDangTin() {
+        Intent intent = getIntent();
+        String tenDanhMuc = intent.getStringExtra("tenDanhMuc");
+
+
+        btnDangTin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                progressDialog = new ProgressDialog(dangTinThoiTrangActivity.this);
+                progressDialog.setMessage("Please wait for save");
+
+                strTitlePost = edtTitlePost.getText().toString().trim();
+                strDescription = edtDescription.getText().toString();
+                strPrice = edtPrice.getText().toString();
+                try {
+                    dbPrice = Double.parseDouble(strPrice);
+                } catch(Exception e) {
+                    System.err.println("Lỗi Parse kiểu dữ liệu");
+                }
+
+                strLoaiSanPham = spn_product_type.getSelectedItem().toString();
+                strAddress = edtAddress.getText().toString();
+
+                System.err.println("Sản phẩm : " +strTitlePost + " - " +  strDescription + " - " + strPrice + "- " + strAddress);
+                if (strTitlePost.isEmpty() || strDescription.isEmpty() || strPrice.isEmpty()
+                        || strAddress.isEmpty()) {
+                    MainActivity.showDiaLogWarning(dangTinThoiTrangActivity.this, "vui lòng nhập đầy đủ thông tin");
+
+                } else {
+                    progressDialog.show();
+                    for (update_count = 0; update_count < imageUri.size(); update_count++) {
+                        Uri indexImage = imageUri.get(update_count);
+                        StorageReference imageName = imageFolder.child("Image " + indexImage.getLastPathSegment());
+                        imageName.child(strTitlePost).putFile(indexImage).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                            @Override
+                            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                                imageName.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                    @Override
+                                    public void onSuccess(Uri uri) {
+                                        String Url = String.valueOf(uri);
+                                        StoreLick(Url);
+
+                                    }
+                                });
+                            }
+                        });
+                    }
+                    int size = imageUri.size() + 1;
+                    String strId = String.valueOf(size);
+                    myData.child(tenDanhMuc).child(strId + 1).setValue(new thoiTrangNews(0,
+                                    strTitlePost,
+                                    strDescription,
+                                    strLoaiSanPham,
+                                    dbPrice,
+                                    strAddress))
+                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void unused) {
+                                    Toast.makeText(dangTinThoiTrangActivity.this, "Đăng tin thành công", Toast.LENGTH_SHORT).show();
+                                    progressDialog.dismiss();
+                                }
+                            });
+
+                }
+            }
+        });
+
+    }
+
+    private void StoreLick(String url) {
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("List Image");
+        HashMap<String, String> hashMap = new HashMap<>();
+        hashMap.put("Imglink", url);
+        databaseReference.push().setValue(hashMap);
+
+    }
+//    private List<thoiTrangNews> getListFashion() {
+//        List<thoiTrangNews> listFashion = new ArrayList<>();
+//        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+//        DatabaseReference databaseReference = firebaseDatabase.getReference("ThoiTrangNews");
+//        databaseReference.addValueEventListener(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(@NonNull DataSnapshot snapshot) {
+//                listFashion.clear();
+//                for (DataSnapshot snapshot1 : snapshot.getChildren() ){
+//                    thoiTrangNews thoiTrangNews = snapshot1.getValue(thoiTrangNews.class);
+//                    listFashion.add(thoiTrangNews);
+//                }
+//            }
+//
+//            @Override
+//            public void onCancelled(@NonNull DatabaseError error) {
+//                Toast.makeText(dangTinThoiTrangActivity.this, "Load data Error", Toast.LENGTH_SHORT).show();
+//            }
+//        });
+//
+//        return listFashion;
+//
+//    }
+
+    /*
+     * @Override
+     * public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+     *  Task<Uri> urlTask = taskSnapshot.getStorage().getDownloadUrl();
+     * while (!urlTask.isSuccessful());
+     * Uri downloadUrl = urlTask.getResult();
+     *  FriendlyMessage friendlyMessage = new FriendlyMessage(null, mUsername, downloadUrl.toString());
+     *  mDatabaseReference.push().setValue(friendlyMessage); }
+     * */
+    private void clickAddImageFashion() {
+        photoAdapter = new photoAdapter(imageUri, this, this);
+        rcvView_select_img_fashion.setLayoutManager(new GridLayoutManager(dangTinThoiTrangActivity.this, 6));
+        rcvView_select_img_fashion.setAdapter(photoAdapter);
+
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+                    REQUEST_PERMISSION_CODE);
+            return;
+        }
+
+        addImageProduct.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+                intent.setType("image/*");
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+                    intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+                }
+                startActivityForResult(Intent.createChooser(intent, "select Picture"), PICK_IMAGE);
+            }
+        });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == PICK_IMAGE && resultCode == RESULT_OK && data != null) {
+            if (data.getClipData() != null) {
+                int count = data.getClipData().getItemCount();
+
+                for (int i = 0; i < count; i++) {
+                    if (imageUri.size() < 9) {
+                        Uri imgUri = (data.getClipData().getItemAt(i).getUri());
+                        imageUri.add(imgUri);
+                    } else {
+                        Toast.makeText(this, "Chỉ đăng tối đa 9 hình ảnh", Toast.LENGTH_SHORT).show();
+                    }
+
+                }
+                photoAdapter.notifyDataSetChanged();
+            } else {
+                if (imageUri.size() < 9) {
+                    Uri imgUri = data.getData();
+                    imageUri.add(imgUri);
+                } else {
+                    Toast.makeText(this, "Chỉ đăng tối đa 9 hình ảnh", Toast.LENGTH_SHORT).show();
+                }
+
+
+            }
+            photoAdapter.notifyDataSetChanged();
+        } else {
+            Toast.makeText(this, "you haven't pick any Image", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void eventClickSPN() {
+        product_type[] product_type = dangTinThoiTrangActivity.productType.getProductType();
+        ArrayAdapter<product_type> adapter = new ArrayAdapter<product_type>(this, android.R.layout.simple_spinner_item, product_type);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spn_product_type.setAdapter(adapter);
+
+        spn_product_type.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                Toast.makeText(dangTinThoiTrangActivity.this, "Loại sản phẩm " + i, Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+    }
+
+    private void clickBAckPage() {
+        imgBackPage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
+    }
+
+    private void initUi() {
+        tvTenDanhMuc = findViewById(R.id.tvTenDanhMucTT);
+        Intent intent = getIntent();
+        tvTenDanhMuc.setText("Danh Mục - " + intent.getStringExtra("tenDanhMuc"));
+        imgBackPage = findViewById(R.id.icon_backTT);
+        spn_product_type = findViewById(R.id.spn_product_type);
+        edtTitlePost = findViewById(R.id.title_postTT);
+        edtDescription = findViewById(R.id.description_postTT);
+        edtPrice = findViewById(R.id.priceTT);
+        edtAddress = findViewById(R.id.addressTT);
+        btnDangTin = findViewById(R.id.btnDangTinTT);
+        rcvView_select_img_fashion = findViewById(R.id.rcvView_select_img_fashion);
+        addImageProduct = findViewById(R.id.addImageProductTT);
+
+
+        imageUri = new ArrayList<>();
+    }
+
+    @Override
+    public void clicked(int getSize) {
+
+    }
+
+    public static class productType {
+        public static product_type[] getProductType() {
+            product_type prd1 = new product_type("Nam");
+            product_type prd2 = new product_type("Nữ");
+            product_type prd3 = new product_type("Cả hai");
+            return new product_type[]{prd1, prd2, prd3};
+
+
+        }
+    }
+}

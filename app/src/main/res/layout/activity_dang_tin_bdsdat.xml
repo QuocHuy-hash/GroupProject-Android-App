@@ -18,18 +18,18 @@
             android:layout_width="35dp"
             android:layout_height="35dp"
             android:src="@drawable/ic_back_page"/>
+
         <TextView
             android:id="@+id/tv_title_dat"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Đăng tin"
-            android:textStyle="bold"
-            android:textSize="20dp"
-            android:gravity="center"
-            android:textColor="#0B0B0B"
-            android:layout_toRightOf="@+id/icon_back"
             android:layout_marginEnd="35dp"
-            />
+            android:layout_toRightOf="@+id/icon_back"
+            android:gravity="center"
+            android:text="Đăng tin"
+            android:textColor="#0B0B0B"
+            android:textSize="20dp"
+            android:textStyle="bold" />
         <ImageView
             android:id="@+id/iconCloser"
             android:layout_width="35dp"
@@ -70,6 +70,37 @@
             android:textStyle="bold"
             android:textColor="#252424"/>
     </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:orientation="vertical">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="TIÊU ĐỀ VÀ CHI TIẾT"
+                android:textSize="16dp"
+                android:padding="5dp"
+                android:background="@drawable/bg_corner"
+                android:textColor="#9A9191"/>
+            <EditText
+                android:id="@+id/edtTitle_postDat"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Tiêu đề tin đăng"
+                android:layout_marginTop="10dp"
+                android:padding="10dp"
+                android:background="@drawable/bg_input"/>
+            <EditText
+                android:id="@+id/edtDesc"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Mô tả chi tiết"
+                android:layout_marginTop="6dp"
+                android:padding="10dp"
+                android:background="@drawable/bg_input"/>
+        </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -84,15 +115,15 @@
             android:background="@drawable/bg_corner"
             android:textColor="#9A9191"/>
         <EditText
-            android:id="@+id/tenPhanKhu"
+            android:id="@+id/edtTenPhanKhu"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Tiêu phân khu"
+            android:hint="Tiên phân khu"
             android:layout_marginTop="10dp"
             android:padding="10dp"
             android:background="@drawable/bg_input"/>
         <EditText
-            android:id="@+id/address"
+            android:id="@+id/edtAddressDat"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Địa chỉ đất"
@@ -118,6 +149,14 @@
                 android:text="Đăng từ 03 đến 06 hình"
                 android:layout_marginTop="5dp"
                 android:textColor="#7E7A7A"/>
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rcvView_select_img_Dat"
+                android:layout_gravity="start"
+                android:scrollbarStyle="outsideInset"
+                android:scrollbars="horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                />
         </LinearLayout>
     </LinearLayout>
 
@@ -177,7 +216,7 @@
             android:background="@drawable/bg_corner"
             android:textColor="#9A9191"/>
         <EditText
-            android:id="@+id/dienTich"
+            android:id="@+id/dienTichDat"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Diện tích "
@@ -197,7 +236,7 @@
 
     </LinearLayout>
     <Button
-        android:id="@+id/dangTin"
+        android:id="@+id/btnDangTin"
         android:layout_width="match_parent"
         android:layout_margin="20dp"
         android:padding="6dp"
