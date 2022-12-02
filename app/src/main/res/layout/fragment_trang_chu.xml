@@ -50,26 +50,7 @@
                     android:text="Miễn phí vận chuyển"
                     android:textSize="16dp"/>
 
-                <LinearLayout
-                    android:layout_width="120dp"
-                    android:layout_height="120dp"
-                    android:gravity="center_horizontal"
-                    android:orientation="vertical">
 
-                    <ImageView
-                        android:layout_width="45dp"
-                        android:layout_height="45dp"
-                        android:src="@drawable/history_search" />
-
-                    <TextView
-                        android:layout_width="100dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="5dp"
-                        android:gravity="center"
-                        android:text="Tìm kiếm đã lưu"
-                        android:textColor="#020202"
-                        android:textSize="16dp" />
-                </LinearLayout>
             </LinearLayout>
             <!-- 2-->
             <LinearLayout
@@ -150,6 +131,26 @@
                     android:gravity="center"
                     android:textColor="#020202"
                     android:text="Vòng quay may mắn"
+                    android:textSize="16dp"/>
+            </LinearLayout>
+            <!-- 2-->
+            <LinearLayout
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:orientation="vertical"
+                android:gravity="center_horizontal"
+                >
+                <ImageView
+                    android:layout_width="45dp"
+                    android:layout_height="45dp"
+                    android:src="@drawable/tin_da_luu"/>
+                <TextView
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:gravity="center"
+                    android:textColor="#020202"
+                    android:text="Tin đăng đã lưu"
                     android:textSize="16dp"/>
             </LinearLayout>
         </LinearLayout>

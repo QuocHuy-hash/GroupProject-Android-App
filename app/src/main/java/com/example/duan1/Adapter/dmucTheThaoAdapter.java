@@ -1,6 +1,7 @@
 package com.example.duan1.Adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +13,8 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.duan1.R;
+import com.example.duan1.dagTinGiaiTriActivity;
+import com.example.duan1.dangTinThoiTrangActivity;
 import com.example.duan1.model.giaiTri;
 
 import java.util.List;
@@ -42,7 +45,9 @@ public class dmucTheThaoAdapter extends RecyclerView.Adapter<dmucTheThaoAdapter.
         holder.layout_item.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(mContext, "Danh mục " + mGiaiTri.getTen(), Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(mContext , dagTinGiaiTriActivity.class);
+                intent.putExtra("tenDanhMuc" , mGiaiTri.getTen());
+                mContext.startActivity(intent);
             }
         });
     }
