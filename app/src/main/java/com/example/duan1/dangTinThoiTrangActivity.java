@@ -63,7 +63,7 @@ public class dangTinThoiTrangActivity extends AppCompatActivity implements photo
 
     private int REQUEST_PERMISSION_CODE = 35;
     private int PICK_IMAGE = 1;
-    private int update_count = 0;
+    private int update_count = 0 , maxID = 0;
     private ArrayList<Uri> imageUri;
     private ProgressDialog progressDialog;
     DatabaseReference myData;
@@ -82,6 +82,22 @@ public class dangTinThoiTrangActivity extends AppCompatActivity implements photo
 
     }
 
+    public void getId() {
+        myData.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if(snapshot.exists()){
+                    maxID = (int) snapshot.getChildrenCount();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+
     private void clickDangTin() {
         Intent intent = getIntent();
         String tenDanhMuc = intent.getStringExtra("tenDanhMuc");
@@ -92,7 +108,7 @@ public class dangTinThoiTrangActivity extends AppCompatActivity implements photo
             public void onClick(View view) {
                 progressDialog = new ProgressDialog(dangTinThoiTrangActivity.this);
                 progressDialog.setMessage("Please wait for save");
-
+                getId();
                 strTitlePost = edtTitlePost.getText().toString().trim();
                 strDescription = edtDescription.getText().toString();
                 strPrice = edtPrice.getText().toString();
@@ -105,7 +121,6 @@ public class dangTinThoiTrangActivity extends AppCompatActivity implements photo
                 strLoaiSanPham = spn_product_type.getSelectedItem().toString();
                 strAddress = edtAddress.getText().toString();
 
-                System.err.println("Sản phẩm : " +strTitlePost + " - " +  strDescription + " - " + strPrice + "- " + strAddress);
                 if (strTitlePost.isEmpty() || strDescription.isEmpty() || strPrice.isEmpty()
                         || strAddress.isEmpty()) {
                     MainActivity.showDiaLogWarning(dangTinThoiTrangActivity.this, "vui lòng nhập đầy đủ thông tin");
@@ -129,9 +144,8 @@ public class dangTinThoiTrangActivity extends AppCompatActivity implements photo
                             }
                         });
                     }
-                    int size = imageUri.size() + 1;
-                    String strId = String.valueOf(size);
-                    myData.child(tenDanhMuc).child(strId + 1).setValue(new thoiTrangNews(0,
+                    String strId = String.valueOf(maxID);
+                    myData.child(tenDanhMuc).child(strId).setValue(new thoiTrangNews(maxID,
                                     strTitlePost,
                                     strDescription,
                                     strLoaiSanPham,

@@ -1,5 +1,6 @@
 package com.example.duan1;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -25,8 +26,11 @@ import android.widget.Toast;
 import com.example.duan1.Adapter.photoAdapter;
 import com.example.duan1.model.BDSNews;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -47,7 +51,7 @@ public class dangTinBDSPhongTroActivity extends AppCompatActivity implements com
     private ArrayList<Uri> imageUri;
     private int REQUEST_PERMISSION_CODE = 35;
     private int PICK_IMAGE = 1;
-    private int update_count = 0;
+    private int update_count = 0 , maxID =0;
     private ProgressDialog progressDialog;
     private String strTitle , strDesc , strAddress , strDienTich , strPrice;
     private Double dbPrice , dbDienTich;
@@ -137,6 +141,21 @@ public class dangTinBDSPhongTroActivity extends AppCompatActivity implements com
         }
     }
 
+    public void getId() {
+        myData.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if(snapshot.exists()){
+                    maxID = (int) snapshot.getChildrenCount();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
 
     private void clickDangTin() {
         Intent intent = getIntent();
@@ -146,6 +165,7 @@ public class dangTinBDSPhongTroActivity extends AppCompatActivity implements com
             public void onClick(View view) {
                 progressDialog = new ProgressDialog(dangTinBDSPhongTroActivity.this);
                 progressDialog.setMessage("Please wait for save");
+                getId();
 
                 strTitle = title_post.getText().toString().trim();
                 strDesc = description.getText().toString().trim();
@@ -181,11 +201,11 @@ public class dangTinBDSPhongTroActivity extends AppCompatActivity implements com
                             }
                         });
                     }
-                    int size = imageUri.size() + 1;
-                    String strId = String.valueOf(size);
 
-                    myData.child(tenDanhMuc).child(strId + 1).setValue(
-                            new BDSNews(size + 1 , strTitle , strDesc ,dbPrice , strDienTich, strAddress)).addOnSuccessListener(new OnSuccessListener<Void>() {
+                    String strId = String.valueOf(maxID);
+
+                    myData.child(tenDanhMuc).child(strId ).setValue(
+                            new BDSNews(maxID , strTitle , strDesc ,dbPrice , strDienTich, strAddress)).addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void unused) {
                             Toast.makeText(dangTinBDSPhongTroActivity.this, "Đăng tin thành công", Toast.LENGTH_SHORT).show();

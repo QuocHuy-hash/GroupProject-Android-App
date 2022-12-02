@@ -1,5 +1,6 @@
 package com.example.duan1;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -29,8 +30,11 @@ import com.example.duan1.Adapter.photoAdapter;
 import com.example.duan1.model.BDSNews;
 import com.example.duan1.model.direction;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -50,6 +54,7 @@ public class dangTinBDSActivity extends AppCompatActivity implements com.example
     private String strTitlePost, strDescription, strTenKhu, strAddress, strLoaiHinhDat
             ,strSoPhongNgu ,strSoPhongWc , strPrice , strDienTich;
     private double  dbPrice;
+    private int maxID = 0;
 
     private com.example.duan1.Adapter.photoAdapter photoAdapter;
     private RecyclerView rcvView_select_img_BDS;
@@ -106,7 +111,21 @@ public class dangTinBDSActivity extends AppCompatActivity implements com.example
         });
     }
 
+    public void getId() {
+        myData.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if(snapshot.exists()){
+                    maxID = (int) snapshot.getChildrenCount();
+                }
+            }
 
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
     private void clickDangTin() {
         Intent intent = getIntent();
         String tenDanhMuc = intent.getStringExtra("tenDanhMuc");
@@ -116,7 +135,7 @@ public class dangTinBDSActivity extends AppCompatActivity implements com.example
             public void onClick(View view) {
                 progressDialog = new ProgressDialog(dangTinBDSActivity.this);
                 progressDialog.setMessage("Please wait for save");
-
+                getId();
                 strTitlePost = edtTitlePost.getText().toString().trim();
                 strDescription = edtDescription.getText().toString();
                 strTenKhu = edtTenKhuDanCu.getText().toString().trim();
@@ -159,10 +178,9 @@ public class dangTinBDSActivity extends AppCompatActivity implements com.example
                             }
                         });
                     }
-                    int size = imageUri.size() + 1;
-                    String strId = String.valueOf(size);
-                    myData.child(tenDanhMuc).child(strId + 1).setValue(
-                            new BDSNews(size ,strTitlePost , strDescription , dbPrice
+                    String strId = String.valueOf(maxID);
+                    myData.child(tenDanhMuc).child(strId ).setValue(
+                            new BDSNews(maxID ,strTitlePost , strDescription , dbPrice
                                     ,strDienTich ,strAddress ,strTenKhu ,strLoaiHinhDat , strSoPhongNgu,strSoPhongWc))
                             .addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
