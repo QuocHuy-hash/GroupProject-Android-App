@@ -283,6 +283,18 @@ public class Login extends AppCompatActivity {
                                                         mListUser.add(user);
 
                                                     }
+                                                }
+
+                                                @Override
+                                                public void onCancelled(@NonNull DatabaseError error) {
+                                                    FirebaseAuth.getInstance().signOut();
+                                                    Toast.makeText(Login.this, "Đăng nhập thất bại!", Toast.LENGTH_SHORT).show();
+                                                }
+                                            });
+
+                                            handler.postDelayed(new Runnable() {
+                                                @Override
+                                                public void run() {
                                                     for (int i = 0; i < mListUser.size(); i++){
                                                         if (mListUser.get(i).getEmail().equals(email) && mListUser.get(i).getPassword().equals(password)){
                                                             Toast.makeText(Login.this, "Đăng nhập thành công!", Toast.LENGTH_SHORT).show();
@@ -293,18 +305,9 @@ public class Login extends AppCompatActivity {
                                                         }
                                                     }
                                                 }
+                                            },1500);
 
-                                                @Override
-                                                public void onCancelled(@NonNull DatabaseError error) {
-                                                    FirebaseAuth.getInstance().signOut();
-                                                    Toast.makeText(Login.this, "Đăng nhập thất bại!", Toast.LENGTH_SHORT).show();
-                                                }
-                                            });
-//                                            int dem = 0;
-//
-//                                            if (dem == 0){
-//                                                Toast.makeText(Login.this, "Đăng nhập thất bại!", Toast.LENGTH_SHORT).show();
-//                                            }
+
                                         } else {
                                             // If sign in fails, display a message to the user.
                                             Toast.makeText(Login.this, "Đăng nhập thất bại, tài khoản hoặc mật khẩu không đúng!", Toast.LENGTH_SHORT).show();

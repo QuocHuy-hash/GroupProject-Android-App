@@ -90,26 +90,38 @@ public class FragmentThem extends Fragment implements NavigationView.OnNavigatio
             });
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_them, container, false);
         mainActivity = (MainActivity) getActivity();
         initUi(view);
+        AccessToken accessToken = AccessToken.getCurrentAccessToken();
+        boolean isLoggedIn = accessToken != null && !accessToken.isExpired();
+        gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build();
+        mGoogleSignInClient = GoogleSignIn.getClient(mainActivity, gso);
+        acct = GoogleSignIn.getLastSignedInAccount(mainActivity);
 
-        ProgressDialog progressDialog1 = new ProgressDialog(mainActivity);
-        progressDialog1.setTitle("Đang tải dữ liệu");
-        progressDialog1.show();
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                progressDialog1.dismiss();
-            }
-        },2500);
+        if (isLoggedIn || currentUser != null || acct != null){
+            progressDialog.setTitle("Đang tải dữ liệu");
+            progressDialog.show();
+            getDataUser(isLoggedIn);
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    initListenerClick();
+                    progressDialog.dismiss();
+                }
+            },500);
+            nav.setItemIconTintList(null);
+            nav.setNavigationItemSelectedListener((NavigationView.OnNavigationItemSelectedListener) this );
+
+        }else{
+            getDataUser(isLoggedIn);
+            initListenerClick();
+            nav.setItemIconTintList(null);
+            nav.setNavigationItemSelectedListener((NavigationView.OnNavigationItemSelectedListener) this );
+        }
 
 
-        nav.setItemIconTintList(null);
-        nav.setNavigationItemSelectedListener((NavigationView.OnNavigationItemSelectedListener) this );
-
-        initListenerClick();
 
         return view;
     }
@@ -120,16 +132,17 @@ public class FragmentThem extends Fragment implements NavigationView.OnNavigatio
             return null;
         }
         String name = "";
-        if (s.length() > 20){
+        if (s.length() > 25){
             for (String s1: s.split("")){
                 name+=s1;
-                if (name.length() == 30){
+                if (name.length() == 25){
                     break;
                 }
             };
+            return name+"...";
         }
 
-        return name+"...";
+        return s;
     }
 
     private void initUi(View view) {
@@ -138,6 +151,8 @@ public class FragmentThem extends Fragment implements NavigationView.OnNavigatio
         nav = view.findViewById(R.id.nav_them);
 
         progressDialog = new ProgressDialog(mainActivity);
+        mAuth = FirebaseAuth.getInstance();
+        currentUser = mAuth.getCurrentUser();
     }
 
     private void initListenerClick() {
@@ -153,7 +168,7 @@ public class FragmentThem extends Fragment implements NavigationView.OnNavigatio
                 if(currentUser != null || isLoggedIn || acct != null){
                     startActivity(new Intent(mainActivity, Account.class));
                 }else {
-                    startActivity(new Intent(mainActivity, Login.class));
+                    mActivityResultLauncher.launch(new Intent(mainActivity, Login.class));
                 }
 
             }
@@ -217,11 +232,7 @@ public class FragmentThem extends Fragment implements NavigationView.OnNavigatio
                         if (mListUser.get(i).getName() == null){
 
                         }
-                        if (mListUser.get(i).getName().length() > 30){
-                            tvEmail.setText(checkname(mListUser.get(i).getName()));
-                        }else{
-                            tvEmail.setText(mListUser.get(i).getName());
-                        }
+                        tvEmail.setText(checkname(mListUser.get(i).getName()));
                         String strImage = mListUser.get(i).getImage().trim();
                         if (strImage.isEmpty()){
                             return;
@@ -245,7 +256,7 @@ public class FragmentThem extends Fragment implements NavigationView.OnNavigatio
 
     }
 
-    private void getProfileUser() {
+    private void getProfileUserFB() {
         AccessToken accessToken = AccessToken.getCurrentAccessToken();
         GraphRequest request = GraphRequest.newMeRequest(
                 accessToken,
@@ -255,18 +266,12 @@ public class FragmentThem extends Fragment implements NavigationView.OnNavigatio
                                 try {
                                     String fullName = object.getString("name");
                                     String image = object.getJSONObject("picture").getJSONObject("data").getString("url");
-
+                                    tvEmail.setText(checkname(fullName));
                                     Picasso.with(mainActivity)
                                             .load(image)
                                             .placeholder(R.drawable.user_icon)
                                             .error(R.drawable.user_icon)
                                             .into(imgLoginRegister);
-                                    if (fullName.length() > 30){
-                                        tvEmail.setText(checkname(fullName));
-                                    }else{
-                                        tvEmail.setText(fullName);
-                                    }
-
 
                                 } catch (JSONException e) {
                                     Toast.makeText(mainActivity, "Lỗi login fb", Toast.LENGTH_SHORT).show();
@@ -284,7 +289,6 @@ public class FragmentThem extends Fragment implements NavigationView.OnNavigatio
     private void getProfileUserGoogle() {
         String personName = acct.getDisplayName();
         String personEmail = acct.getEmail();
-//        String personId = acct.getId();
         String personPhoto = String.valueOf(acct.getPhotoUrl());
         if ((personName+" ("+personEmail+")").length() > 30 ){
             tvEmail.setText(checkname(personName+" ("+personEmail+")"));
@@ -300,20 +304,10 @@ public class FragmentThem extends Fragment implements NavigationView.OnNavigatio
 
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-
-
-        //firebase
-        mAuth = FirebaseAuth.getInstance();
-        currentUser = mAuth.getCurrentUser();
-
+    private void getDataUser(boolean isLoggedIn){
         //facebook
-        AccessToken accessToken = AccessToken.getCurrentAccessToken();
-        boolean isLoggedIn = accessToken != null && !accessToken.isExpired();
         if (isLoggedIn){
-            getProfileUser();
+            getProfileUserFB();
         }
 
         //firebase
@@ -322,13 +316,8 @@ public class FragmentThem extends Fragment implements NavigationView.OnNavigatio
         }
 
         //google
-        gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build();
-        mGoogleSignInClient = GoogleSignIn.getClient(mainActivity, gso);
-        acct = GoogleSignIn.getLastSignedInAccount(mainActivity);
         if (acct != null) {
             getProfileUserGoogle();
         }
-
-
     }
 }

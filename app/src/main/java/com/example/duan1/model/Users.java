@@ -14,17 +14,27 @@ public class Users implements Serializable {
     private String sdt;
     private String image;
     private String password;
+    private String sex;
+    private String dateofbirth;
+    private String cccd;
+    private String address;
+
 
     public Users() {
     }
 
-    public Users(int id, String name, String email, String sdt, String image, String password) {
+
+    public Users(int id, String name, String email, String sdt, String image, String password, String sex, String dateofbirth, String cccd, String address) {
         this.id = id;
         this.name = name;
         this.email = email;
         this.sdt = sdt;
         this.image = image;
         this.password = password;
+        this.sex = sex;
+        this.dateofbirth = dateofbirth;
+        this.cccd = cccd;
+        this.address = address;
     }
 
     public int getId() {
@@ -75,29 +85,50 @@ public class Users implements Serializable {
         this.password = password;
     }
 
-    @Exclude
-    public Map<String, Object> toMap() {
-        HashMap<String, Object> result = new HashMap<>();
-        result.put("id", id);
-        result.put("name", name);
-        result.put("email", email);
-        result.put("sdt", sdt);
-        result.put("image", image);
-        result.put("password", password);
-
-        return result;
+    public String getSex() {
+        return sex;
     }
 
-    @Exclude
-    public Map<String, Object> toMapImage() {
-        HashMap<String, Object> result = new HashMap<>();
-        result.put("id", id);
-        result.put("name", name);
-        result.put("email", email);
-        result.put("sdt", sdt);
-        result.put("image", image);
-        result.put("password", password);
-
-        return result;
+    public void setSex(String sex) {
+        this.sex = sex;
     }
+
+    public String getDateofbirth() {
+        return dateofbirth;
+    }
+
+    public void setDateofbirth(String dateofbirth) {
+        this.dateofbirth = dateofbirth;
+    }
+
+    public String getCccd() {
+        return cccd;
+    }
+
+    public void setCccd(String cccd) {
+        this.cccd = cccd;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    //    @Exclude
+//    public Map<String, Object> toMap() {
+//        HashMap<String, Object> result = new HashMap<>();
+//        result.put("id", id);
+//        result.put("name", name);
+//        result.put("email", email);
+//        result.put("sdt", sdt);
+//        result.put("image", image);
+//        result.put("password", password);
+//
+//        return result;
+//    }
+
+
 }

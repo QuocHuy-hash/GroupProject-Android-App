@@ -3,8 +3,10 @@ package com.example.duan1;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -13,6 +15,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.duan1.model.Users;
+import com.facebook.AccessToken;
+import com.facebook.GraphRequest;
+import com.facebook.GraphResponse;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -22,6 +31,9 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,27 +42,50 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class Account extends AppCompatActivity {
 
-    private TextView tvUsernameTitle, tvUsernameContent, tvFollowers, tvWatching, tvEditAccount
+    private TextView tvUsernameContent, tvFollowers, tvWatching, tvEditAccount
             , tvJudge, tvParticipationDate, tvLocation, tvFeedbackMessage, tvBelieve;
     private ImageView imgShare;
     private CircleImageView imgAvatar;
     private Button btnPost, btnJobApplication;
     private ImageButton btnBack;
+    private ProgressDialog progressDialog;
+    private GoogleSignInClient mGoogleSignInClient;
+    private GoogleSignInOptions gso;
+    GoogleSignInAccount acct;
+    private FirebaseAuth mAuth;
+    private FirebaseUser currentUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_account);
         initUi();
+        AccessToken accessToken = AccessToken.getCurrentAccessToken();
+        boolean isLoggedIn = accessToken != null && !accessToken.isExpired();
+        gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build();
+        mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
+        acct = GoogleSignIn.getLastSignedInAccount(this);
 
-        initClickListener();
+            if (currentUser != null){
+                getProfileUser();
+            }else if (isLoggedIn){
+                getProfileUserFB();
+            }else if (acct != null){
+                getProfileUserGoogle();
+            }
 
-        getProfileUser();
+            //code click listener
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    initClickListener();
+                }
+            },500);
+
     }
 
     //Ánh xạ
     private void initUi() {
-        tvUsernameTitle = findViewById(R.id.username_activity_account);
         tvUsernameContent = findViewById(R.id.username_content_activity_account);
         tvFollowers = findViewById(R.id.tv_followers_activity_account);
         tvWatching = findViewById(R.id.tv_watching_activity_account);
@@ -65,6 +100,10 @@ public class Account extends AppCompatActivity {
         btnPost = findViewById(R.id.btn_post_news);
         btnJobApplication = findViewById(R.id.btn_job_application);
         btnBack = findViewById(R.id.btn_back_activity_account);
+
+        progressDialog = new ProgressDialog(this);
+        mAuth = FirebaseAuth.getInstance();
+        currentUser = mAuth.getCurrentUser();
     }
 
     //sự kiện click
@@ -72,8 +111,14 @@ public class Account extends AppCompatActivity {
         tvEditAccount.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(Account.this, EditAccount.class);
-                startActivity(intent);
+                if (currentUser != null){
+                    Intent intent = new Intent(Account.this, EditAccount.class);
+                    intent.putExtra("email", currentUser.getEmail());
+                    startActivity(intent);
+                }else{
+                    Toast.makeText(Account.this, "Đăng nhập bằng tài khoản chợ tốt để chỉnh sửa thông tin!", Toast.LENGTH_SHORT).show();
+                }
+
             }
         });
 
@@ -84,7 +129,6 @@ public class Account extends AppCompatActivity {
             }
         });
     }
-
 
     private void getProfileUser() {
         FirebaseAuth auth = FirebaseAuth.getInstance();
@@ -103,13 +147,7 @@ public class Account extends AppCompatActivity {
                 }
                 for (int i = 0; i < mListUser.size(); i++){
                     if (mListUser.get(i).getEmail().equals(email)){
-                        if (mListUser.get(i).getName().length() > 30){
-                            tvUsernameTitle.setText(checkname(mListUser.get(i).getName()));
-                            tvUsernameContent.setText(checkname(mListUser.get(i).getName()));
-                        }else{
-                            tvUsernameTitle.setText(mListUser.get(i).getName());
-                            tvUsernameContent.setText(mListUser.get(i).getName());
-                        }
+                        tvUsernameContent.setText(checkname(mListUser.get(i).getName()));
                         String strImage = mListUser.get(i).getImage().trim();
                         if (strImage.isEmpty()){
                             return;
@@ -133,22 +171,59 @@ public class Account extends AppCompatActivity {
 
     }
 
-
     private String checkname(String s){
-
-        if (s.isEmpty()){
-            return null;
-        }
         String name = "";
         if (s.length() > 20){
             for (String s1: s.split("")){
                 name+=s1;
-                if (name.length() == 30){
+                if (name.length() == 20){
                     break;
                 }
-            };
+            }
+            return name+"...";
         }
 
-        return name+"...";
+       return s;
+    }
+
+    private void getProfileUserFB() {
+        AccessToken accessToken = AccessToken.getCurrentAccessToken();
+        GraphRequest request = GraphRequest.newMeRequest(
+                accessToken,
+                new GraphRequest.GraphJSONObjectCallback() {
+                    @Override
+                    public void onCompleted(JSONObject object, GraphResponse response) {
+                        try {
+                            String fullName = object.getString("name");
+                            String image = object.getJSONObject("picture").getJSONObject("data").getString("url");
+                            tvUsernameContent.setText(checkname(fullName));
+                            Picasso.with(Account.this)
+                                    .load(image)
+                                    .placeholder(R.drawable.user_icon)
+                                    .error(R.drawable.user_icon)
+                                    .into(imgAvatar);
+                        } catch (JSONException e) {
+                            Toast.makeText(Account.this, "Lỗi tải dữ liệu tk fb: "+e, Toast.LENGTH_SHORT).show();
+                        }
+
+                    }
+                });
+
+        Bundle parameters = new Bundle();
+        parameters.putString("fields", "id,name,link,picture.type(large)");
+        request.setParameters(parameters);
+        request.executeAsync();
+    }
+
+    private void getProfileUserGoogle() {
+        String personName = acct.getDisplayName();
+        String personPhoto = String.valueOf(acct.getPhotoUrl());
+        tvUsernameContent.setText(checkname(personName));
+        Picasso.with(this)
+                .load(personPhoto)
+                .placeholder(R.drawable.user_icon)
+                .error(R.drawable.user_icon)
+                .into(imgAvatar);
+
     }
 }
