@@ -25,7 +25,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginEnd="35dp"
-            android:layout_toRightOf="@+id/icon_back"
+            android:layout_toRightOf="@+id/icon_backTT"
             android:gravity="center"
             android:text="Đăng tin"
             android:textColor="#0B0B0B"

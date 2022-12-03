@@ -1,10 +1,6 @@
 package com.example.duan1.model;
 
-import com.google.firebase.database.Exclude;
-
 import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Map;
 
 public class Users implements Serializable {
 
@@ -117,18 +113,6 @@ public class Users implements Serializable {
         this.address = address;
     }
 
-    //    @Exclude
-//    public Map<String, Object> toMap() {
-//        HashMap<String, Object> result = new HashMap<>();
-//        result.put("id", id);
-//        result.put("name", name);
-//        result.put("email", email);
-//        result.put("sdt", sdt);
-//        result.put("image", image);
-//        result.put("password", password);
-//
-//        return result;
-//    }
 
 
 }

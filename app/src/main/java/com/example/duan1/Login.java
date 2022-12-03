@@ -80,7 +80,7 @@ public class Login extends AppCompatActivity {
                     public void onSuccess(LoginResult loginResult) {
                         Toast.makeText(Login.this, "Đăng nhập thành công!", Toast.LENGTH_SHORT).show();
                         Intent intent = new Intent(Login.this, MainActivity.class);
-                        setResult(RESULT_OK,intent );
+                        setResult(RESULT_OK, intent);
                         finish();
                     }
 
@@ -106,7 +106,6 @@ public class Login extends AppCompatActivity {
 
 
     }
-
 
 
     private void initUi() {
@@ -181,7 +180,6 @@ public class Login extends AppCompatActivity {
         });
 
 
-
     }
 
     private void initListenerTextChange() {
@@ -198,10 +196,10 @@ public class Login extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable editable) {
-                if (edtNumberPhone.getText().toString().trim().equals("") || edtPassword.getText().toString().trim().equals("")){
+                if (edtNumberPhone.getText().toString().trim().equals("") || edtPassword.getText().toString().trim().equals("")) {
                     btnLogin.setBackgroundResource(R.drawable.bg_button_login);
                     return;
-                }else{
+                } else {
                     btnLogin.setBackgroundResource(R.drawable.bg_button_register);
                     OnLogin();
                 }
@@ -221,10 +219,10 @@ public class Login extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable editable) {
-                if (edtNumberPhone.getText().toString().trim().equals("") || edtPassword.getText().toString().trim().equals("")){
+                if (edtNumberPhone.getText().toString().trim().equals("") || edtPassword.getText().toString().trim().equals("")) {
                     btnLogin.setBackgroundResource(R.drawable.bg_button_login);
                     return;
-                }else{
+                } else {
                     btnLogin.setBackgroundResource(R.drawable.bg_button_register);
                     OnLogin();
                 }
@@ -236,7 +234,7 @@ public class Login extends AppCompatActivity {
         return (!TextUtils.isEmpty(target) && Patterns.EMAIL_ADDRESS.matcher(target).matches());
     }
 
-    private void OnLogin(){
+    private void OnLogin() {
 
         //click login
         btnLogin.setOnClickListener(new View.OnClickListener() {
@@ -245,12 +243,12 @@ public class Login extends AppCompatActivity {
                 //code login
                 ProgressDialog progressDialog = new ProgressDialog(Login.this);
                 String email = edtNumberPhone.getText().toString().trim();
-                if (!isValidEmail(email)){
+                if (!isValidEmail(email)) {
                     edtNumberPhone.setError("Email không đúng!");
                     return;
                 }
                 String password = edtPassword.getText().toString().trim();
-                if (password.length() < 6 ){
+                if (password.length() < 6) {
                     edtPassword.setError("Mật khẩu phải bằng hoặc trên 6 kí tự");
                     return;
                 }
@@ -273,12 +271,12 @@ public class Login extends AppCompatActivity {
                                             List<Users> mListUser = new ArrayList<>();
                                             FirebaseDatabase database = FirebaseDatabase.getInstance();
                                             DatabaseReference myRef = database.getReference("Users");
-                    
+
                                             myRef.addValueEventListener(new ValueEventListener() {
                                                 @Override
                                                 public void onDataChange(@NonNull DataSnapshot snapshot) {
                                                     mListUser.clear();
-                                                    for (DataSnapshot snapshot1 : snapshot.getChildren()){
+                                                    for (DataSnapshot snapshot1 : snapshot.getChildren()) {
                                                         Users user = snapshot1.getValue(Users.class);
                                                         mListUser.add(user);
 
@@ -295,12 +293,14 @@ public class Login extends AppCompatActivity {
                                             handler.postDelayed(new Runnable() {
                                                 @Override
                                                 public void run() {
-                                                    for (int i = 0; i < mListUser.size(); i++){
-                                                        if (mListUser.get(i).getEmail().equals(email) && mListUser.get(i).getPassword().equals(password)){
+                                                    for (int i = 0; i < mListUser.size(); i++) {
+                                                        if (mListUser.get(i).getEmail().equals(email) && mListUser.get(i).getPassword().equals(password)) {
                                                             Toast.makeText(Login.this, "Đăng nhập thành công!", Toast.LENGTH_SHORT).show();
                                                             Intent intent = new Intent(Login.this, MainActivity.class);
-                                                            setResult(RESULT_OK,intent );
-                                                            finish();
+                                                            intent.putExtra("statusLogin", 1);
+                                                            setResult(RESULT_OK, intent);
+                                                            startActivity(intent);
+//                                                            finish();
 
                                                         }
                                                     }
@@ -314,7 +314,7 @@ public class Login extends AppCompatActivity {
                                         }
                                         progressDialog.dismiss();
                                     }
-                                },2000);
+                                }, 2000);
                             }
                         });
             }
@@ -341,8 +341,10 @@ public class Login extends AppCompatActivity {
                 task.getResult(ApiException.class);
                 Toast.makeText(Login.this, "Đăng nhập thành công!", Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(Login.this, MainActivity.class);
-                setResult(RESULT_OK,intent);
-                finish();
+                setResult(RESULT_OK, intent);
+                intent.putExtra("statusLogin", 1);
+                startActivity(intent);
+//                finish();
             } catch (ApiException e) {
                 Toast.makeText(this, "signInResult:failed code=" + e.getStatusCode(), Toast.LENGTH_SHORT).show();
             }
@@ -353,7 +355,7 @@ public class Login extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
-        if (account != null){
+        if (account != null) {
             finish();
         }
 

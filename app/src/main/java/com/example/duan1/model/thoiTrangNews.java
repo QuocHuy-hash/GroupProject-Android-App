@@ -10,20 +10,40 @@ public class thoiTrangNews {
     private String titlePost;
     private String descriptionPost;
     private String typeproduct;
-
     private double price;
     private String address;
+    private int idUser;
+    private String nameUser;
 
     public thoiTrangNews() {
     }
 
-    public thoiTrangNews(int id, String titlePost, String descriptionPost, String typeproduct, double price, String address) {
+    public thoiTrangNews(int id, String titlePost, String descriptionPost, String typeproduct
+            , double price, String address, int idUser, String nameUser) {
         this.id = id;
         this.titlePost = titlePost;
         this.descriptionPost = descriptionPost;
         this.typeproduct = typeproduct;
         this.price = price;
         this.address = address;
+        this.idUser = idUser;
+        this.nameUser = nameUser;
+    }
+
+    public int getIdUser() {
+        return idUser;
+    }
+
+    public void setIdUser(int idUser) {
+        this.idUser = idUser;
+    }
+
+    public String getNameUser() {
+        return nameUser;
+    }
+
+    public void setNameUser(String nameUser) {
+        this.nameUser = nameUser;
     }
 
     public int getId() {

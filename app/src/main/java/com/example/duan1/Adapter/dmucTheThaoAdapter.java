@@ -41,6 +41,7 @@ public class dmucTheThaoAdapter extends RecyclerView.Adapter<dmucTheThaoAdapter.
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         giaiTri mGiaiTri = listGiaiTri.get(position);
 
+
         holder.tenDanhMuc.setText(mGiaiTri.getTen());
         holder.layout_item.setOnClickListener(new View.OnClickListener() {
             @Override
