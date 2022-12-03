@@ -41,6 +41,7 @@ import com.google.firebase.storage.UploadTask;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class dangTinBDSActivity extends AppCompatActivity implements com.example.duan1.Adapter.photoAdapter.CountOfImageWhenRemove {
     private Spinner spn_Direction;
@@ -52,16 +53,18 @@ public class dangTinBDSActivity extends AppCompatActivity implements com.example
     private Button btnDangTin;
 
     private String strTitlePost, strDescription, strTenKhu, strAddress, strLoaiHinhDat
-            ,strSoPhongNgu ,strSoPhongWc , strPrice , strDienTich;
+            ,strSoPhongNgu ,strSoPhongWc , strPrice , strDienTich ,nameUser ,tenDanhMuc ;
     private double  dbPrice;
-    private int maxID = 0;
+    private int maxID;
 
     private com.example.duan1.Adapter.photoAdapter photoAdapter;
     private RecyclerView rcvView_select_img_BDS;
     private ArrayList<Uri> imageUri;
     private int REQUEST_PERMISSION_CODE = 35;
     private int PICK_IMAGE = 1;
-    private int update_count = 0;
+    private int update_count = 0 , idUser;
+    private List<BDSNews> listBDS;
+    private MainActivity mainActivity;
 
     private ProgressDialog progressDialog;
     DatabaseReference myData;
@@ -72,11 +75,14 @@ public class dangTinBDSActivity extends AppCompatActivity implements com.example
         setContentView(R.layout.activity_dang_tin_bdsactivity);
 
         imageFolder = FirebaseStorage.getInstance().getReference().child("Image.jpg");
-        myData = FirebaseDatabase.getInstance().getReference("Tin");
+        myData = FirebaseDatabase.getInstance().getReference("Tin").child("BDS");
         imageUri = new ArrayList<>();
 
+        nameUser = mainActivity.name;
+        idUser = mainActivity.id;
         initUi();
         eventClickSpinner();
+        getListBds();
         clickBackPage();
         clickAddImageFashion();
         clickDangTin();
@@ -127,8 +133,7 @@ public class dangTinBDSActivity extends AppCompatActivity implements com.example
         });
     }
     private void clickDangTin() {
-        Intent intent = getIntent();
-        String tenDanhMuc = intent.getStringExtra("tenDanhMuc");
+
 
         btnDangTin.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -178,10 +183,12 @@ public class dangTinBDSActivity extends AppCompatActivity implements com.example
                             }
                         });
                     }
+                    maxID = listBDS.size();
                     String strId = String.valueOf(maxID);
                     myData.child(tenDanhMuc).child(strId ).setValue(
                             new BDSNews(maxID ,strTitlePost , strDescription , dbPrice
-                                    ,strDienTich ,strAddress ,strTenKhu ,strLoaiHinhDat , strSoPhongNgu,strSoPhongWc))
+                                    ,strDienTich ,strAddress ,strTenKhu ,strLoaiHinhDat ,
+                                    strSoPhongNgu,strSoPhongWc ,idUser,nameUser))
                             .addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
                                 public void onSuccess(Void unused) {
@@ -204,6 +211,29 @@ public class dangTinBDSActivity extends AppCompatActivity implements com.example
 
     }
 
+    private List<BDSNews> getListBds() {
+        listBDS = new ArrayList<>();
+        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+        DatabaseReference databaseReference = firebaseDatabase.getReference("Tin").child("BDS");
+        databaseReference.child(tenDanhMuc).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                listBDS.clear();
+                for (DataSnapshot snapshot1 : snapshot.getChildren() ){
+                    BDSNews bdsNews = snapshot1.getValue(BDSNews.class);
+                    listBDS.add(bdsNews);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Toast.makeText(dangTinBDSActivity.this, "Load data Error", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        return listBDS;
+
+    }
     private void initUi() {
         spn_Direction = findViewById(R.id.spn_Direction);
         tvTenDanhMuc = findViewById(R.id.tvTenDanhMuc);
@@ -223,6 +253,8 @@ public class dangTinBDSActivity extends AppCompatActivity implements com.example
         btnDangTin = findViewById(R.id.dangTinBDS);
 
         rcvView_select_img_BDS = findViewById(R.id.rcvView_select_img_BDS);
+        Intent intent1 = getIntent();
+         tenDanhMuc = intent1.getStringExtra("tenDanhMuc");
 
     }
 

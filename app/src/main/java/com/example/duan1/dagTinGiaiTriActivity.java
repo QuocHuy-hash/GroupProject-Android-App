@@ -43,6 +43,7 @@ import com.google.firebase.storage.UploadTask;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class dagTinGiaiTriActivity extends AppCompatActivity implements com.example.duan1.Adapter.photoAdapter.CountOfImageWhenRemove {
     private TextView tvTenDanhMuc;
@@ -51,16 +52,20 @@ public class dagTinGiaiTriActivity extends AppCompatActivity implements com.exam
     private LinearLayout layout_spnTypeProduct, addImageProduct;
     private EditText edtTitlePost, edtDescription, edtPrice, edtAddress ;
     private Button btnDangTin;
+    chonDanhMucThoiTrangAcrivity chonDanhMucThoiTrangAcrivity;
 
-    private String strTitlePost , strDescription , strPrice , strAddress ,strLoaiSanPham ;
+    private String strTitlePost , strDescription , strPrice , strAddress ,strLoaiSanPham , nameUser ,tenDanhMuc;
     private double dbPrice;
     private com.example.duan1.Adapter.photoAdapter photoAdapter;
     private RecyclerView rcvView_select_img_GiaiTri;
     private ArrayList<Uri> imageUri;
     private int REQUEST_PERMISSION_CODE = 35;
     private int PICK_IMAGE = 1;
-    private int update_count = 0 , maxID = 0;
+    private int update_count = 0 , maxID  , idUser;
     private ProgressDialog progressDialog;
+    private List<giaiTriNews> listGiaiTri;
+    MainActivity mainActivity;
+    private
     DatabaseReference myData;
     StorageReference imageFolder;
     @Override
@@ -71,12 +76,15 @@ public class dagTinGiaiTriActivity extends AppCompatActivity implements com.exam
         imageFolder = FirebaseStorage.getInstance().getReference().child("Image.jpg");
         myData = FirebaseDatabase.getInstance().getReference("Tin");
         imageUri = new ArrayList<>();
+        getListGiaiTri();
+        idUser = mainActivity.id;
+        nameUser = mainActivity.name;
 
         initUi();
         clickBackPage();
         eventClickSPN();
         clickAddImageFashion();
-        getId();
+
         clickDangTin();
 
     }
@@ -170,9 +178,6 @@ public class dagTinGiaiTriActivity extends AppCompatActivity implements com.exam
 
 
     private void clickDangTin() {
-        Intent intent = getIntent();
-        String tenDanhMuc = intent.getStringExtra("tenDanhMuc");
-
 
         btnDangTin.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -218,10 +223,10 @@ public class dagTinGiaiTriActivity extends AppCompatActivity implements com.exam
                             }
                         });
                     }
-                    int size = imageUri.size() + 1;
+                    maxID = listGiaiTri.size();
                     String strId = String.valueOf(maxID);
                     myData.child(tenDanhMuc).child(strId ).setValue(new giaiTriNews(maxID ,strTitlePost , strDescription ,strAddress, dbPrice
-                                      ,strLoaiSanPham ))
+                                      ,strLoaiSanPham ,idUser ,nameUser))
                             .addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
                                 public void onSuccess(Void unused) {
@@ -235,20 +240,30 @@ public class dagTinGiaiTriActivity extends AppCompatActivity implements com.exam
         });
 
     }
-    public void getId() {
-        myData.addValueEventListener(new ValueEventListener() {
+
+
+    private List<giaiTriNews> getListGiaiTri() {
+        listGiaiTri = new ArrayList<>();
+        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+        DatabaseReference databaseReference = firebaseDatabase.getReference("Tin").child("BDS");
+        databaseReference.child(tenDanhMuc).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if(snapshot.exists()){
-                    maxID = (int) snapshot.getChildrenCount();
+                listGiaiTri.clear();
+                for (DataSnapshot snapshot1 : snapshot.getChildren() ){
+                    giaiTriNews giaiTriNews = snapshot1.getValue(giaiTriNews.class);
+                    listGiaiTri.add(giaiTriNews);
                 }
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-
+                Toast.makeText(dagTinGiaiTriActivity.this, "Load data Error", Toast.LENGTH_SHORT).show();
             }
         });
+
+        return listGiaiTri;
+
     }
 
     private void StoreLick(String url) {
@@ -276,6 +291,9 @@ public class dagTinGiaiTriActivity extends AppCompatActivity implements com.exam
         addImageProduct = findViewById(R.id.addImageProduct);
 
         rcvView_select_img_GiaiTri = findViewById(R.id.rcvView_select_img_GiaiTri);
+
+        Intent intent1 = getIntent();
+       tenDanhMuc = intent1.getStringExtra("tenDanhMuc");
 
     }
 

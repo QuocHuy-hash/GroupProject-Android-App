@@ -43,18 +43,19 @@ import com.google.firebase.storage.UploadTask;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class dangTinBDSDatActivity extends AppCompatActivity implements com.example.duan1.Adapter.photoAdapter.CountOfImageWhenRemove {
-private TextView tvTenDanhMuc;
-private ImageView imgBackPage;
+    private TextView tvTenDanhMuc;
+    private ImageView imgBackPage;
 
-    private EditText edtTitlePost, edtDescription , edtTenPhanKhu ,edtLoaiHinhDat,edtAddress ,edtDienTich,edtPrice;
+    private EditText edtTitlePost, edtDescription, edtTenPhanKhu, edtLoaiHinhDat, edtAddress, edtDienTich, edtPrice;
     private LinearLayout addImageProduct;
     private Button btnDangTin;
     private Spinner spn_Direction;
-    private String strTitlePost, strDescription, strTenPhanKhu, strAddress, strLoaiHinhDat ,strDienTich , strPrice , strDirection;
-    private double  dbPrice;
-
+    private String strTitlePost, strDescription, strTenPhanKhu, strAddress, strLoaiHinhDat, strDienTich, strPrice, strDirection, nameUser, tenDanhMuc;
+    private double dbPrice;
+    private chonDanhMucThoiTrangAcrivity chonDanhMucThoiTrangAcrivity;
 
 
     private com.example.duan1.Adapter.photoAdapter photoAdapter;
@@ -62,22 +63,29 @@ private ImageView imgBackPage;
     private ArrayList<Uri> imageUri;
     private int REQUEST_PERMISSION_CODE = 35;
     private int PICK_IMAGE = 1;
-    private int update_count = 0 , maxID = 0;
+    private int update_count = 0, maxID, idUser;
     private ProgressDialog progressDialog;
     DatabaseReference myData;
     StorageReference imageFolder;
+    private List<BDSNews> listBDS;
+    MainActivity mainActivity;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dang_tin_bdsdat);
 
         imageFolder = FirebaseStorage.getInstance().getReference().child("Image.jpg");
-        myData = FirebaseDatabase.getInstance().getReference("Tin");
+        myData = FirebaseDatabase.getInstance().getReference("Tin").child("BDS");
         imageUri = new ArrayList<>();
 
+
+        nameUser = mainActivity.name;
+        idUser = mainActivity.id;
         initUi();
         clickBackPage();
         eventClickSpinner();
+        getListBds();
         clickAddImageFashion();
         clickDangTin();
     }
@@ -90,9 +98,10 @@ private ImageView imgBackPage;
             }
         });
     }
+
     private void eventClickSpinner() {
         direction[] directions = dangTinBDSActivity.EmployeeDataUtils.getEmployees();
-        ArrayAdapter<direction> adapter = new ArrayAdapter<direction>(this , android.R.layout.simple_spinner_item, directions);
+        ArrayAdapter<direction> adapter = new ArrayAdapter<direction>(this, android.R.layout.simple_spinner_item, directions);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spn_Direction.setAdapter(adapter);
 
@@ -108,15 +117,16 @@ private ImageView imgBackPage;
             }
         });
     }
+
     private void clickAddImageFashion() {
-        photoAdapter = new photoAdapter( imageUri , this , this);
-        rcvView_select_img_Dat.setLayoutManager(new GridLayoutManager(dangTinBDSDatActivity.this , 6));
+        photoAdapter = new photoAdapter(imageUri, this, this);
+        rcvView_select_img_Dat.setLayoutManager(new GridLayoutManager(dangTinBDSDatActivity.this, 6));
         rcvView_select_img_Dat.setAdapter(photoAdapter);
 
-        if(ContextCompat.checkSelfPermission(this , Manifest.permission.READ_EXTERNAL_STORAGE)
-                != PackageManager.PERMISSION_GRANTED){
-            ActivityCompat.requestPermissions(this , new String[]{Manifest.permission.READ_EXTERNAL_STORAGE} ,
-                    REQUEST_PERMISSION_CODE );
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+                    REQUEST_PERMISSION_CODE);
             return;
         }
 
@@ -125,10 +135,10 @@ private ImageView imgBackPage;
             public void onClick(View view) {
                 Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
                 intent.setType("image/*");
-                if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-                    intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE , true);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+                    intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
                 }
-                startActivityForResult(Intent.createChooser(intent , "select Picture") , PICK_IMAGE);
+                startActivityForResult(Intent.createChooser(intent, "select Picture"), PICK_IMAGE);
             }
         });
     }
@@ -136,56 +146,39 @@ private ImageView imgBackPage;
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode == PICK_IMAGE && resultCode == RESULT_OK && data != null) {
-            if(data.getClipData() != null) {
+        if (requestCode == PICK_IMAGE && resultCode == RESULT_OK && data != null) {
+            if (data.getClipData() != null) {
                 int count = data.getClipData().getItemCount();
 
-                for(int i = 0 ; i < count ; i++ ) {
-                    if(imageUri.size() < 9) {
+                for (int i = 0; i < count; i++) {
+                    if (imageUri.size() < 9) {
                         Uri imgUri = (data.getClipData().getItemAt(i).getUri());
                         imageUri.add(imgUri);
-                    }else {
+                    } else {
 
                         Toast.makeText(this, "Chỉ đăng tối đa 9 hình ảnh", Toast.LENGTH_SHORT).show();
                     }
 
                 }
                 photoAdapter.notifyDataSetChanged();
-            }else {
-                if(imageUri.size() < 9) {
+            } else {
+                if (imageUri.size() < 9) {
                     Uri imgUri = data.getData();
                     imageUri.add(imgUri);
-                }else {
+                } else {
                     Toast.makeText(this, "Chỉ đăng tối đa 9 hình ảnh", Toast.LENGTH_SHORT).show();
                 }
 
 
             }
             photoAdapter.notifyDataSetChanged();
-        }else {
+        } else {
             Toast.makeText(this, "you haven't pick any Image", Toast.LENGTH_SHORT).show();
         }
     }
 
-    public void getId() {
-        myData.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if(snapshot.exists()){
-                    maxID = (int) snapshot.getChildrenCount();
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
-    }
 
     private void clickDangTin() {
-        Intent intent = getIntent();
-        String tenDanhMuc = intent.getStringExtra("tenDanhMuc");
 
 
         btnDangTin.setOnClickListener(new View.OnClickListener() {
@@ -193,7 +186,6 @@ private ImageView imgBackPage;
             public void onClick(View view) {
                 progressDialog = new ProgressDialog(dangTinBDSDatActivity.this);
                 progressDialog.setMessage("Please wait for save");
-                getId();
 
                 strTitlePost = edtTitlePost.getText().toString().trim();
                 strDescription = edtDescription.getText().toString();
@@ -205,7 +197,7 @@ private ImageView imgBackPage;
                 try {
                     dbPrice = Double.parseDouble(strPrice);
 
-                } catch(Exception e) {
+                } catch (Exception e) {
                     System.err.println("Lỗi Parse kiểu dữ liệu");
                 }
 
@@ -213,7 +205,7 @@ private ImageView imgBackPage;
 
 
                 if (strTitlePost.isEmpty() || strDescription.isEmpty() || strPrice.isEmpty()
-                        || strAddress.isEmpty() ||  strTenPhanKhu.isEmpty()|| strLoaiHinhDat.isEmpty()) {
+                        || strAddress.isEmpty() || strTenPhanKhu.isEmpty() || strLoaiHinhDat.isEmpty()) {
                     MainActivity.showDiaLogWarning(dangTinBDSDatActivity.this, "vui lòng nhập đầy đủ thông tin");
 
                 } else {
@@ -235,10 +227,10 @@ private ImageView imgBackPage;
                             }
                         });
                     }
-
+                    maxID = listBDS.size();
                     String strId = String.valueOf(maxID);
-                    myData.child(tenDanhMuc).child(strId + 1).setValue(new BDSNews(maxID ,strTitlePost , strDescription , dbPrice
-                    ,strDienTich ,strAddress ,strTenPhanKhu ,strLoaiHinhDat ,strDirection))
+                    myData.child(tenDanhMuc).child(strId).setValue(new BDSNews(maxID, strTitlePost, strDescription, dbPrice
+                                    , strDienTich, strAddress, strTenPhanKhu, strLoaiHinhDat, strDirection, idUser, nameUser))
                             .addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
                                 public void onSuccess(Void unused) {
@@ -250,6 +242,31 @@ private ImageView imgBackPage;
                 }
             }
         });
+
+    }
+
+
+    private List<BDSNews> getListBds() {
+        listBDS = new ArrayList<>();
+        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+        DatabaseReference databaseReference = firebaseDatabase.getReference("Tin").child("BDS");
+        databaseReference.child(tenDanhMuc).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                listBDS.clear();
+                for (DataSnapshot snapshot1 : snapshot.getChildren()) {
+                    BDSNews bdsNews = snapshot1.getValue(BDSNews.class);
+                    listBDS.add(bdsNews);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Toast.makeText(dangTinBDSDatActivity.this, "Load data Error", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        return listBDS;
 
     }
 
@@ -277,6 +294,8 @@ private ImageView imgBackPage;
         edtPrice = findViewById(R.id.price);
         btnDangTin = findViewById(R.id.btnDangTin);
         rcvView_select_img_Dat = findViewById(R.id.rcvView_select_img_Dat);
+        Intent intent1 = getIntent();
+        tenDanhMuc = intent1.getStringExtra("tenDanhMuc");
 
     }
 
@@ -289,13 +308,13 @@ private ImageView imgBackPage;
         public static direction[] getEmployees() {
             direction drt1 = new direction("Nam");
             direction drt2 = new direction("Bắc");
-            direction drt3= new direction("Đông");
+            direction drt3 = new direction("Đông");
             direction drt4 = new direction("Tây");
             direction drt5 = new direction("Đông-Nam");
             direction drt6 = new direction("Tây-Băc");
             direction drt7 = new direction("Đông-Bắc");
             direction drt8 = new direction("Tây-Nam");
-            return new direction[] {drt1 ,drt2 ,drt3,drt4,drt5,drt6, drt7,drt8};
+            return new direction[]{drt1, drt2, drt3, drt4, drt5, drt6, drt7, drt8};
         }
     }
 }

@@ -12,34 +12,17 @@ public class BDSNews {
     private String direction;
     private String soPhongNgu;
     private String soPhongWc;
+    private int idUser;
+    private String nameUser;
 
     public BDSNews() {
     }
 
-    public BDSNews(int id, String title, String description, double price, String dienTich, String adress,
-                   String tenPhanKhu, String loaiDat, String soPhongNgu, String soPhongWc) {
-        this.id = id;
-        this.title = title;
-        this.description = description;
-        this.price = price;
-        this.dienTich = dienTich;
-        this.adress = adress;
-        this.tenPhanKhu = tenPhanKhu;
-        this.loaiDat = loaiDat;
-        this.soPhongNgu = soPhongNgu;
-        this.soPhongWc = soPhongWc;
+    public BDSNews(int maxID, String strTitlePost, String strDescription, double dbPrice, String strDienTich, String strAddress, String strTenKhu, String strLoaiHinhDat, String strSoPhongNgu, String strSoPhongWc, int idUser, String nameUser) {
     }
 
-    public BDSNews(int id, String title, String description, double price, String dienTich, String adress) {
-        this.id = id;
-        this.title = title;
-        this.description = description;
-        this.price = price;
-        this.dienTich = dienTich;
-        this.adress = adress;
-    }
-
-    public BDSNews(int id, String title, String description, double price, String dienTich, String adress, String tenPhanKhu, String loaiDat, String direction) {
+    public BDSNews(int id, String title, String description, double price, String dienTich, String adress, String tenPhanKhu, String loaiDat,
+                   String direction, String soPhongNgu, String soPhongWc, int idUser, String nameUser) {
         this.id = id;
         this.title = title;
         this.description = description;
@@ -49,6 +32,56 @@ public class BDSNews {
         this.tenPhanKhu = tenPhanKhu;
         this.loaiDat = loaiDat;
         this.direction = direction;
+        this.soPhongNgu = soPhongNgu;
+        this.soPhongWc = soPhongWc;
+        this.idUser = idUser;
+        this.nameUser = nameUser;
+    }
+
+    public BDSNews(int id, String title, String description, double price,
+                   String dienTich, String adress
+                  , int idUser, String nameUser
+    ) {
+        this.id = id;
+        this.title = title;
+        this.description = description;
+        this.price = price;
+        this.dienTich = dienTich;
+        this.adress = adress;
+        this.idUser = idUser;
+        this.nameUser = nameUser;
+    }
+
+    public BDSNews(int id, String title, String description, double price,
+                   String dienTich, String adress, String tenPhanKhu, String loaiDat, String direction
+            , int idUser, String nameUser ) {
+        this.id = id;
+        this.title = title;
+        this.description = description;
+        this.price = price;
+        this.dienTich = dienTich;
+        this.adress = adress;
+        this.tenPhanKhu = tenPhanKhu;
+        this.loaiDat = loaiDat;
+        this.direction = direction;
+        this.idUser = idUser;
+        this.nameUser = nameUser;
+    }
+
+    public int getIdUser() {
+        return idUser;
+    }
+
+    public void setIdUser(int idUser) {
+        this.idUser = idUser;
+    }
+
+    public String getNameUser() {
+        return nameUser;
+    }
+
+    public void setNameUser(String nameUser) {
+        this.nameUser = nameUser;
     }
 
     public String getSoPhongNgu() {
