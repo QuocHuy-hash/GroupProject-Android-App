@@ -53,8 +53,8 @@ public class MainActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private FirebaseDatabase database;
     private DatabaseReference myRef;
-    private String name ;
-    private int id;
+    public static String name ;
+    public static int id;
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -62,8 +62,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         initUi();
-//        onPostResume();
-
 
         mAuth = FirebaseAuth.getInstance();
         currentUser = mAuth.getCurrentUser();

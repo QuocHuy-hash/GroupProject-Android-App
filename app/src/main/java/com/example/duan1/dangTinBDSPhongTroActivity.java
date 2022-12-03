@@ -25,6 +25,7 @@ import android.widget.Toast;
 
 import com.example.duan1.Adapter.photoAdapter;
 import com.example.duan1.model.BDSNews;
+import com.example.duan1.model.thoiTrangNews;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -37,6 +38,7 @@ import com.google.firebase.storage.UploadTask;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class dangTinBDSPhongTroActivity extends AppCompatActivity implements com.example.duan1.Adapter.photoAdapter.CountOfImageWhenRemove {
     private TextView tvTenDanhMuc;
@@ -44,6 +46,7 @@ public class dangTinBDSPhongTroActivity extends AppCompatActivity implements com
     private EditText title_post, description, address, dienTich, price;
     private LinearLayout addImageProduct;
     private Button btnDangTin;
+    private chonDanhMucThoiTrangAcrivity chonDanhMucThoiTrangAcrivity;
 
 
     private com.example.duan1.Adapter.photoAdapter photoAdapter;
@@ -51,27 +54,36 @@ public class dangTinBDSPhongTroActivity extends AppCompatActivity implements com
     private ArrayList<Uri> imageUri;
     private int REQUEST_PERMISSION_CODE = 35;
     private int PICK_IMAGE = 1;
-    private int update_count = 0 , maxID =0;
+    private int update_count = 0, idUser;
+    private int maxID;
     private ProgressDialog progressDialog;
-    private String strTitle , strDesc , strAddress , strDienTich , strPrice;
-    private Double dbPrice , dbDienTich;
+    private String strTitle, strDesc, strAddress, strDienTich, strPrice, tenDanhMuc, nameUser;
+    private Double dbPrice;
+    private List<BDSNews> listBDS;
+    MainActivity mainActivity;
+
 
     StorageReference imageFolder;
     DatabaseReference myData;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dang_tin_bdsphong_tro);
-      imageFolder = FirebaseStorage.getInstance().getReference().child("Image.jpg");
-        myData = FirebaseDatabase.getInstance().getReference("Tin");
+        imageFolder = FirebaseStorage.getInstance().getReference().child("Image.jpg");
+        myData = FirebaseDatabase.getInstance().getReference("Tin").child("BDS");
         imageUri = new ArrayList<>();
 
+
+        nameUser = mainActivity.name;
+        idUser = mainActivity.id;
+        System.out.println("ID : " + idUser + " - name : " + nameUser);
         initUi();
         clickBackPage();
         clickAddImageFashion();
+        getListBds();
         clickDangTin();
     }
-
 
 
     private void clickBackPage() {
@@ -141,31 +153,14 @@ public class dangTinBDSPhongTroActivity extends AppCompatActivity implements com
         }
     }
 
-    public void getId() {
-        myData.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if(snapshot.exists()){
-                    maxID = (int) snapshot.getChildrenCount();
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
-    }
 
     private void clickDangTin() {
-        Intent intent = getIntent();
-        String tenDanhMuc = intent.getStringExtra("tenDanhMuc");
+
         btnDangTin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 progressDialog = new ProgressDialog(dangTinBDSPhongTroActivity.this);
                 progressDialog.setMessage("Please wait for save");
-                getId();
 
                 strTitle = title_post.getText().toString().trim();
                 strDesc = description.getText().toString().trim();
@@ -174,15 +169,15 @@ public class dangTinBDSPhongTroActivity extends AppCompatActivity implements com
                 strDienTich = dienTich.getText().toString().trim();
                 strAddress = address.getText().toString().trim();
                 try {
-                  dbPrice = Double.parseDouble(strPrice);
-                }catch (Exception e) {
+                    dbPrice = Double.parseDouble(strPrice);
+                } catch (Exception e) {
                     Toast.makeText(dangTinBDSPhongTroActivity.this, "Lỗi chuyển đổi kiểu dữ liệu", Toast.LENGTH_SHORT).show();
                 }
 
-                if(strAddress.isEmpty() || strPrice.isEmpty() || strDesc.isEmpty() || strTitle.isEmpty() || strDienTich.isEmpty()) {
+                if (strAddress.isEmpty() || strPrice.isEmpty() || strDesc.isEmpty() || strTitle.isEmpty() || strDienTich.isEmpty()) {
                     MainActivity.showDiaLogWarning(dangTinBDSPhongTroActivity.this, "vui lòng nhập đầy đủ thông tin");
 
-                }else {
+                } else {
                     progressDialog.show();
                     for (update_count = 0; update_count < imageUri.size(); update_count++) {
                         Uri indexImage = imageUri.get(update_count);
@@ -202,10 +197,13 @@ public class dangTinBDSPhongTroActivity extends AppCompatActivity implements com
                         });
                     }
 
+                    maxID = listBDS.size();
                     String strId = String.valueOf(maxID);
 
-                    myData.child(tenDanhMuc).child(strId ).setValue(
-                            new BDSNews(maxID , strTitle , strDesc ,dbPrice , strDienTich, strAddress)).addOnSuccessListener(new OnSuccessListener<Void>() {
+                    myData.child(tenDanhMuc).child(strId).setValue(
+                            new BDSNews(maxID, strTitle, strDesc, dbPrice, strDienTich, strAddress,
+                                    idUser, nameUser
+                            )).addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void unused) {
                             Toast.makeText(dangTinBDSPhongTroActivity.this, "Đăng tin thành công", Toast.LENGTH_SHORT).show();
@@ -224,6 +222,30 @@ public class dangTinBDSPhongTroActivity extends AppCompatActivity implements com
         databaseReference.push().setValue(hashMap);
     }
 
+    private List<BDSNews> getListBds() {
+        listBDS = new ArrayList<>();
+        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+        DatabaseReference databaseReference = firebaseDatabase.getReference("Tin").child("BDS");
+        databaseReference.child(tenDanhMuc).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                listBDS.clear();
+                for (DataSnapshot snapshot1 : snapshot.getChildren()) {
+                    BDSNews bdsNews = snapshot1.getValue(BDSNews.class);
+                    listBDS.add(bdsNews);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Toast.makeText(dangTinBDSPhongTroActivity.this, "Load data Error", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        return listBDS;
+
+    }
+
     private void initUi() {
         tvTenDanhMuc = findViewById(R.id.tvTenDanhMuc);
         Intent intent = getIntent();
@@ -237,7 +259,11 @@ public class dangTinBDSPhongTroActivity extends AppCompatActivity implements com
         dienTich = findViewById(R.id.dienTich);
         price = findViewById(R.id.price);
         rcvView_select_img_PhongTro = findViewById(R.id.rcvView_select_img_PhongTro);
+
+        Intent intent1 = getIntent();
+        tenDanhMuc = intent1.getStringExtra("tenDanhMuc");
     }
+
     @Override
     public void clicked(int getSize) {
 

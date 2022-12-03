@@ -42,6 +42,7 @@ import com.google.firebase.storage.UploadTask;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 
 public class dangTinThoiTrangActivity extends AppCompatActivity implements photoAdapter.CountOfImageWhenRemove {
@@ -53,9 +54,11 @@ public class dangTinThoiTrangActivity extends AppCompatActivity implements photo
     private com.example.duan1.Adapter.photoAdapter photoAdapter;
     private RecyclerView rcvView_select_img_fashion;
     StorageReference imageFolder;
-    private String strTitlePost, strDescription, strPrice, strLoaiSanPham, strAddress, nameUser;
+    private String strTitlePost, strDescription, strPrice, strLoaiSanPham, strAddress, nameUser
+            , tenDanhMuc;
     private int idUser;
     private double dbPrice;
+    private List<thoiTrangNews> listFashion;
     chonDanhMucThoiTrangAcrivity chonDanhMucThoiTrangAcrivity;
 
 
@@ -81,31 +84,16 @@ public class dangTinThoiTrangActivity extends AppCompatActivity implements photo
         clickBAckPage();
         eventClickSPN();
         clickAddImageFashion();
-
+        getListFashion();
         clickDangTin();
 
     }
 
 
-    public void getIdIncrement() {
-        myData.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if(snapshot.exists()){
-                    maxID = (int) snapshot.getChildrenCount();
-                }
-            }
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
-    }
 
     private void clickDangTin() {
-        Intent intent = getIntent();
-        String tenDanhMuc = intent.getStringExtra("tenDanhMuc");
+
 
 
         btnDangTin.setOnClickListener(new View.OnClickListener() {
@@ -115,7 +103,6 @@ public class dangTinThoiTrangActivity extends AppCompatActivity implements photo
 
                 progressDialog = new ProgressDialog(dangTinThoiTrangActivity.this);
                 progressDialog.setMessage("Please wait for save");
-                getIdIncrement();
                 strTitlePost = edtTitlePost.getText().toString().trim();
                 strDescription = edtDescription.getText().toString();
                 strPrice = edtPrice.getText().toString();
@@ -151,8 +138,8 @@ public class dangTinThoiTrangActivity extends AppCompatActivity implements photo
                             }
                         });
                     }
+                    maxID = listFashion.size();
                     String strId = String.valueOf(maxID);
-                    Toast.makeText(dangTinThoiTrangActivity.this, "Max ID : " + maxID , Toast.LENGTH_SHORT).show();
                     myData.child(tenDanhMuc).child(strId ).setValue(new thoiTrangNews(maxID ,
                                     strTitlePost,
                                     strDescription,
@@ -181,29 +168,30 @@ public class dangTinThoiTrangActivity extends AppCompatActivity implements photo
         databaseReference.push().setValue(hashMap);
 
     }
-//    private List<thoiTrangNews> getListFashion() {
-//        List<thoiTrangNews> listFashion = new ArrayList<>();
-//        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
-//        DatabaseReference databaseReference = firebaseDatabase.getReference("ThoiTrangNews");
-//        databaseReference.addValueEventListener(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(@NonNull DataSnapshot snapshot) {
-//                listFashion.clear();
-//                for (DataSnapshot snapshot1 : snapshot.getChildren() ){
-//                    thoiTrangNews thoiTrangNews = snapshot1.getValue(thoiTrangNews.class);
-//                    listFashion.add(thoiTrangNews);
-//                }
-//            }
-//
-//            @Override
-//            public void onCancelled(@NonNull DatabaseError error) {
-//                Toast.makeText(dangTinThoiTrangActivity.this, "Load data Error", Toast.LENGTH_SHORT).show();
-//            }
-//        });
-//
-//        return listFashion;
-//
-//    }
+
+    private List<thoiTrangNews> getListFashion() {
+         listFashion = new ArrayList<>();
+        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+        DatabaseReference databaseReference = firebaseDatabase.getReference("Tin").child("ThoiTrang");
+        databaseReference.child(tenDanhMuc).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                listFashion.clear();
+                for (DataSnapshot snapshot1 : snapshot.getChildren() ){
+                    thoiTrangNews thoiTrangNews = snapshot1.getValue(thoiTrangNews.class);
+                    listFashion.add(thoiTrangNews);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Toast.makeText(dangTinThoiTrangActivity.this, "Load data Error", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        return listFashion;
+
+    }
 
     /*
      * @Override
@@ -316,6 +304,8 @@ public class dangTinThoiTrangActivity extends AppCompatActivity implements photo
 
 
         imageUri = new ArrayList<>();
+        Intent intent1 = getIntent();
+        tenDanhMuc = intent1.getStringExtra("tenDanhMuc");
     }
 
     @Override

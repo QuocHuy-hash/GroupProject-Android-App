@@ -3,21 +3,43 @@ package com.example.duan1.model;
 public class giaiTriNews {
     private int id;
     private String title;
-    private  String description;
+    private String description;
     private String address;
-    private  double price;
+    private double price;
     private String typeProduct;
+    private int idUser;
+    private String nameUser;
+
 
     public giaiTriNews() {
     }
 
-    public giaiTriNews(int id, String title, String description, String address, double price, String typeProduct) {
+    public giaiTriNews(int id, String title, String description, String address, double price,
+                       String typeProduct, int idUser, String nameUser) {
         this.id = id;
         this.title = title;
         this.description = description;
         this.address = address;
         this.price = price;
         this.typeProduct = typeProduct;
+        this.idUser = idUser;
+        this.nameUser = nameUser;
+    }
+
+    public int getIdUser() {
+        return idUser;
+    }
+
+    public void setIdUser(int idUser) {
+        this.idUser = idUser;
+    }
+
+    public String getNameUser() {
+        return nameUser;
+    }
+
+    public void setNameUser(String nameUser) {
+        this.nameUser = nameUser;
     }
 
     public int getId() {
