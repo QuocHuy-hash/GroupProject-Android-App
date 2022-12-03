@@ -35,7 +35,8 @@ public class NewsTrangChuAdapter extends RecyclerView.Adapter<NewsTrangChuAdapte
     @NonNull
     @Override
     public NewsTrangChuAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_trangchu_news,parent,false);
+        View view = LayoutInflater.from(
+                parent.getContext()).inflate(R.layout.item_trangchu_news,parent,false);
 
         return new ViewHolder(view);
     }
