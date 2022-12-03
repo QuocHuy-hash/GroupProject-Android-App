@@ -22,6 +22,7 @@ import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.duan1.model.Users;
@@ -63,10 +64,10 @@ public class EditAccount extends AppCompatActivity {
     private ImageButton btnBack;
     private Bitmap bitmapselect;
     private String strImage = " ";
-    FirebaseAuth auth;
-    FirebaseUser user;
-    ProgressDialog progressDialog;
-
+    private FirebaseAuth auth;
+    private FirebaseUser user;
+    private ProgressDialog progressDialog;
+    private List<Users> mListUser;
 
     private ActivityResultLauncher<Intent> mActivityResultLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
@@ -86,9 +87,12 @@ public class EditAccount extends AppCompatActivity {
 
                             bitmapselect = MediaStore.Images.Media.getBitmap(getContentResolver(),uri);
 
+                            progressDialog.setTitle("Đang tải ảnh lên...!");
+                            progressDialog.show();
+
                             FirebaseStorage storage = FirebaseStorage.getInstance();
                             StorageReference storageRef = storage.getReference();
-                            StorageReference mountainsRef = storageRef.child("AvatarUser/image"+calendar.getTimeInMillis());
+                            StorageReference mountainsRef = storageRef.child("AvatarUser/"+user.getEmail()+"/image"+calendar.getTimeInMillis());
                             ByteArrayOutputStream baos = new ByteArrayOutputStream();
                             bitmapselect.compress(Bitmap.CompressFormat.JPEG, 100, baos);
                             byte[] dataImage = baos.toByteArray();
@@ -98,6 +102,7 @@ public class EditAccount extends AppCompatActivity {
                                 @Override
                                 public void onFailure(@NonNull Exception exception) {
                                     // Handle unsuccessful uploads
+                                    progressDialog.dismiss();
                                     Toast.makeText(EditAccount.this, "Lỗi cập nhật hình ảnh!", Toast.LENGTH_SHORT).show();
                                 }
                             }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
@@ -109,39 +114,52 @@ public class EditAccount extends AppCompatActivity {
                                         @Override
                                         public void onSuccess(Uri uri) {
                                             strImage = String.valueOf(uri);
-                                            updateImageUrlRealtimeDatabase();
+                                            UpdateImageUrl();
+                                            progressDialog.dismiss();
                                         }
                                     }).addOnFailureListener(new OnFailureListener() {
                                         @Override
                                         public void onFailure(@NonNull Exception exception) {
                                             // Handle any errors
+                                            progressDialog.dismiss();
                                             Toast.makeText(EditAccount.this, "Lỗi tải URL hình ảnh!", Toast.LENGTH_SHORT).show();
                                         }
                                     });
                                 }
                             });
+
+
                         }catch (IOException e){
                             e.printStackTrace();
+                            progressDialog.dismiss();
                         }
                     }
                 }
             }
     );
-    private int count = 0;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_account);
         initUi();
-        initClickListener();
+        getDataUser();
+        progressDialog.show();
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                initClickListener();
+                progressDialog.dismiss();
+            }
+        }, 500);
+
     }
 
     //ánh xạ
     private void initUi() {
         tvName = findViewById(R.id.tv_name_activity_editaccount);
         tvSdt = findViewById(R.id.tv_sdt_activity_editaccount);
-        tvEmail = findViewById(R.id.tv_email_activity_editaccount);
         tvLocation = findViewById(R.id.tv_location_activity_editaccount);
         tvCCCD = findViewById(R.id.tv_cccd_activity_editaccount);
         tvPassword = findViewById(R.id.tv_password_activity_editaccount);
@@ -164,8 +182,6 @@ public class EditAccount extends AppCompatActivity {
         imgAvatar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                progressDialog.setTitle("Đang tải ảnh...");
-                progressDialog.show();
                 requestPermissionsimage();
             }
         });
@@ -176,7 +192,8 @@ public class EditAccount extends AppCompatActivity {
             public void onClick(View view) {
                 progressDialog.setTitle("Xin chờ!...");
                 progressDialog.show();
-                updateNameRealtimeDatabase();
+                UpdateName();
+                progressDialog.dismiss();
             }
         });
 
@@ -187,31 +204,44 @@ public class EditAccount extends AppCompatActivity {
             }
         });
 
+        tvSdt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                setSdt();
+            }
+        });
+
+        tvCCCD.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                setCCCD();
+            }
+        });
+
     }
 
-    private String checkname(String s){
 
-        if (s.isEmpty()){
-            return null;
-        }
-        String name = "";
+    @Nullable
+    private String checkname(@NonNull String s){
+        String name1 = "";
         if (s.length() > 20){
             for (String s1: s.split("")){
-                name+=s1;
-                if (name.length() == 30){
+                name1+=s1;
+                if (name1.length() == 20){
                     break;
                 }
-            };
+            }
+            return name1+"...";
         }
 
-        return name+"...";
+        return s;
     }
 
     private void getDataUser(){
         FirebaseAuth auth = FirebaseAuth.getInstance();
         FirebaseUser user = auth.getCurrentUser();
         String email = user.getEmail();
-        List<Users> mListUser = new ArrayList<>();
+        mListUser = new ArrayList<>();
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference myRef = database.getReference("Users");
         myRef.addValueEventListener(new ValueEventListener() {
@@ -221,15 +251,9 @@ public class EditAccount extends AppCompatActivity {
                 for (DataSnapshot snapshot1 : snapshot.getChildren()){
                     Users user = snapshot1.getValue(Users.class);
                     mListUser.add(user);
-                }
-                for (int i = 0; i < mListUser.size(); i++){
-                    if (mListUser.get(i).getEmail().equals(email)){
-                        if (mListUser.get(i).getName().length() > 30){
-                            tvName.setText(checkname(mListUser.get(i).getName()));
-                        }else{
-                            tvName.setText(mListUser.get(i).getName());
-                        }
-                        String strImage = mListUser.get(i).getImage().trim();
+                    if (user.getEmail().equals(email)){
+                        tvName.setText(checkname(user.getName()));
+                        String strImage = user.getImage().trim();
                         if (strImage.isEmpty()){
                             return;
                         }
@@ -255,6 +279,7 @@ public class EditAccount extends AppCompatActivity {
         intent.setType("image/*");
         intent.setAction(Intent.ACTION_GET_CONTENT);
         mActivityResultLauncher.launch(Intent.createChooser(intent, "Select picture"));
+
     }
 
     @Override
@@ -287,132 +312,182 @@ public class EditAccount extends AppCompatActivity {
                 .check();
     }
 
-    private void updateImageUrlRealtimeDatabase() {
-        List<Users> listUser = new ArrayList<>();
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myRef = database.getReference("Users");
-
-        myRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                listUser.clear();
-                for (DataSnapshot snapshot1 : snapshot.getChildren()){
-                    Users user = snapshot1.getValue(Users.class);
-                    listUser.add(user);
-                }
-
-                String email = user.getEmail();
-                for (int i = 0; i< listUser.size(); i++){
-                    if (listUser.get(i).getEmail().equals(email)){
-                        count = i;
-                        break;
-                    }
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                Toast.makeText(EditAccount.this, "Lỗi cập nhật hình ảnh!", Toast.LENGTH_SHORT).show();
-            }
-
-
-        });
-
-        Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                UpdateImageUrl(count, listUser);
-                progressDialog.dismiss();
-            }
-        },2000);
-
-
-    }
-
-    private void UpdateImageUrl(int id, List<Users> users) {
-        if (users.size() == 0 || id == 0){
-            finish();
+    private void UpdateImageUrl() {
+        if (mListUser.size() == 0){
+            return;
         }
         String email = user.getEmail();
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myRef = database.getReference();
-        if (users.get(id).getEmail().equals(email)){
-            myRef.child("Users").child(users.get(id).getId()+"").child("image").setValue(strImage)
-                    .addOnCompleteListener(new OnCompleteListener<Void>() {
-                @Override
-                public void onComplete(@NonNull Task<Void> task) {
-                    Toast.makeText(EditAccount.this, "Đã xong!", Toast.LENGTH_SHORT).show();
-                }
-            });
+        int index = -1;
+        for (int i = 0; i < mListUser.size(); i++){
+            if (mListUser.get(i).getEmail().equals(email)){
+                index = i;
+            }
         }
-    }
-
-    private void updateNameRealtimeDatabase() {
-        List<Users> listUser = new ArrayList<>();
-
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference myRef = database.getReference();
-
-        myRef.child("Users").addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                listUser.clear();
-                for (DataSnapshot snapshot1 : snapshot.getChildren()){
-                    Users user = snapshot1.getValue(Users.class);
-
-                    listUser.add(user);
-                }
-                String email = user.getEmail();
-                for (int i = 0; i< listUser.size(); i++){
-                    if (listUser.get(i).getEmail().equals(email)){
-                        count = i;
-                        break;
+        myRef.child("Users").child(mListUser.get(index).getId()+"").child("image").setValue(strImage)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        Toast.makeText(EditAccount.this, "Đã xong!", Toast.LENGTH_SHORT).show();
                     }
-                }
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                Toast.makeText(EditAccount.this, "Lỗi cập nhật tên!", Toast.LENGTH_SHORT).show();
-            }
-        });
-
-
-        Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                UpdateName(count, listUser);
-                progressDialog.dismiss();
-            }
-        },2000);
+                });
 
     }
 
-    private void UpdateName(int id, List<Users> users){
-        if (users.size() == 0){
+    private void UpdateName(){
+        if (mListUser.size() == 0){
             finish();
         }
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myRef = database.getReference();
         String email = user.getEmail();
         String name = tvName.getText().toString().trim();
-        if (users.get(id).getEmail().equals(email)){
-            myRef.child("Users").child(users.get(id).getId()+"").child("name").setValue(name)
-                    .addOnCompleteListener(new OnCompleteListener<Void>() {
-                @Override
-                public void onComplete(@NonNull Task<Void> task) {
-                    Toast.makeText(EditAccount.this, "Đã xong!", Toast.LENGTH_SHORT).show();
-                }
-            });
+        int index = -1;
+        for (int i = 0; i < mListUser.size(); i++){
+            if (mListUser.get(i).getEmail().equals(email)){
+                index = i;
+            }
         }
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference myRef = database.getReference();
+        myRef.child("Users").child(mListUser.get(index).getId()+"").child("name").setValue(name)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        Toast.makeText(EditAccount.this, "Đã xong!", Toast.LENGTH_SHORT).show();
+                    }
+                });
+
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-        getDataUser();
+    private void setSdt() {
+        final Dialog dialog = new Dialog(EditAccount.this);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.dialog_edit_account);
+
+        Window window = dialog.getWindow();
+        if(window == null){
+            return;
+        }
+        dialog.setCancelable(false);
+
+        window.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT);
+        window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+        WindowManager.LayoutParams windowAttributes = window.getAttributes();
+        windowAttributes.gravity = Gravity.CENTER;
+        window.setAttributes(windowAttributes);
+
+        //anh xa
+        TextView tvTitle = dialog.findViewById(R.id.tv_title_dialog);
+        EditText edtSdt = dialog.findViewById(R.id.edt_dialog);
+        TextInputLayout tilHint = dialog.findViewById(R.id.hint);
+        Button btnOk = dialog.findViewById(R.id.btn_them_dialog);
+        Button btnCancel = dialog.findViewById(R.id.btn_cancel_dialog);
+
+        tvTitle.setText("Cập nhật số điện thoại");
+        tilHint.setHint("Nhập số điện thoại...");
+
+        btnCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+            }
+        });
+
+        btnOk.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String sdt = edtSdt.getText().toString().trim();
+                if (edtSdt == null || sdt.isEmpty()){
+                    edtSdt.setError("không được để trống!");
+                    return;
+                }
+                String email = user.getEmail();
+                int index = -1;
+                for (int i = 0; i < mListUser.size(); i++){
+                    if (mListUser.get(i).getEmail().equals(email)){
+                        index = i;
+                    }
+                }
+                FirebaseDatabase database = FirebaseDatabase.getInstance();
+                DatabaseReference myRef = database.getReference();
+                myRef.child("Users").child(mListUser.get(index).getId()+"").child("sdt").setValue(sdt)
+                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                Toast.makeText(EditAccount.this, "Đã xong!", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                dialog.dismiss();
+            }
+        });
+
+        dialog.show();
+    }
+
+    private void setCCCD() {
+        final Dialog dialog = new Dialog(EditAccount.this);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.dialog_edit_account);
+
+        Window window = dialog.getWindow();
+        if(window == null){
+            return;
+        }
+        dialog.setCancelable(false);
+
+        window.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT);
+        window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+        WindowManager.LayoutParams windowAttributes = window.getAttributes();
+        windowAttributes.gravity = Gravity.CENTER;
+        window.setAttributes(windowAttributes);
+
+        //anh xa
+        TextView tvTitle = dialog.findViewById(R.id.tv_title_dialog);
+        EditText edtCCCD = dialog.findViewById(R.id.edt_dialog);
+        TextInputLayout tilHint = dialog.findViewById(R.id.hint);
+        Button btnOk = dialog.findViewById(R.id.btn_them_dialog);
+        Button btnCancel = dialog.findViewById(R.id.btn_cancel_dialog);
+
+        tvTitle.setText("Cập nhật số CMND/CCCD/Hộ chiếu");
+        tilHint.setHint("CMND/CCCD/Hộ chiếu...");
+
+        btnCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+            }
+        });
+
+        btnOk.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String cccd = edtCCCD.getText().toString().trim();
+                if (edtCCCD == null || cccd.isEmpty()){
+                    edtCCCD.setError("không được để trống!");
+                    return;
+                }
+                String email = user.getEmail();
+                int index = -1;
+                for (int i = 0; i < mListUser.size(); i++){
+                    if (mListUser.get(i).getEmail().equals(email)){
+                        index = i;
+                    }
+                }
+                FirebaseDatabase database = FirebaseDatabase.getInstance();
+                DatabaseReference myRef = database.getReference();
+                myRef.child("Users").child(mListUser.get(index).getId()+"").child("cccd").setValue(cccd)
+                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                Toast.makeText(EditAccount.this, "Đã xong!", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                dialog.dismiss();
+            }
+        });
+
+        dialog.show();
     }
 }

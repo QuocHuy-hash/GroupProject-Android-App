@@ -26,10 +26,9 @@
             />
 
         <TextView
-            android:id="@+id/username_activity_account"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Username"
+            android:text="Thông tin tài khoản"
             android:layout_marginLeft="30dp"
             android:textStyle="bold"
             android:textSize="18dp"

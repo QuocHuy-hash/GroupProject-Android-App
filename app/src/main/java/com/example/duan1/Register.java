@@ -3,26 +3,18 @@ package com.example.duan1;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-
-import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-
-
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
-
 import com.example.duan1.model.Users;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -33,20 +25,17 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-
-
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
+import java.util.regex.Pattern;
 
-import de.hdodenhof.circleimageview.CircleImageView;
 
 public class Register extends AppCompatActivity {
 
     private ImageView imgBack;
 
     private TextView tvTermsAndUse, tvLogin ;
-    private EditText edtNumberPhone, edtPassword;
+    private EditText edtNumberPhone, edtPassword, edtName;
     private Button btnRegister;
 
     private ProgressDialog progressDialog;
@@ -64,7 +53,9 @@ public class Register extends AppCompatActivity {
     }
 
     public static boolean isValidEmail(CharSequence target) {
-        return (!TextUtils.isEmpty(target) && Patterns.EMAIL_ADDRESS.matcher(target).matches());
+        return (!TextUtils.isEmpty(target) && Pattern.
+                compile("^[A-Za-z0-9]+[A-Za-z0-9]*@[A-Za-z0-9]+(\\\\.[A-Za-z0-9]+)$").
+                matcher(target).matches());
     }
 
   private void initUi() {
@@ -73,6 +64,7 @@ public class Register extends AppCompatActivity {
         tvTermsAndUse = findViewById(R.id.tv_terms_of_use);
         edtNumberPhone = findViewById(R.id.edt_numberphone_register);
         edtPassword = findViewById(R.id.edt_password_register);
+        edtName = findViewById(R.id.edt_name_register);
         btnRegister = findViewById(R.id.btn_register);
 
         // Initialize Firebase Auth
@@ -110,6 +102,30 @@ public class Register extends AppCompatActivity {
             }
         });
 
+        edtName.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+            @Override
+            public void afterTextChanged(Editable editable) {
+                if (edtNumberPhone.getText().toString().trim().isEmpty() ||
+                        edtPassword.getText().toString().trim().isEmpty() ||
+                        edtName.getText().toString().trim().isEmpty()){
+                    btnRegister.setBackgroundResource(R.drawable.bg_button_login);
+                    return;
+                }else{
+                    btnRegister.setBackgroundResource(R.drawable.bg_button_register);
+                    //code register
+                    OnRegister(getListData());
+                }
+            }
+        });
+
         edtNumberPhone.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -121,7 +137,9 @@ public class Register extends AppCompatActivity {
             }
             @Override
             public void afterTextChanged(Editable editable) {
-                if (edtNumberPhone.getText().toString().trim().equals("") || edtPassword.getText().toString().trim().equals("")){
+                if (edtNumberPhone.getText().toString().trim().isEmpty() ||
+                        edtPassword.getText().toString().trim().isEmpty() ||
+                        edtName.getText().toString().trim().isEmpty()){
                     btnRegister.setBackgroundResource(R.drawable.bg_button_login);
                     return;
                 }else{
@@ -143,7 +161,9 @@ public class Register extends AppCompatActivity {
             }
             @Override
             public void afterTextChanged(Editable editable) {
-                if (edtNumberPhone.getText().toString().trim().equals("") || edtPassword.getText().toString().trim().equals("")){
+                if (edtNumberPhone.getText().toString().trim().isEmpty() ||
+                        edtPassword.getText().toString().trim().isEmpty() ||
+                        edtName.getText().toString().trim().isEmpty()){
                     btnRegister.setBackgroundResource(R.drawable.bg_button_login);
                     return;
                 }else{
@@ -175,45 +195,67 @@ public class Register extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 //code register
+                String name = edtName.getText().toString().trim();
+                if (name.isEmpty() || edtName == null){
+                    edtName.setError("Tên không được để trống");
+                    return;
+                }
                 String email = edtNumberPhone.getText().toString().trim();
-//                if (isValidEmail(email)){
-//                    edtNumberPhone.setError("Email không được để trống!");
-//                    return;
-//                }
+                if (isValidEmail(email)){
+                    edtNumberPhone.setError("Email không đúng!");
+                    return;
+                }
                 String password = edtPassword.getText().toString().trim();
                 if (password.length() < 6 ){
                     edtPassword.setError("Mật khẩu phải bằng hoặc trên 6 kí tự");
                     return;
                 }
-                progressDialog.setTitle("Xin chờ!");
+                progressDialog.setTitle("Xin chờ...!");
                 progressDialog.show();
                 mAuth.createUserWithEmailAndPassword(email, password)
                         .addOnCompleteListener(Register.this, new OnCompleteListener<AuthResult>() {
                             @Override
                             public void onComplete(@NonNull Task<AuthResult> task) {
-                                Handler handler = new Handler();
-                                handler.postDelayed(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        progressDialog.dismiss();
-                                        if (task.isSuccessful()) {
-                                            // Sign in success, update UI with the signed-in user's information
 
-                                            int size = listUsers.size();
-                                            int IDcuoi = -1;
-                                            if (size != 0){
-                                                IDcuoi = listUsers.get(size-1).getId();
-                                            }
+                                if (task.isSuccessful()) {
+                                    Handler handler = new Handler();
+                                    handler.postDelayed(new Runnable() {
+                                        @Override
+                                        public void run() {
 
-                                            Users users = new Users(IDcuoi+1, " ", email, " ", " ", password);
-                                            myRef.child("Users/"+(IDcuoi+1)).setValue(users);
-                                            Toast.makeText(Register.this, "Tạo tài khoản thành công!", Toast.LENGTH_SHORT).show();
-                                            finish();
-                                        } else {
-                                            Toast.makeText(Register.this, "Tạo tài khoản thất bại!.",Toast.LENGTH_SHORT).show();
+                                        // Sign in success, update UI with the signed-in user's information
+
+                                        int size = listUsers.size();
+                                        int IDcuoi = -1;
+                                        if (size != 0){
+                                            IDcuoi = listUsers.get(size-1).getId();
                                         }
-                                    }
-                                },2000);
+
+                                                Users users = new Users(IDcuoi+1, name, email,
+                                                        " ", " ", password, " ",
+                                                        " ", " ", " ");
+//                                        Users users = new Users(IDcuoi+1, name, email,
+//                                                " ", " ", password);
+
+                                        myRef.child("Users/"+(IDcuoi+1)).setValue(users);
+                                        Toast.makeText(Register.this, "Tạo tài khoản thành công!",
+                                                Toast.LENGTH_SHORT).show();
+                                        finish();
+                                        progressDialog.dismiss();
+                                        }
+                                    },1500);
+
+                                } else {
+                                    Toast.makeText(Register.this, "Tạo tài khoản thất bại!",
+                                            Toast.LENGTH_SHORT).show();
+                                    System.out.println(task.getException());
+                                }
+
+
+
+
+
+
                             }
                         });
 
