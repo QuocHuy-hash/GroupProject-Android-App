@@ -1,0 +1,504 @@
+Index: app/src/main/res/layout/fragment_trang_chu.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<LinearLayout xmlns:android=\"http://schemas.android.com/apk/res/android\"\r\n    xmlns:tools=\"http://schemas.android.com/tools\"\r\n    android:layout_width=\"match_parent\"\r\n    android:layout_height=\"match_parent\"\r\n    tools:context=\".Fragment.FragmentTrangChu\"\r\n    android:orientation=\"vertical\"\r\n    android:background=\"@color/white\"\r\n    >\r\n\r\n    <androidx.viewpager.widget.ViewPager\r\n        android:id=\"@+id/viewPager_slide\"\r\n        android:layout_width=\"match_parent\"\r\n        android:layout_height=\"220dp\"/>\r\n    <me.relex.circleindicator.CircleIndicator\r\n        android:id=\"@+id/circle_indicator\"\r\n        android:layout_width=\"100dp\"\r\n        android:layout_height=\"30dp\"\r\n        android:layout_gravity=\"center_horizontal\"\r\n        android:layout_marginTop=\"5dp\"\r\n\r\n        tools:ignore=\"MissingClass\" />\r\n    <HorizontalScrollView\r\n        android:id=\"@+id/scrollView\"\r\n        android:layout_width=\"match_parent\"\r\n        android:scrollbars=\"none\"\r\n        android:layout_height=\"wrap_content\"\r\n        >\r\n        <LinearLayout\r\n            android:layout_width=\"match_parent\"\r\n            android:layout_height=\"wrap_content\"\r\n            android:orientation=\"horizontal\">\r\n            <LinearLayout\r\n                android:layout_width=\"120dp\"\r\n                android:layout_height=\"120dp\"\r\n                android:orientation=\"vertical\"\r\n                android:gravity=\"center_horizontal\"\r\n                >\r\n                <ImageView\r\n                    android:layout_width=\"45dp\"\r\n                    android:layout_height=\"45dp\"\r\n                    android:src=\"@drawable/transport\"/>\r\n                <TextView\r\n                    android:layout_width=\"120dp\"\r\n                    android:layout_height=\"wrap_content\"\r\n                    android:layout_marginTop=\"5dp\"\r\n                    android:gravity=\"center\"\r\n                    android:textColor=\"#020202\"\r\n                    android:text=\"Miễn phí vận chuyển\"\r\n                    android:textSize=\"16dp\"/>\r\n\r\n\r\n            </LinearLayout>\r\n            <!-- 2-->\r\n            <LinearLayout\r\n                android:layout_width=\"120dp\"\r\n                android:layout_height=\"120dp\"\r\n                android:orientation=\"vertical\"\r\n                android:gravity=\"center_horizontal\"\r\n                >\r\n                <ImageView\r\n                    android:layout_width=\"45dp\"\r\n                    android:layout_height=\"45dp\"\r\n                    android:src=\"@drawable/tin_da_luu\"/>\r\n                <TextView\r\n                    android:layout_width=\"100dp\"\r\n                    android:layout_height=\"wrap_content\"\r\n                    android:layout_marginTop=\"5dp\"\r\n                    android:gravity=\"center\"\r\n                    android:textColor=\"#020202\"\r\n                    android:text=\"Tin đăng đã lưu\"\r\n                    android:textSize=\"16dp\"/>\r\n            </LinearLayout>\r\n            <!--        3-->\r\n            <LinearLayout\r\n                android:layout_width=\"100dp\"\r\n                android:layout_height=\"120dp\"\r\n                android:orientation=\"vertical\"\r\n                android:gravity=\"center_horizontal\"\r\n                >\r\n                <ImageView\r\n                    android:layout_width=\"45dp\"\r\n                    android:layout_height=\"45dp\"\r\n                    android:src=\"@drawable/danh_gia\"/>\r\n                <TextView\r\n                    android:layout_width=\"90dp\"\r\n                    android:layout_height=\"wrap_content\"\r\n                    android:layout_marginTop=\"5dp\"\r\n                    android:gravity=\"center\"\r\n                    android:textColor=\"#020202\"\r\n                    android:text=\"Đánh giá từ tôi\"\r\n                    android:textSize=\"16dp\"/>\r\n            </LinearLayout>\r\n            <!--        4-->\r\n            <!--        5-->\r\n            <LinearLayout\r\n                android:layout_width=\"120dp\"\r\n                android:layout_height=\"120dp\"\r\n                android:orientation=\"vertical\"\r\n                android:gravity=\"center_horizontal\"\r\n                >\r\n                <ImageView\r\n                    android:layout_width=\"45dp\"\r\n                    android:layout_height=\"45dp\"\r\n                    android:src=\"@drawable/history_search\"/>\r\n                <TextView\r\n                    android:layout_width=\"90dp\"\r\n                    android:layout_height=\"wrap_content\"\r\n                    android:layout_marginTop=\"5dp\"\r\n                    android:gravity=\"center\"\r\n                    android:textColor=\"#020202\"\r\n                    android:text=\"Chia sẻ\"\r\n                    android:textSize=\"16dp\"/>\r\n            </LinearLayout>\r\n            <!--        6-->\r\n            <LinearLayout\r\n                android:layout_width=\"120dp\"\r\n                android:layout_height=\"120dp\"\r\n                android:orientation=\"vertical\"\r\n                android:gravity=\"center_horizontal\"\r\n                >\r\n                <ImageView\r\n                    android:layout_width=\"45dp\"\r\n                    android:layout_height=\"45dp\"\r\n                    android:src=\"@drawable/img_vong_quay\"/>\r\n                <TextView\r\n                    android:layout_width=\"90dp\"\r\n                    android:layout_height=\"wrap_content\"\r\n                    android:layout_marginTop=\"5dp\"\r\n                    android:gravity=\"center\"\r\n                    android:textColor=\"#020202\"\r\n                    android:text=\"Vòng quay may mắn\"\r\n                    android:textSize=\"16dp\"/>\r\n            </LinearLayout>\r\n            <!-- 2-->\r\n            <LinearLayout\r\n                android:layout_width=\"120dp\"\r\n                android:layout_height=\"120dp\"\r\n                android:orientation=\"vertical\"\r\n                android:gravity=\"center_horizontal\"\r\n                >\r\n                <ImageView\r\n                    android:layout_width=\"45dp\"\r\n                    android:layout_height=\"45dp\"\r\n                    android:src=\"@drawable/tin_da_luu\"/>\r\n                <TextView\r\n                    android:layout_width=\"100dp\"\r\n                    android:layout_height=\"wrap_content\"\r\n                    android:layout_marginTop=\"5dp\"\r\n                    android:gravity=\"center\"\r\n                    android:textColor=\"#020202\"\r\n                    android:text=\"Tin đăng đã lưu\"\r\n                    android:textSize=\"16dp\"/>\r\n            </LinearLayout>\r\n        </LinearLayout>\r\n    </HorizontalScrollView>\r\n\r\n    <androidx.recyclerview.widget.RecyclerView\r\n        android:id=\"@+id/rcv_news_trangchu\"\r\n        android:layout_width=\"match_parent\"\r\n        android:layout_height=\"wrap_content\" />\r\n</LinearLayout>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/layout/fragment_trang_chu.xml b/app/src/main/res/layout/fragment_trang_chu.xml
+--- a/app/src/main/res/layout/fragment_trang_chu.xml	
++++ b/app/src/main/res/layout/fragment_trang_chu.xml	
+@@ -7,156 +7,167 @@
+     android:orientation="vertical"
+     android:background="@color/white"
+     >
+-
+-    <androidx.viewpager.widget.ViewPager
+-        android:id="@+id/viewPager_slide"
+-        android:layout_width="match_parent"
+-        android:layout_height="220dp"/>
+-    <me.relex.circleindicator.CircleIndicator
+-        android:id="@+id/circle_indicator"
+-        android:layout_width="100dp"
+-        android:layout_height="30dp"
+-        android:layout_gravity="center_horizontal"
+-        android:layout_marginTop="5dp"
++    <ScrollView
++        android:layout_width="match_parent"
++        android:layout_height="match_parent">
++        <LinearLayout
++            android:orientation="vertical"
++            android:layout_width="match_parent"
++            android:layout_height="match_parent">
++            <androidx.viewpager.widget.ViewPager
++                android:id="@+id/viewPager_slide"
++                android:layout_width="match_parent"
++                android:layout_height="220dp"/>
++            <me.relex.circleindicator.CircleIndicator
++                android:id="@+id/circle_indicator"
++                android:layout_width="100dp"
++                android:layout_height="30dp"
++                android:layout_gravity="center_horizontal"
++                android:layout_marginTop="5dp"
+ 
+-        tools:ignore="MissingClass" />
+-    <HorizontalScrollView
+-        android:id="@+id/scrollView"
+-        android:layout_width="match_parent"
+-        android:scrollbars="none"
+-        android:layout_height="wrap_content"
+-        >
+-        <LinearLayout
+-            android:layout_width="match_parent"
+-            android:layout_height="wrap_content"
+-            android:orientation="horizontal">
+-            <LinearLayout
+-                android:layout_width="120dp"
+-                android:layout_height="120dp"
+-                android:orientation="vertical"
+-                android:gravity="center_horizontal"
+-                >
+-                <ImageView
+-                    android:layout_width="45dp"
+-                    android:layout_height="45dp"
+-                    android:src="@drawable/transport"/>
+-                <TextView
+-                    android:layout_width="120dp"
+-                    android:layout_height="wrap_content"
+-                    android:layout_marginTop="5dp"
+-                    android:gravity="center"
+-                    android:textColor="#020202"
+-                    android:text="Miễn phí vận chuyển"
+-                    android:textSize="16dp"/>
++                tools:ignore="MissingClass" />
++            <HorizontalScrollView
++                android:id="@+id/scrollView"
++                android:layout_width="match_parent"
++                android:scrollbars="none"
++                android:layout_height="wrap_content"
++                >
++                <LinearLayout
++                    android:layout_width="match_parent"
++                    android:layout_height="wrap_content"
++                    android:orientation="horizontal">
++                    <LinearLayout
++                        android:layout_width="120dp"
++                        android:layout_height="120dp"
++                        android:orientation="vertical"
++                        android:gravity="center_horizontal"
++                        >
++                        <ImageView
++                            android:layout_width="45dp"
++                            android:layout_height="45dp"
++                            android:src="@drawable/transport"/>
++                        <TextView
++                            android:layout_width="120dp"
++                            android:layout_height="wrap_content"
++                            android:layout_marginTop="5dp"
++                            android:gravity="center"
++                            android:textColor="#020202"
++                            android:text="Miễn phí vận chuyển"
++                            android:textSize="16dp"/>
+ 
+ 
+-            </LinearLayout>
+-            <!-- 2-->
+-            <LinearLayout
+-                android:layout_width="120dp"
+-                android:layout_height="120dp"
+-                android:orientation="vertical"
+-                android:gravity="center_horizontal"
+-                >
+-                <ImageView
+-                    android:layout_width="45dp"
+-                    android:layout_height="45dp"
+-                    android:src="@drawable/tin_da_luu"/>
+-                <TextView
+-                    android:layout_width="100dp"
+-                    android:layout_height="wrap_content"
+-                    android:layout_marginTop="5dp"
+-                    android:gravity="center"
+-                    android:textColor="#020202"
+-                    android:text="Tin đăng đã lưu"
+-                    android:textSize="16dp"/>
+-            </LinearLayout>
+-            <!--        3-->
+-            <LinearLayout
+-                android:layout_width="100dp"
+-                android:layout_height="120dp"
+-                android:orientation="vertical"
+-                android:gravity="center_horizontal"
+-                >
+-                <ImageView
+-                    android:layout_width="45dp"
+-                    android:layout_height="45dp"
+-                    android:src="@drawable/danh_gia"/>
+-                <TextView
+-                    android:layout_width="90dp"
+-                    android:layout_height="wrap_content"
+-                    android:layout_marginTop="5dp"
+-                    android:gravity="center"
+-                    android:textColor="#020202"
+-                    android:text="Đánh giá từ tôi"
+-                    android:textSize="16dp"/>
+-            </LinearLayout>
+-            <!--        4-->
+-            <!--        5-->
+-            <LinearLayout
+-                android:layout_width="120dp"
+-                android:layout_height="120dp"
+-                android:orientation="vertical"
+-                android:gravity="center_horizontal"
+-                >
+-                <ImageView
+-                    android:layout_width="45dp"
+-                    android:layout_height="45dp"
+-                    android:src="@drawable/history_search"/>
+-                <TextView
+-                    android:layout_width="90dp"
+-                    android:layout_height="wrap_content"
+-                    android:layout_marginTop="5dp"
+-                    android:gravity="center"
+-                    android:textColor="#020202"
+-                    android:text="Chia sẻ"
+-                    android:textSize="16dp"/>
+-            </LinearLayout>
+-            <!--        6-->
+-            <LinearLayout
+-                android:layout_width="120dp"
+-                android:layout_height="120dp"
+-                android:orientation="vertical"
+-                android:gravity="center_horizontal"
+-                >
+-                <ImageView
+-                    android:layout_width="45dp"
+-                    android:layout_height="45dp"
+-                    android:src="@drawable/img_vong_quay"/>
+-                <TextView
+-                    android:layout_width="90dp"
+-                    android:layout_height="wrap_content"
+-                    android:layout_marginTop="5dp"
+-                    android:gravity="center"
+-                    android:textColor="#020202"
+-                    android:text="Vòng quay may mắn"
+-                    android:textSize="16dp"/>
+-            </LinearLayout>
+-            <!-- 2-->
+-            <LinearLayout
+-                android:layout_width="120dp"
+-                android:layout_height="120dp"
+-                android:orientation="vertical"
+-                android:gravity="center_horizontal"
+-                >
+-                <ImageView
+-                    android:layout_width="45dp"
+-                    android:layout_height="45dp"
+-                    android:src="@drawable/tin_da_luu"/>
+-                <TextView
+-                    android:layout_width="100dp"
+-                    android:layout_height="wrap_content"
+-                    android:layout_marginTop="5dp"
+-                    android:gravity="center"
+-                    android:textColor="#020202"
+-                    android:text="Tin đăng đã lưu"
+-                    android:textSize="16dp"/>
+-            </LinearLayout>
+-        </LinearLayout>
+-    </HorizontalScrollView>
++                    </LinearLayout>
++                    <!-- 2-->
++                    <LinearLayout
++                        android:layout_width="120dp"
++                        android:layout_height="120dp"
++                        android:orientation="vertical"
++                        android:gravity="center_horizontal"
++                        >
++                        <ImageView
++                            android:layout_width="45dp"
++                            android:layout_height="45dp"
++                            android:src="@drawable/tin_da_luu"/>
++                        <TextView
++                            android:layout_width="100dp"
++                            android:layout_height="wrap_content"
++                            android:layout_marginTop="5dp"
++                            android:gravity="center"
++                            android:textColor="#020202"
++                            android:text="Tin đăng đã lưu"
++                            android:textSize="16dp"/>
++                    </LinearLayout>
++                    <!--        3-->
++                    <LinearLayout
++                        android:layout_width="100dp"
++                        android:layout_height="120dp"
++                        android:orientation="vertical"
++                        android:gravity="center_horizontal"
++                        >
++                        <ImageView
++                            android:layout_width="45dp"
++                            android:layout_height="45dp"
++                            android:src="@drawable/danh_gia"/>
++                        <TextView
++                            android:layout_width="90dp"
++                            android:layout_height="wrap_content"
++                            android:layout_marginTop="5dp"
++                            android:gravity="center"
++                            android:textColor="#020202"
++                            android:text="Đánh giá từ tôi"
++                            android:textSize="16dp"/>
++                    </LinearLayout>
++                    <!--        4-->
++                    <!--        5-->
++                    <LinearLayout
++                        android:layout_width="120dp"
++                        android:layout_height="120dp"
++                        android:orientation="vertical"
++                        android:gravity="center_horizontal"
++                        >
++                        <ImageView
++                            android:layout_width="45dp"
++                            android:layout_height="45dp"
++                            android:src="@drawable/history_search"/>
++                        <TextView
++                            android:layout_width="90dp"
++                            android:layout_height="wrap_content"
++                            android:layout_marginTop="5dp"
++                            android:gravity="center"
++                            android:textColor="#020202"
++                            android:text="Chia sẻ"
++                            android:textSize="16dp"/>
++                    </LinearLayout>
++                    <!--        6-->
++                    <LinearLayout
++                        android:layout_width="120dp"
++                        android:layout_height="120dp"
++                        android:orientation="vertical"
++                        android:gravity="center_horizontal"
++                        >
++                        <ImageView
++                            android:layout_width="45dp"
++                            android:layout_height="45dp"
++                            android:src="@drawable/img_vong_quay"/>
++                        <TextView
++                            android:layout_width="90dp"
++                            android:layout_height="wrap_content"
++                            android:layout_marginTop="5dp"
++                            android:gravity="center"
++                            android:textColor="#020202"
++                            android:text="Vòng quay may mắn"
++                            android:textSize="16dp"/>
++                    </LinearLayout>
++                    <!-- 2-->
++                    <LinearLayout
++                        android:layout_width="120dp"
++                        android:layout_height="120dp"
++                        android:orientation="vertical"
++                        android:gravity="center_horizontal"
++                        >
++                        <ImageView
++                            android:layout_width="45dp"
++                            android:layout_height="45dp"
++                            android:src="@drawable/tin_da_luu"/>
++                        <TextView
++                            android:layout_width="100dp"
++                            android:layout_height="wrap_content"
++                            android:layout_marginTop="5dp"
++                            android:gravity="center"
++                            android:textColor="#020202"
++                            android:text="Tin đăng đã lưu"
++                            android:textSize="16dp"/>
++                    </LinearLayout>
++                </LinearLayout>
++            </HorizontalScrollView>
+ 
+-    <androidx.recyclerview.widget.RecyclerView
+-        android:id="@+id/rcv_news_trangchu"
+-        android:layout_width="match_parent"
+-        android:layout_height="wrap_content" />
++            <androidx.recyclerview.widget.RecyclerView
++                android:id="@+id/rcv_news_trangchu"
++                android:layout_width="match_parent"
++                android:layout_height="match_parent"
++                android:scrollbars="none"
++                />
++        </LinearLayout>
++    </ScrollView>
++
+ </LinearLayout>
+\ No newline at end of file
+Index: app/src/main/java/com/example/duan1/Fragment/FragmentTrangChu.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.duan1.Fragment;\r\n\r\nimport android.annotation.SuppressLint;\r\nimport android.os.Bundle;\r\nimport androidx.fragment.app.Fragment;\r\nimport androidx.recyclerview.widget.GridLayoutManager;\r\nimport androidx.recyclerview.widget.RecyclerView;\r\nimport androidx.viewpager.widget.ViewPager;\r\n\r\nimport android.os.Handler;\r\nimport android.os.Looper;\r\nimport android.view.LayoutInflater;\r\nimport android.view.View;\r\nimport android.view.ViewGroup;\r\n\r\nimport com.example.duan1.Adapter.NewsTrangChuAdapter;\r\nimport com.example.duan1.Adapter.slidersAdapter;\r\nimport com.example.duan1.MainActivity;\r\nimport com.example.duan1.R;\r\nimport com.example.duan1.model.NewsTrangChu;\r\nimport com.example.duan1.model.photosSlider;\r\n\r\n\r\nimport java.util.ArrayList;\r\nimport java.util.List;\r\nimport java.util.Timer;\r\nimport java.util.TimerTask;\r\n\r\n\r\n\r\nimport me.relex.circleindicator.CircleIndicator;\r\n\r\n\r\npublic class FragmentTrangChu extends Fragment {\r\n    private ViewPager viewPager;\r\n    private CircleIndicator circleIndicator;\r\n    private slidersAdapter slidersAdapter;\r\n    private List<photosSlider> mListPhoto = new ArrayList<>();\r\n    private Timer mTimer;\r\n    private RecyclerView rcvNewsTrangChu;\r\n    private List<NewsTrangChu> newsTrangChuList = new ArrayList<>();\r\n    private NewsTrangChuAdapter mNewsTrangChuAdapter;\r\n\r\n\r\n     public MainActivity mainActivity;\r\n\r\n\r\n    @SuppressLint(\"MissingInflatedId\")\r\n    @Override\r\n    public View onCreateView(LayoutInflater inflater, ViewGroup container,\r\n                             Bundle savedInstanceState) {\r\n        View view = inflater.inflate(R.layout.fragment_trang_chu, container, false);\r\n        mainActivity = (MainActivity) getActivity();\r\n\r\n        viewPager = view.findViewById(R.id.viewPager_slide);\r\n        circleIndicator = view.findViewById(R.id.circle_indicator);\r\n\r\n        slidersAdapter = new slidersAdapter(getContext(), getListPhoto());\r\n        viewPager.setAdapter(slidersAdapter);\r\n\r\n        circleIndicator.setViewPager(viewPager);\r\n        slidersAdapter.registerDataSetObserver(circleIndicator.getDataSetObserver());\r\n\r\n        autoSliderImg();\r\n\r\n\r\n        rcvNewsTrangChu = view.findViewById(R.id.rcv_news_trangchu);\r\n        mNewsTrangChuAdapter = new NewsTrangChuAdapter(getContext());\r\n        GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(),2);\r\n        rcvNewsTrangChu.setLayoutManager(gridLayoutManager);\r\n        mNewsTrangChuAdapter.setDATA(getListNews());\r\n        rcvNewsTrangChu.setAdapter(mNewsTrangChuAdapter);\r\n        return view;\r\n    }\r\n\r\n    private List<NewsTrangChu> getListNews() {\r\n        List<String> UrlArr = new ArrayList<>();\r\n        UrlArr.add(\"https://firebasestorage.googleapis.com/v0/b/cho-tot-du-an-1.appspot.com/o/Image.jpg%2FImage%20image%3A62%2FN%C6%B0%E1%BB%9Bc%20Hoa%20Chionhs%20H%C3%A3ng?alt=media&token=d6d9bfaf-f8bf-4225-b388-031e6456b149\");\r\n        UrlArr.add(\"https://firebasestorage.googleapis.com/v0/b/cho-tot-du-an-1.appspot.com/o/Image.jpg%2FImage%20image%3A62%2FN%C6%B0%E1%BB%9Bc%20Hoa%20Chionhs%20H%C3%A3ng?alt=media&token=d6d9bfaf-f8bf-4225-b388-031e6456b149\");\r\n        UrlArr.add(\"https://firebasestorage.googleapis.com/v0/b/cho-tot-du-an-1.appspot.com/o/Image.jpg%2FImage%20image%3A62%2FN%C6%B0%E1%BB%9Bc%20Hoa%20Chionhs%20H%C3%A3ng?alt=media&token=d6d9bfaf-f8bf-4225-b388-031e6456b149\");\r\n\r\n\r\n        newsTrangChuList.add(new NewsTrangChu(\r\n                \"String title1\"\r\n                , \"String descripsion\"\r\n                , \"String fee\"\r\n                , \"String time\"\r\n                , false\r\n            ,UrlArr));\r\n        newsTrangChuList.add(new NewsTrangChu(\r\n                \"String title2\"\r\n                , \"String descripsion\"\r\n                , \"String fee\"\r\n                , \"String time\"\r\n                , false\r\n                ,UrlArr));newsTrangChuList.add(new NewsTrangChu(\r\n                \"String title3\"\r\n                , \"String descripsion\"\r\n                , \"String fee\"\r\n                , \"String time\"\r\n                , false\r\n                ,UrlArr));\r\n        return newsTrangChuList;\r\n    }\r\n\r\n    private void autoSliderImg() {\r\n\r\n        if (mTimer == null) {\r\n            mTimer = new Timer();\r\n        }\r\n\r\n        mTimer.schedule(new TimerTask() {\r\n            @Override\r\n            public void run() {\r\n                new Handler(Looper.getMainLooper()).post(new Runnable() {\r\n                    @Override\r\n                    public void run() {\r\n                        int currentitem = viewPager.getCurrentItem();\r\n                        int totalItem = mListPhoto.size() - 1;\r\n\r\n                        if (currentitem < totalItem) {\r\n                            currentitem++;\r\n                            viewPager.setCurrentItem(currentitem);\r\n                        } else {\r\n                            viewPager.setCurrentItem(0);\r\n                        }\r\n                    }\r\n                });\r\n            }\r\n        }, 500, 3000);\r\n    }\r\n\r\n    @Override\r\n    public void onDestroyView() {\r\n        super.onDestroyView();\r\n\r\n        if (mTimer != null) {\r\n            mTimer.cancel();\r\n            mTimer = null;\r\n        }\r\n\r\n    }\r\n\r\n\r\n\r\n    private List<photosSlider> getListPhoto() {\r\n//    List<photosSlider> list = new ArrayList<>();\r\n\r\n        mListPhoto.add(new photosSlider(R.drawable.img_slider1));\r\n        mListPhoto.add(new photosSlider(R.drawable.img_slider2));\r\n        mListPhoto.add(new photosSlider(R.drawable.img_slider3));\r\n        mListPhoto.add(new photosSlider(R.drawable.img_slider4));\r\n\r\n        return  mListPhoto;\r\n    }\r\n\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/duan1/Fragment/FragmentTrangChu.java b/app/src/main/java/com/example/duan1/Fragment/FragmentTrangChu.java
+--- a/app/src/main/java/com/example/duan1/Fragment/FragmentTrangChu.java	
++++ b/app/src/main/java/com/example/duan1/Fragment/FragmentTrangChu.java	
+@@ -70,14 +70,16 @@
+         rcvNewsTrangChu.setLayoutManager(gridLayoutManager);
+         mNewsTrangChuAdapter.setDATA(getListNews());
+         rcvNewsTrangChu.setAdapter(mNewsTrangChuAdapter);
++
++
+         return view;
+     }
+ 
+     private List<NewsTrangChu> getListNews() {
+-        List<String> UrlArr = new ArrayList<>();
+-        UrlArr.add("https://firebasestorage.googleapis.com/v0/b/cho-tot-du-an-1.appspot.com/o/Image.jpg%2FImage%20image%3A62%2FN%C6%B0%E1%BB%9Bc%20Hoa%20Chionhs%20H%C3%A3ng?alt=media&token=d6d9bfaf-f8bf-4225-b388-031e6456b149");
+-        UrlArr.add("https://firebasestorage.googleapis.com/v0/b/cho-tot-du-an-1.appspot.com/o/Image.jpg%2FImage%20image%3A62%2FN%C6%B0%E1%BB%9Bc%20Hoa%20Chionhs%20H%C3%A3ng?alt=media&token=d6d9bfaf-f8bf-4225-b388-031e6456b149");
+-        UrlArr.add("https://firebasestorage.googleapis.com/v0/b/cho-tot-du-an-1.appspot.com/o/Image.jpg%2FImage%20image%3A62%2FN%C6%B0%E1%BB%9Bc%20Hoa%20Chionhs%20H%C3%A3ng?alt=media&token=d6d9bfaf-f8bf-4225-b388-031e6456b149");
++//        List<String> UrlArr = new ArrayList<>();
++//        UrlArr.add("https://firebasestorage.googleapis.com/v0/b/cho-tot-du-an-1.appspot.com/o/Image.jpg%2FImage%20image%3A62%2FN%C6%B0%E1%BB%9Bc%20Hoa%20Chionhs%20H%C3%A3ng?alt=media&token=d6d9bfaf-f8bf-4225-b388-031e6456b149");
++//        UrlArr.add("https://firebasestorage.googleapis.com/v0/b/cho-tot-du-an-1.appspot.com/o/Image.jpg%2FImage%20image%3A62%2FN%C6%B0%E1%BB%9Bc%20Hoa%20Chionhs%20H%C3%A3ng?alt=media&token=d6d9bfaf-f8bf-4225-b388-031e6456b149");
++//        UrlArr.add("https://firebasestorage.googleapis.com/v0/b/cho-tot-du-an-1.appspot.com/o/Image.jpg%2FImage%20image%3A62%2FN%C6%B0%E1%BB%9Bc%20Hoa%20Chionhs%20H%C3%A3ng?alt=media&token=d6d9bfaf-f8bf-4225-b388-031e6456b149");
+ 
+ 
+         newsTrangChuList.add(new NewsTrangChu(
+@@ -86,20 +88,21 @@
+                 , "String fee"
+                 , "String time"
+                 , false
+-            ,UrlArr));
++            ,"https://firebasestorage.googleapis.com/v0/b/cho-tot-du-an-1.appspot.com/o/Image.jpg%2FImage%20image%3A62%2FN%C6%B0%E1%BB%9Bc%20Hoa%20Chionhs%20H%C3%A3ng?alt=media&token=d6d9bfaf-f8bf-4225-b388-031e6456b149"));
+         newsTrangChuList.add(new NewsTrangChu(
+                 "String title2"
+                 , "String descripsion"
+                 , "String fee"
+                 , "String time"
+                 , false
+-                ,UrlArr));newsTrangChuList.add(new NewsTrangChu(
++                ,"https://firebasestorage.googleapis.com/v0/b/cho-tot-du-an-1.appspot.com/o/Image.jpg%2FImage%20image%3A62%2FN%C6%B0%E1%BB%9Bc%20Hoa%20Chionhs%20H%C3%A3ng?alt=media&token=d6d9bfaf-f8bf-4225-b388-031e6456b149"));
++        newsTrangChuList.add(new NewsTrangChu(
+                 "String title3"
+                 , "String descripsion"
+                 , "String fee"
+                 , "String time"
+                 , false
+-                ,UrlArr));
++                ,"https://firebasestorage.googleapis.com/v0/b/cho-tot-du-an-1.appspot.com/o/Image.jpg%2FImage%20image%3A62%2FN%C6%B0%E1%BB%9Bc%20Hoa%20Chionhs%20H%C3%A3ng?alt=media&token=d6d9bfaf-f8bf-4225-b388-031e6456b149"));
+         return newsTrangChuList;
+     }
+ 
+Index: app/src/main/java/com/example/duan1/model/NewsTrangChu.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.duan1.model;\r\n\r\nimport java.util.List;\r\n\r\npublic class NewsTrangChu {\r\n    private String title,descripsion, fee, time;\r\n    private boolean favorite;\r\n    private List<String> ArrURL;\r\n    public int getsoluonganh(){\r\n        return getArrURL().size();\r\n    }\r\n\r\n    public NewsTrangChu() {\r\n    }\r\n\r\n    public NewsTrangChu(String title\r\n            , String descripsion\r\n            , String fee\r\n            , String time\r\n            , boolean favorite\r\n            , List<String> arrURL) {\r\n        this.title = title;\r\n        this.descripsion = descripsion;\r\n        this.fee = fee;\r\n        this.time = time;\r\n        this.favorite = favorite;\r\n        ArrURL = arrURL;\r\n    }\r\n\r\n    public String getTitle() {\r\n        return title;\r\n    }\r\n\r\n    public void setTitle(String title) {\r\n        this.title = title;\r\n    }\r\n\r\n    public String getDescripsion() {\r\n        return descripsion;\r\n    }\r\n\r\n    public void setDescripsion(String descripsion) {\r\n        this.descripsion = descripsion;\r\n    }\r\n\r\n    public String getFee() {\r\n        return fee;\r\n    }\r\n\r\n    public void setFee(String fee) {\r\n        this.fee = fee;\r\n    }\r\n\r\n    public String getTime() {\r\n        return time;\r\n    }\r\n\r\n    public void setTime(String time) {\r\n        this.time = time;\r\n    }\r\n\r\n    public boolean isFavorite() {\r\n        return favorite;\r\n    }\r\n\r\n    public void setFavorite(boolean favorite) {\r\n        this.favorite = favorite;\r\n    }\r\n\r\n    public List<String> getArrURL() {\r\n        return ArrURL;\r\n    }\r\n\r\n    public void setArrURL(List<String> arrURL) {\r\n        ArrURL = arrURL;\r\n    }\r\n}\r\n
+===================================================================
+diff --git a/app/src/main/java/com/example/duan1/model/NewsTrangChu.java b/app/src/main/java/com/example/duan1/model/NewsTrangChu.java
+--- a/app/src/main/java/com/example/duan1/model/NewsTrangChu.java	
++++ b/app/src/main/java/com/example/duan1/model/NewsTrangChu.java	
+@@ -5,10 +5,10 @@
+ public class NewsTrangChu {
+     private String title,descripsion, fee, time;
+     private boolean favorite;
+-    private List<String> ArrURL;
+-    public int getsoluonganh(){
+-        return getArrURL().size();
+-    }
++    private String ArrURL;
++//    public int getsoluonganh(){
++//        return getArrURL().size();
++//    }
+ 
+     public NewsTrangChu() {
+     }
+@@ -18,7 +18,7 @@
+             , String fee
+             , String time
+             , boolean favorite
+-            , List<String> arrURL) {
++            , String arrURL) {
+         this.title = title;
+         this.descripsion = descripsion;
+         this.fee = fee;
+@@ -67,11 +67,11 @@
+         this.favorite = favorite;
+     }
+ 
+-    public List<String> getArrURL() {
++    public String getArrURL() {
+         return ArrURL;
+     }
+ 
+-    public void setArrURL(List<String> arrURL) {
++    public void setArrURL(String arrURL) {
+         ArrURL = arrURL;
+     }
+ }
+Index: app/src/main/java/com/example/duan1/Adapter/NewsTrangChuAdapter.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.duan1.Adapter;\r\n\r\nimport android.content.Context;\r\nimport android.view.LayoutInflater;\r\nimport android.view.View;\r\nimport android.view.ViewGroup;\r\nimport android.widget.ImageView;\r\nimport android.widget.LinearLayout;\r\nimport android.widget.TextView;\r\n\r\nimport androidx.annotation.NonNull;\r\nimport androidx.recyclerview.widget.RecyclerView;\r\n\r\nimport com.bumptech.glide.Glide;\r\nimport com.example.duan1.R;\r\nimport com.example.duan1.model.NewsTrangChu;\r\n\r\nimport java.util.List;\r\n\r\n\r\npublic class NewsTrangChuAdapter extends RecyclerView.Adapter<NewsTrangChuAdapter.ViewHolder> {\r\n\r\n    private Context context;\r\n    private List<NewsTrangChu> newsTrangChuList;\r\n\r\n    public NewsTrangChuAdapter(Context context) {\r\n        this.context = context;\r\n    }\r\n\r\n    public void setDATA(List<NewsTrangChu> newsTrangChuList) {\r\n        this.newsTrangChuList = newsTrangChuList;\r\n        notifyDataSetChanged();\r\n    }\r\n\r\n    @NonNull\r\n    @Override\r\n    public NewsTrangChuAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {\r\n        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_trangchu_news,parent,false);\r\n\r\n        return new ViewHolder(view);\r\n    }\r\n\r\n    @Override\r\n    public void onBindViewHolder(@NonNull NewsTrangChuAdapter.ViewHolder h, int position) {\r\n        NewsTrangChu OOP = newsTrangChuList.get(position);\r\n        if(OOP == null){\r\n            return;\r\n        }\r\n        h.tvTitle.setText(OOP.getTitle());\r\n        h.tvFee.setText(OOP.getFee());\r\n        h.tvTime.setText(OOP.getTime());\r\n        h.tvDes.setText(OOP.getDescripsion());\r\n\r\n        if(OOP.getsoluonganh() > 1){\r\n            h.linearLayout.setVisibility(View.VISIBLE);\r\n            h.tvSLAnh.setText(OOP.getsoluonganh());\r\n        }else{\r\n            h.linearLayout.setVisibility(View.INVISIBLE);\r\n        }\r\n\r\n        Glide.with(context).load(OOP.getArrURL().get(0)).into(h.imgNews);\r\n\r\n        if(OOP.isFavorite()){\r\n            h.imgFavorite.setImageResource(R.drawable.ic_item_trangchu_favorite);\r\n        }else{\r\n            h.imgFavorite.setImageResource(R.drawable.ic_item_trangchu_unfavorite);\r\n        }\r\n        h.imgFavorite.setOnClickListener(new View.OnClickListener() {\r\n            @Override\r\n            public void onClick(View view) {\r\n                if(OOP.isFavorite()){\r\n                    OOP.setFavorite(false);\r\n                }else{\r\n                    OOP.setFavorite(true);\r\n                }\r\n            }\r\n        });\r\n    }\r\n\r\n    @Override\r\n    public int getItemCount() {\r\n        return 0;\r\n    }\r\n\r\n    public class ViewHolder extends RecyclerView.ViewHolder {\r\n        private TextView tvSLAnh,tvTitle,tvFee,tvDes,tvTime;\r\n        private ImageView imgNews,imgFavorite,imgLoaiTin;\r\n        private LinearLayout linearLayout;\r\n        public ViewHolder(@NonNull View itemView) {\r\n            super(itemView);\r\n            tvSLAnh = itemView.findViewById(R.id.tv_item_trangchu_news_SoLuongAnh);\r\n            tvDes = itemView.findViewById(R.id.tv_item_trangchu_descripsion);\r\n            tvFee = itemView.findViewById(R.id.tv_item_trangchu_fee);\r\n            tvTime = itemView.findViewById(R.id.tv_item_trangchu_news_Time);\r\n            tvTitle = itemView.findViewById(R.id.tv_item_trangchu_title);\r\n\r\n            imgFavorite = itemView.findViewById(R.id.img_item_trangchu_news_favorite);\r\n            imgNews = itemView.findViewById(R.id.img_item_trangchu_news_Pic);\r\n            imgLoaiTin = itemView.findViewById(R.id.img_item_trangchu_news_LoaiTin);\r\n\r\n            linearLayout = itemView.findViewById(R.id.layout_item_trangchu_news_SLA);\r\n        }\r\n    }\r\n}\r\n
+===================================================================
+diff --git a/app/src/main/java/com/example/duan1/Adapter/NewsTrangChuAdapter.java b/app/src/main/java/com/example/duan1/Adapter/NewsTrangChuAdapter.java
+--- a/app/src/main/java/com/example/duan1/Adapter/NewsTrangChuAdapter.java	
++++ b/app/src/main/java/com/example/duan1/Adapter/NewsTrangChuAdapter.java	
+@@ -1,6 +1,7 @@
+ package com.example.duan1.Adapter;
+ 
+ import android.content.Context;
++import android.util.Log;
+ import android.view.LayoutInflater;
+ import android.view.View;
+ import android.view.ViewGroup;
+@@ -27,8 +28,9 @@
+         this.context = context;
+     }
+ 
+-    public void setDATA(List<NewsTrangChu> newsTrangChuList) {
+-        this.newsTrangChuList = newsTrangChuList;
++    public void setDATA(List<NewsTrangChu> x) {
++        this.newsTrangChuList = x;
++        Log.d("hoang", String.valueOf(newsTrangChuList));
+         notifyDataSetChanged();
+     }
+ 
+@@ -36,7 +38,6 @@
+     @Override
+     public NewsTrangChuAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_trangchu_news,parent,false);
+-
+         return new ViewHolder(view);
+     }
+ 
+@@ -51,14 +52,14 @@
+         h.tvTime.setText(OOP.getTime());
+         h.tvDes.setText(OOP.getDescripsion());
+ 
+-        if(OOP.getsoluonganh() > 1){
+-            h.linearLayout.setVisibility(View.VISIBLE);
+-            h.tvSLAnh.setText(OOP.getsoluonganh());
+-        }else{
+-            h.linearLayout.setVisibility(View.INVISIBLE);
+-        }
++//        if(OOP.getsoluonganh() > 1){
++//            h.linearLayout.setVisibility(View.VISIBLE);
++//            h.tvSLAnh.setText(OOP.getsoluonganh());
++//        }else{
++//            h.linearLayout.setVisibility(View.INVISIBLE);
++//        }
+ 
+-        Glide.with(context).load(OOP.getArrURL().get(0)).into(h.imgNews);
++        Glide.with(context).load(OOP.getArrURL()).into(h.imgNews);
+ 
+         if(OOP.isFavorite()){
+             h.imgFavorite.setImageResource(R.drawable.ic_item_trangchu_favorite);
+@@ -75,10 +76,16 @@
+                 }
+             }
+         });
++        if(true){
++            h.imgLoaiTin.setImageResource(R.drawable.ic_item_trangchu_news_cameratest);
++        }
+     }
+ 
+     @Override
+     public int getItemCount() {
++        if(newsTrangChuList !=null){
++            return newsTrangChuList.size();
++        }
+         return 0;
+     }
+ 

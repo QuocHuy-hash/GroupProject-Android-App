@@ -1,0 +1,193 @@
+Index: app/src/main/res/values/colors.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<resources>\r\n    <color name=\"purple_200\">#FFBB86FC</color>\r\n    <color name=\"purple_500\">#FF6200EE</color>\r\n    <color name=\"purple_700\">#FF3700B3</color>\r\n    <color name=\"teal_200\">#FF03DAC5</color>\r\n    <color name=\"teal_700\">#FF018786</color>\r\n    <color name=\"black\">#FF000000</color>\r\n    <color name=\"white\">#FFFFFFFF</color>\r\n    <color name=\"Yellow\">#FFFF00</color>\r\n    <color name=\"Orenge\">#F6BB4E</color>\r\n    <color name=\"Orenge_1\">#FAA607</color>\r\n    <color name=\"gray_1\">#CFCCC4</color>\r\n    <color name=\"gray_2\">#BAB7AF</color>\r\n    <color name=\"blue\">#0679FB</color>\r\n    <color name=\"blue_black\">#084D9B</color>\r\n    <color name=\"trans...\">#00000000</color>\r\n    <color name=\"white_opacity_50\">#CCFFFFFF</color>\r\n\r\n</resources>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/values/colors.xml b/app/src/main/res/values/colors.xml
+--- a/app/src/main/res/values/colors.xml	
++++ b/app/src/main/res/values/colors.xml	
+@@ -16,5 +16,5 @@
+     <color name="blue_black">#084D9B</color>
+     <color name="trans...">#00000000</color>
+     <color name="white_opacity_50">#CCFFFFFF</color>
+-
++<color name="red">#FF0000</color>
+ </resources>
+\ No newline at end of file
+Index: app/src/main/res/drawable/ic_item_trangchu_news_cameratest.xml
+===================================================================
+diff --git a/app/src/main/res/drawable/ic_item_trangchu_news_cameratest.xml b/app/src/main/res/drawable/ic_item_trangchu_news_cameratest.xml
+new file mode 100644
+--- /dev/null	
++++ b/app/src/main/res/drawable/ic_item_trangchu_news_cameratest.xml	
+@@ -0,0 +1,18 @@
++<vector android:height="24dp" android:tint="#000000"
++    android:viewportHeight="24" android:viewportWidth="24"
++    android:width="24dp" xmlns:android="http://schemas.android.com/apk/res/android">
++
++    <path android:fillColor="@android:color/black"
++        android:pathData="M9,2L7.17,4L4,4c-1.1,0 -2,0.9 -2,2v12c0,1.1 0.9,2 2,2h16c1.1,0 2,-0.9 2,-2L22,6c0,-1.1 -0.9,-2 -2,-2h-3.17L15,2L9,2zM12,17"/>
++
++
++
++
++
++
++
++
++    <!--    <path android:fillColor="@android:color/black" android:pathData="M12,12m-3.2,0a3.2,3.2 0,1 1,6.4 0a3.2,3.2 0,1 1,-6.4 0"/>-->
++<!--    <path android:fillColor="@android:color/black"-->
++<!--        android:pathData="M9,2L7.17,4L4,4c-1.1,0 -2,0.9 -2,2v12c0,1.1 0.9,2 2,2h16c1.1,0 2,-0.9 2,-2L22,6c0,-1.1 -0.9,-2 -2,-2h-3.17L15,2L9,2zM12,17c-2.76,0 -5,-2.24 -5,-5s2.24,-5 5,-5 5,2.24 5,5 -2.24,5 -5,5z"/>-->
++</vector>
+Index: app/src/main/res/drawable/ic_item_trangchu_favorite.xml
+===================================================================
+diff --git a/app/src/main/res/drawable/ic_item_trangchu_favorite.xml b/app/src/main/res/drawable/ic_item_trangchu_favorite.xml
+new file mode 100644
+--- /dev/null	
++++ b/app/src/main/res/drawable/ic_item_trangchu_favorite.xml	
+@@ -0,0 +1,5 @@
++<vector android:height="24dp" android:tint="#FF0000"
++    android:viewportHeight="24" android:viewportWidth="24"
++    android:width="24dp" xmlns:android="http://schemas.android.com/apk/res/android">
++    <path android:fillColor="@android:color/white" android:pathData="M12,21.35l-1.45,-1.32C5.4,15.36 2,12.28 2,8.5 2,5.42 4.42,3 7.5,3c1.74,0 3.41,0.81 4.5,2.09C13.09,3.81 14.76,3 16.5,3 19.58,3 22,5.42 22,8.5c0,3.78 -3.4,6.86 -8.55,11.54L12,21.35z"/>
++</vector>
+Index: app/src/main/res/drawable/ic_item_trangchu_unfavorite.xml
+===================================================================
+diff --git a/app/src/main/res/drawable/ic_item_trangchu_unfavorite.xml b/app/src/main/res/drawable/ic_item_trangchu_unfavorite.xml
+new file mode 100644
+--- /dev/null	
++++ b/app/src/main/res/drawable/ic_item_trangchu_unfavorite.xml	
+@@ -0,0 +1,5 @@
++<vector android:height="24dp" android:tint="#FF0000"
++    android:viewportHeight="24" android:viewportWidth="24"
++    android:width="24dp" xmlns:android="http://schemas.android.com/apk/res/android">
++    <path android:fillColor="@android:color/white" android:pathData="M16.5,3c-1.74,0 -3.41,0.81 -4.5,2.09C10.91,3.81 9.24,3 7.5,3 4.42,3 2,5.42 2,8.5c0,3.78 3.4,6.86 8.55,11.54L12,21.35l1.45,-1.32C18.6,15.36 22,12.28 22,8.5 22,5.42 19.58,3 16.5,3zM12.1,18.55l-0.1,0.1 -0.1,-0.1C7.14,14.24 4,11.39 4,8.5 4,6.5 5.5,5 7.5,5c1.54,0 3.04,0.99 3.57,2.36h1.87C13.46,5.99 14.96,5 16.5,5c2,0 3.5,1.5 3.5,3.5 0,2.89 -3.14,5.74 -7.9,10.05z"/>
++</vector>
+Index: app/src/main/res/layout/item_trangchu_news.xml
+===================================================================
+diff --git a/app/src/main/res/layout/item_trangchu_news.xml b/app/src/main/res/layout/item_trangchu_news.xml
+new file mode 100644
+--- /dev/null	
++++ b/app/src/main/res/layout/item_trangchu_news.xml	
+@@ -0,0 +1,105 @@
++<?xml version="1.0" encoding="utf-8"?>
++<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
++    xmlns:app="http://schemas.android.com/apk/res-auto"
++    xmlns:tools="http://schemas.android.com/tools"
++    android:layout_width="match_parent"
++    android:layout_height="match_parent"
++    android:orientation="vertical"
++    android:padding="10dp">
++
++    <androidx.constraintlayout.widget.ConstraintLayout
++        android:layout_width="match_parent"
++        android:layout_height="350dp">
++        <ImageView
++            android:layout_width="match_parent"
++            android:layout_height="match_parent"
++            android:src="@color/gray_1"
++            app:layout_constraintBottom_toBottomOf="parent"
++            app:layout_constraintEnd_toEndOf="parent"
++            app:layout_constraintStart_toStartOf="parent"
++            app:layout_constraintTop_toTopOf="parent" />
++        <LinearLayout
++            android:id="@+id/linearLayout"
++            android:layout_width="40dp"
++            android:layout_height="35dp"
++            android:layout_marginStart="10dp"
++            android:layout_marginTop="10dp"
++            android:background="@drawable/ic_item_trangchu_news_cameratest"
++            app:layout_constraintStart_toStartOf="parent"
++            app:layout_constraintTop_toTopOf="parent">
++
++            <TextView
++                android:id="@+id/tv_item_trangchu_news_SoLuongAnh"
++                android:layout_width="match_parent"
++                android:layout_height="match_parent"
++                android:gravity="center"
++                android:maxLength="99"
++                android:text="10"
++                android:textColor="@color/white"
++                android:textStyle="bold" />
++
++        </LinearLayout>
++
++        <ImageView
++            android:id="@+id/img_item_trangchu_news_favorite"
++            android:layout_width="40dp"
++            android:layout_height="35dp"
++            android:layout_marginEnd="10dp"
++            android:layout_marginBottom="10dp"
++            android:src="@drawable/ic_item_trangchu_unfavorite"
++            app:layout_constraintBottom_toBottomOf="parent"
++            app:layout_constraintEnd_toEndOf="parent" />
++
++
++    </androidx.constraintlayout.widget.ConstraintLayout>
++
++    <LinearLayout
++        android:layout_width="match_parent"
++        android:layout_height="wrap_content"
++        android:orientation="vertical"
++        >
++        <TextView
++            android:layout_width="wrap_content"
++            android:layout_height="wrap_content"
++            android:text="TITLE"
++
++            android:textSize="25dp"
++            android:textColor="@color/black"
++            android:maxLength="55"/>
++        <TextView
++            android:layout_width="wrap_content"
++            android:layout_height="wrap_content"
++            android:text="descripsion"
++            android:textSize="25dp"
++            android:textColor="@color/gray_1"
++            android:maxLength="29"/>
++        <TextView
++            android:layout_width="wrap_content"
++            android:layout_height="wrap_content"
++            android:text="descripsion"
++            android:textSize="25dp"
++            android:textColor="@color/red"
++            android:textStyle="bold"
++            android:maxLength="29"/>
++        <LinearLayout
++            android:layout_width="wrap_content"
++            android:layout_height="wrap_content"
++            >
++            <ImageView
++                android:id="@+id/img_item_trangchu_news_LoaiTin"
++                android:layout_width="wrap_content"
++                android:layout_height="match_parent"
++                android:src="@drawable/ic_item_trangchu_news_cameratest"
++                android:layout_gravity="center"/>
++            <TextView
++                android:id="@+id/tv_item_trangchu_news_Time"
++                android:layout_width="wrap_content"
++                android:layout_height="match_parent"
++                android:text="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
++                android:maxLength="45"/>
++
++
++        </LinearLayout>
++    </LinearLayout>
++
++</LinearLayout>
+\ No newline at end of file
+Index: app/src/main/res/drawable/ic_trangchu_news_loaitintuc_test.xml
+===================================================================
+diff --git a/app/src/main/res/drawable/ic_trangchu_news_loaitintuc_test.xml b/app/src/main/res/drawable/ic_trangchu_news_loaitintuc_test.xml
+new file mode 100644
+--- /dev/null	
++++ b/app/src/main/res/drawable/ic_trangchu_news_loaitintuc_test.xml	
+@@ -0,0 +1,6 @@
++<vector android:alpha="0.6" android:autoMirrored="true"
++    android:height="24dp" android:tint="#000000"
++    android:viewportHeight="24" android:viewportWidth="24"
++    android:width="24dp" xmlns:android="http://schemas.android.com/apk/res/android">
++    <path android:fillColor="@android:color/white" android:pathData="M21,3L3,3c-1.1,0 -2,0.9 -2,2v14c0,1.1 0.9,2 2,2h18c1.1,0 2,-0.9 2,-2L23,5c0,-1.1 -0.9,-2 -2,-2zM12,12L3,12L3,5h9v7z"/>
++</vector>

@@ -1,0 +1,444 @@
+Index: app/src/main/res/values/colors.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<resources>\r\n    <color name=\"purple_200\">#FFBB86FC</color>\r\n    <color name=\"purple_500\">#FF6200EE</color>\r\n    <color name=\"purple_700\">#FF3700B3</color>\r\n    <color name=\"teal_200\">#FF03DAC5</color>\r\n    <color name=\"teal_700\">#FF018786</color>\r\n    <color name=\"black\">#FF000000</color>\r\n    <color name=\"white\">#FFFFFFFF</color>\r\n    <color name=\"Yellow\">#FFFF00</color>\r\n    <color name=\"Orenge\">#F6BB4E</color>\r\n    <color name=\"Orenge_1\">#FAA607</color>\r\n    <color name=\"gray_1\">#CFCCC4</color>\r\n    <color name=\"gray_2\">#BAB7AF</color>\r\n    <color name=\"blue\">#0679FB</color>\r\n    <color name=\"blue_black\">#084D9B</color>\r\n    <color name=\"trans...\">#00000000</color>\r\n    <color name=\"white_opacity_50\">#CCFFFFFF</color>\r\n\r\n</resources>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/values/colors.xml b/app/src/main/res/values/colors.xml
+--- a/app/src/main/res/values/colors.xml	(revision 68aa6f3bbd670638177edce6c5d07c5440ae358e)
++++ b/app/src/main/res/values/colors.xml	(date 1669914077763)
+@@ -16,5 +16,5 @@
+     <color name="blue_black">#084D9B</color>
+     <color name="trans...">#00000000</color>
+     <color name="white_opacity_50">#CCFFFFFF</color>
+-
++    <color name="red">#FF0000</color>
+ </resources>
+\ No newline at end of file
+Index: build.gradle
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>buildscript {\r\n    dependencies {\r\n        classpath 'com.google.gms:google-services:4.3.10'\r\n\r\n    }\r\n}// Top-level build file where you can add configuration options common to all sub-projects/modules.\r\nplugins {\r\n    id 'com.android.application' version '7.2.1' apply false\r\n    id 'com.android.library' version '7.2.1' apply false\r\n}\r\n\r\ntask clean(type: Delete) {\r\n    delete rootProject.buildDir\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/build.gradle b/build.gradle
+--- a/build.gradle	(revision 68aa6f3bbd670638177edce6c5d07c5440ae358e)
++++ b/build.gradle	(date 1669914077753)
+@@ -5,8 +5,8 @@
+     }
+ }// Top-level build file where you can add configuration options common to all sub-projects/modules.
+ plugins {
+-    id 'com.android.application' version '7.2.1' apply false
+-    id 'com.android.library' version '7.2.1' apply false
++    id 'com.android.application' version '7.3.0' apply false
++    id 'com.android.library' version '7.3.0' apply false
+ }
+ 
+ task clean(type: Delete) {
+Index: app/src/main/java/com/example/duan1/Adapter/dsachTinTrangChuAdapter.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/duan1/Adapter/dsachTinTrangChuAdapter.java b/app/src/main/java/com/example/duan1/Adapter/dsachTinTrangChuAdapter.java
+new file mode 100644
+--- /dev/null	(date 1669914077770)
++++ b/app/src/main/java/com/example/duan1/Adapter/dsachTinTrangChuAdapter.java	(date 1669914077770)
+@@ -0,0 +1,43 @@
++package com.example.duan1.Adapter;
++
++import android.content.Context;
++import android.view.View;
++import android.view.ViewGroup;
++
++import androidx.annotation.NonNull;
++import androidx.recyclerview.widget.RecyclerView;
++
++import com.example.duan1.model.danhsachTinTrangChu;
++
++import java.util.List;
++
++public class dsachTinTrangChuAdapter extends RecyclerView.Adapter<dsachTinTrangChuAdapter.TinTrangChuViewHolder> {
++    private Context context;
++    private List<danhsachTinTrangChu> list;
++
++
++    @NonNull
++    @Override
++    public TinTrangChuViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
++        return null;
++    }
++
++    @Override
++    public void onBindViewHolder(@NonNull TinTrangChuViewHolder holder, int position) {
++
++    }
++
++    @Override
++    public int getItemCount() {
++        return 0;
++    }
++
++    public class TinTrangChuViewHolder extends RecyclerView.ViewHolder {
++
++
++
++        public TinTrangChuViewHolder(@NonNull View itemView) {
++            super(itemView);
++        }
++    }
++}
+Index: app/src/main/java/com/example/duan1/DangTin.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/duan1/DangTin.java b/app/src/main/java/com/example/duan1/model/DangTin.java
+rename from app/src/main/java/com/example/duan1/DangTin.java
+rename to app/src/main/java/com/example/duan1/model/DangTin.java
+--- a/app/src/main/java/com/example/duan1/DangTin.java	(revision 68aa6f3bbd670638177edce6c5d07c5440ae358e)
++++ b/app/src/main/java/com/example/duan1/model/DangTin.java	(date 1669914077789)
+@@ -1,9 +1,11 @@
+-package com.example.duan1;
++package com.example.duan1.model;
+ 
+ import androidx.appcompat.app.AppCompatActivity;
+ 
+ import android.os.Bundle;
+ 
++import com.example.duan1.R;
++
+ public class DangTin extends AppCompatActivity {
+ 
+     @Override
+Index: app/src/main/res/layout/activity_dang_tin.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<LinearLayout xmlns:android=\"http://schemas.android.com/apk/res/android\"\r\n    xmlns:app=\"http://schemas.android.com/apk/res-auto\"\r\n    xmlns:tools=\"http://schemas.android.com/tools\"\r\n    android:layout_width=\"match_parent\"\r\n    android:layout_height=\"match_parent\"\r\n    tools:context=\".DangTin\"\r\n    android:orientation=\"vertical\"\r\n    android:gravity=\"center\"\r\n    >\r\n\r\n    <TextView\r\n        android:layout_width=\"wrap_content\"\r\n        android:layout_height=\"wrap_content\"\r\n        android:text=\"Activity Đăng tin\"\r\n        android:textSize=\"30dp\"\r\n        android:textColor=\"@color/black\"\r\n\r\n        />\r\n\r\n</LinearLayout>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/layout/activity_dang_tin.xml b/app/src/main/res/layout/activity_dang_tin.xml
+--- a/app/src/main/res/layout/activity_dang_tin.xml	(revision 68aa6f3bbd670638177edce6c5d07c5440ae358e)
++++ b/app/src/main/res/layout/activity_dang_tin.xml	(date 1669914077810)
+@@ -4,7 +4,7 @@
+     xmlns:tools="http://schemas.android.com/tools"
+     android:layout_width="match_parent"
+     android:layout_height="match_parent"
+-    tools:context=".DangTin"
++    tools:context=".model.DangTin"
+     android:orientation="vertical"
+     android:gravity="center"
+     >
+Index: app/src/main/res/layout/item_danh_sach_tin_trang_chu_cu.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/layout/item_danh_sach_tin_trang_chu_cu.xml b/app/src/main/res/layout/item_danh_sach_tin_trang_chu_cu.xml
+new file mode 100644
+--- /dev/null	(date 1669914077831)
++++ b/app/src/main/res/layout/item_danh_sach_tin_trang_chu_cu.xml	(date 1669914077831)
+@@ -0,0 +1,109 @@
++<?xml version="1.0" encoding="utf-8"?>
++<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
++    xmlns:app="http://schemas.android.com/apk/res-auto"
++    xmlns:tools="http://schemas.android.com/tools"
++    android:layout_width="match_parent"
++    android:layout_height="match_parent"
++    android:orientation="vertical"
++    android:padding="10dp">
++
++    <androidx.constraintlayout.widget.ConstraintLayout
++        android:layout_width="match_parent"
++        android:layout_height="350dp"
++        android:background="@color/gray_1"
++        >
++
++        <!--        <ImageView-->
++        <!--            android:id="@+id/imgSoAnh"-->
++
++        <!--            android:layout_width="45dp"-->
++        <!--            android:layout_height="45dp"-->
++        <!--            android:layout_marginStart="10dp"-->
++        <!--            android:layout_marginTop="10dp"-->
++        <!--            app:layout_constraintStart_toStartOf="parent"-->
++        <!--            app:layout_constraintTop_toTopOf="parent"-->
++
++        <!--            android:src="@drawable/ic_baseline_photo_camera_16"/>-->
++        <LinearLayout
++            android:id="@+id/layout_SoAnh_item"
++            android:layout_width="45dp"
++            android:layout_height="45dp"
++            android:layout_marginStart="10dp"
++            android:layout_marginTop="10dp"
++            android:background="@drawable/ic_baseline_photo_camera_16"
++            app:layout_constraintStart_toStartOf="parent"
++            app:layout_constraintTop_toTopOf="parent">
++        <TextView
++            android:layout_width="match_parent"
++            android:layout_height="match_parent"
++            android:maxLength="99"
++            android:text="10"
++            android:textColor="@color/white"
++            android:textStyle="bold"
++
++            android:gravity="center"/>
++        </LinearLayout>
++
++        <ImageView
++            android:id="@+id/imgTym"
++            android:layout_width="45dp"
++            android:layout_height="45dp"
++            android:layout_marginEnd="10dp"
++            android:layout_marginBottom="10dp"
++            android:src="@drawable/ic_baseline_favorite_border_24"
++            app:layout_constraintBottom_toBottomOf="parent"
++            app:layout_constraintEnd_toEndOf="parent" />
++    </androidx.constraintlayout.widget.ConstraintLayout>
++
++    <TextView
++        android:id="@+id/tvTitle"
++        android:layout_width="match_parent"
++        android:layout_height="wrap_content"
++        android:maxLength="50"
++        android:text="Title"
++        android:textColor="@color/black"
++        android:textSize="20dp"
++        android:textStyle="bold" />
++
++    <TextView
++        android:id="@+id/tvDescription"
++        android:layout_width="match_parent"
++        android:layout_height="70dp"
++        android:text="descripsion"
++        android:textColor="@color/gray_2"
++        android:textSize="20dp"
++        android:textStyle="normal" />
++
++    <TextView
++        android:id="@+id/tvFee"
++        android:layout_width="match_parent"
++        android:layout_height="wrap_content"
++        android:maxLength="35"
++        android:text="Fee"
++        android:textColor="@color/red"
++        android:textSize="25dp"
++        android:textStyle="bold" />
++
++    <LinearLayout
++        android:layout_width="wrap_content"
++        android:layout_height="wrap_content"
++        android:layout_marginTop="10dp">
++
++        <ImageView
++            android:id="@+id/img_item_loai_tin"
++            android:layout_width="wrap_content"
++            android:layout_height="wrap_content"
++            android:layout_gravity="center"
++            android:src="@drawable/ic_icon_test_25" />
++
++        <TextView
++            android:id="@+id/tv_item_time_trang_chu"
++            android:layout_width="wrap_content"
++            android:layout_height="wrap_content"
++            android:maxLength="25"
++            android:text="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
++            android:textSize="20dp" />
++    </LinearLayout>
++
++
++</LinearLayout>
+\ No newline at end of file
+Index: app/src/main/res/drawable/ic_baseline_favorite_border_24.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/drawable/ic_baseline_favorite_border_24.xml b/app/src/main/res/drawable/ic_baseline_favorite_border_24.xml
+new file mode 100644
+--- /dev/null	(date 1669914077825)
++++ b/app/src/main/res/drawable/ic_baseline_favorite_border_24.xml	(date 1669914077825)
+@@ -0,0 +1,5 @@
++<vector android:height="24dp" android:tint="#FF0000"
++    android:viewportHeight="24" android:viewportWidth="24"
++    android:width="24dp" xmlns:android="http://schemas.android.com/apk/res/android">
++    <path android:fillColor="@android:color/white" android:pathData="M16.5,3c-1.74,0 -3.41,0.81 -4.5,2.09C10.91,3.81 9.24,3 7.5,3 4.42,3 2,5.42 2,8.5c0,3.78 3.4,6.86 8.55,11.54L12,21.35l1.45,-1.32C18.6,15.36 22,12.28 22,8.5 22,5.42 19.58,3 16.5,3zM12.1,18.55l-0.1,0.1 -0.1,-0.1C7.14,14.24 4,11.39 4,8.5 4,6.5 5.5,5 7.5,5c1.54,0 3.04,0.99 3.57,2.36h1.87C13.46,5.99 14.96,5 16.5,5c2,0 3.5,1.5 3.5,3.5 0,2.89 -3.14,5.74 -7.9,10.05z"/>
++</vector>
+Index: app/src/main/res/drawable/ic_baseline_favorite_24.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/drawable/ic_baseline_favorite_24.xml b/app/src/main/res/drawable/ic_baseline_favorite_24.xml
+new file mode 100644
+--- /dev/null	(date 1669914077782)
++++ b/app/src/main/res/drawable/ic_baseline_favorite_24.xml	(date 1669914077782)
+@@ -0,0 +1,5 @@
++<vector android:height="24dp" android:tint="#FF0000"
++    android:viewportHeight="24" android:viewportWidth="24"
++    android:width="24dp" xmlns:android="http://schemas.android.com/apk/res/android">
++    <path android:fillColor="@android:color/white" android:pathData="M12,21.35l-1.45,-1.32C5.4,15.36 2,12.28 2,8.5 2,5.42 4.42,3 7.5,3c1.74,0 3.41,0.81 4.5,2.09C13.09,3.81 14.76,3 16.5,3 19.58,3 22,5.42 22,8.5c0,3.78 -3.4,6.86 -8.55,11.54L12,21.35z"/>
++</vector>
+Index: app/src/main/res/drawable/ic_baseline_photo_camera_16.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/drawable/ic_baseline_photo_camera_16.xml b/app/src/main/res/drawable/ic_baseline_photo_camera_16.xml
+new file mode 100644
+--- /dev/null	(date 1669914077776)
++++ b/app/src/main/res/drawable/ic_baseline_photo_camera_16.xml	(date 1669914077776)
+@@ -0,0 +1,6 @@
++<vector android:alpha="0.3" android:height="16dp" android:tint="#000000"
++    android:viewportHeight="24" android:viewportWidth="24"
++    android:width="16dp" xmlns:android="http://schemas.android.com/apk/res/android">
++    <path android:fillColor="@android:color/white" android:pathData="M12,12m-3.2,0a3.2,3.2 0,1 1,6.4 0a3.2,3.2 0,1 1,-6.4 0"/>
++    <path android:fillColor="@android:color/white" android:pathData="M9,2L7.17,4L4,4c-1.1,0 -2,0.9 -2,2v12c0,1.1 0.9,2 2,2h16c1.1,0 2,-0.9 2,-2L22,6c0,-1.1 -0.9,-2 -2,-2h-3.17L15,2L9,2zM12,17c-2.76,0 -5,-2.24 -5,-5s2.24,-5 5,-5 5,2.24 5,5 -2.24,5 -5,5z"/>
++</vector>
+Index: app/src/main/java/com/example/duan1/model/danhsachTinTrangChu.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/duan1/model/danhsachTinTrangChu.java b/app/src/main/java/com/example/duan1/model/danhsachTinTrangChu.java
+new file mode 100644
+--- /dev/null	(date 1669914077820)
++++ b/app/src/main/java/com/example/duan1/model/danhsachTinTrangChu.java	(date 1669914077820)
+@@ -0,0 +1,81 @@
++package com.example.duan1.model;
++
++import android.net.Uri;
++
++import java.util.ArrayList;
++
++public class danhsachTinTrangChu {
++    private String strTitle,strDescripsion,strFee,strTime;
++    private int soluongAnh;
++    private boolean favorite;
++    private ArrayList<Uri> urisArrAnh;
++
++    public danhsachTinTrangChu(String strTitle, String strDescripsion, String strFee, String strTime, int soluongAnh, boolean favorite, ArrayList<Uri> urisArrAnh) {
++        this.strTitle = strTitle;
++        this.strDescripsion = strDescripsion;
++        this.strFee = strFee;
++        this.strTime = strTime;
++        this.soluongAnh = soluongAnh;
++        this.favorite = favorite;
++        this.urisArrAnh = urisArrAnh;
++    }
++
++    public danhsachTinTrangChu() {
++    }
++
++    public ArrayList<Uri> getUrisArrAnh() {
++        return urisArrAnh;
++    }
++
++    public void setUrisArrAnh(ArrayList<Uri> urisArrAnh) {
++        this.urisArrAnh = urisArrAnh;
++    }
++
++    public String getStrTitle() {
++        return strTitle;
++    }
++
++    public void setStrTitle(String strTitle) {
++        this.strTitle = strTitle;
++    }
++
++    public String getStrDescripsion() {
++        return strDescripsion;
++    }
++
++    public void setStrDescripsion(String strDescripsion) {
++        this.strDescripsion = strDescripsion;
++    }
++
++    public String getStrFee() {
++        return strFee;
++    }
++
++    public void setStrFee(String strFee) {
++        this.strFee = strFee;
++    }
++
++    public String getStrTime() {
++        return strTime;
++    }
++
++    public void setStrTime(String strTime) {
++        this.strTime = strTime;
++    }
++
++    public int getSoluongAnh() {
++        return soluongAnh;
++    }
++
++    public void setSoluongAnh(int soluongAnh) {
++        this.soluongAnh = soluongAnh;
++    }
++
++    public boolean isFavorite() {
++        return favorite;
++    }
++
++    public void setFavorite(boolean favorite) {
++        this.favorite = favorite;
++    }
++}
+Index: app/src/main/AndroidManifest.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<manifest xmlns:android=\"http://schemas.android.com/apk/res/android\"\r\n    xmlns:tools=\"http://schemas.android.com/tools\"\r\n    package=\"com.example.duan1\">\r\n\r\n    <uses-permission android:name=\"android.permission.INTERNET\" />\r\n    <uses-permission android:name=\"android.permission.READ_EXTERNAL_STORAGE\" />\r\n    <uses-permission android:name=\"android.permission.WRITE_EXTERNAL_STORAGE\" />\r\n    <uses-permission android:name=\"android.permission.CAMERA\" />\r\n\r\n    <application\r\n        android:allowBackup=\"true\"\r\n        android:dataExtractionRules=\"@xml/data_extraction_rules\"\r\n        android:fullBackupContent=\"@xml/backup_rules\"\r\n        android:icon=\"@mipmap/ic_launcher\"\r\n        android:label=\"@string/app_name\"\r\n        android:roundIcon=\"@mipmap/ic_launcher_round\"\r\n        android:supportsRtl=\"true\"\r\n        android:theme=\"@style/Theme.DuAn1\"\r\n        tools:targetApi=\"31\">\r\n        <activity\r\n            android:name=\".EditAccount\"\r\n            android:exported=\"false\">\r\n            <meta-data\r\n                android:name=\"android.app.lib_name\"\r\n                android:value=\"\" />\r\n        </activity>\r\n        <activity\r\n            android:name=\".dangTinBDSPhongTroActivity\"\r\n            android:exported=\"false\" />\r\n        <activity\r\n            android:name=\".dangTinBDSDatActivity\"\r\n            android:exported=\"false\" />\r\n        <activity\r\n            android:name=\".dangTinBDSActivity\"\r\n            android:exported=\"false\" />\r\n        <activity\r\n            android:name=\".chonDanhMucDienMayActivity\"\r\n            android:exported=\"false\" />\r\n        <activity\r\n            android:name=\".chonDanhMucGiaiTriActivity\"\r\n            android:exported=\"false\" />\r\n        <activity\r\n            android:name=\".chonDanhMucDoDienTuActivity\"\r\n            android:exported=\"false\" />\r\n        <activity\r\n            android:name=\".chonDanhMucThoiTrangAcrivity\"\r\n            android:exported=\"false\" />\r\n        <activity\r\n            android:name=\".chonDanhMucXeCoActivity\"\r\n            android:exported=\"false\" />\r\n        <activity\r\n            android:name=\".chonDanhMucBDSActivity\"\r\n            android:exported=\"false\" />\r\n        <activity\r\n            android:name=\".Account\"\r\n            android:exported=\"false\">\r\n            <meta-data\r\n                android:name=\"android.app.lib_name\"\r\n                android:value=\"\" />\r\n        </activity>\r\n        <activity\r\n            android:name=\".Register\"\r\n            android:exported=\"false\">\r\n            <meta-data\r\n                android:name=\"android.app.lib_name\"\r\n                android:value=\"\" />\r\n        </activity>\r\n        <activity\r\n            android:name=\".DangTin\"\r\n            android:exported=\"false\">\r\n            <meta-data\r\n                android:name=\"android.app.lib_name\"\r\n                android:value=\"\" />\r\n        </activity>\r\n        <activity\r\n            android:name=\".Login\"\r\n            android:exported=\"false\">\r\n            <meta-data\r\n                android:name=\"android.app.lib_name\"\r\n                android:value=\"\" />\r\n        </activity>\r\n        <activity\r\n            android:name=\".MainActivity\"\r\n            android:exported=\"true\">\r\n            <intent-filter>\r\n                <action android:name=\"android.intent.action.MAIN\" />\r\n\r\n                <category android:name=\"android.intent.category.LAUNCHER\" />\r\n            </intent-filter>\r\n        </activity>\r\n\r\n        <meta-data\r\n            android:name=\"com.facebook.sdk.ApplicationId\"\r\n            android:value=\"@string/facebook_app_id\" />\r\n        <meta-data\r\n            android:name=\"com.facebook.sdk.ClientToken\"\r\n            android:value=\"@string/facebook_client_token\" />\r\n\r\n        <activity\r\n            android:name=\"com.facebook.FacebookActivity\"\r\n            android:configChanges=\"keyboard|keyboardHidden|screenLayout|screenSize|orientation\"\r\n            android:label=\"@string/app_name\" />\r\n        <activity\r\n            android:name=\"com.facebook.CustomTabActivity\"\r\n            android:exported=\"true\">\r\n            <intent-filter>\r\n                <action android:name=\"android.intent.action.VIEW\" />\r\n\r\n                <category android:name=\"android.intent.category.DEFAULT\" />\r\n                <category android:name=\"android.intent.category.BROWSABLE\" />\r\n\r\n                <data android:scheme=\"@string/fb_login_protocol_scheme\" />\r\n            </intent-filter>\r\n        </activity>\r\n    </application>\r\n\r\n</manifest>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/AndroidManifest.xml b/app/src/main/AndroidManifest.xml
+--- a/app/src/main/AndroidManifest.xml	(revision 68aa6f3bbd670638177edce6c5d07c5440ae358e)
++++ b/app/src/main/AndroidManifest.xml	(date 1669914077838)
+@@ -67,7 +67,7 @@
+                 android:value="" />
+         </activity>
+         <activity
+-            android:name=".DangTin"
++            android:name=".model.DangTin"
+             android:exported="false">
+             <meta-data
+                 android:name="android.app.lib_name"
+Index: gradle/wrapper/gradle-wrapper.properties
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>#Thu Nov 03 10:20:28 ICT 2022\r\ndistributionBase=GRADLE_USER_HOME\r\ndistributionUrl=https\\://services.gradle.org/distributions/gradle-7.3.3-bin.zip\r\ndistributionPath=wrapper/dists\r\nzipStorePath=wrapper/dists\r\nzipStoreBase=GRADLE_USER_HOME\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>ISO-8859-1
+===================================================================
+diff --git a/gradle/wrapper/gradle-wrapper.properties b/gradle/wrapper/gradle-wrapper.properties
+--- a/gradle/wrapper/gradle-wrapper.properties	(revision 68aa6f3bbd670638177edce6c5d07c5440ae358e)
++++ b/gradle/wrapper/gradle-wrapper.properties	(date 1669914077845)
+@@ -1,6 +1,6 @@
+ #Thu Nov 03 10:20:28 ICT 2022
+ distributionBase=GRADLE_USER_HOME
+-distributionUrl=https\://services.gradle.org/distributions/gradle-7.3.3-bin.zip
++distributionUrl=https\://services.gradle.org/distributions/gradle-7.4-bin.zip
+ distributionPath=wrapper/dists
+ zipStorePath=wrapper/dists
+ zipStoreBase=GRADLE_USER_HOME
+Index: app/src/main/res/drawable/ic_icon_test_25.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/drawable/ic_icon_test_25.xml b/app/src/main/res/drawable/ic_icon_test_25.xml
+new file mode 100644
+--- /dev/null	(date 1669914077815)
++++ b/app/src/main/res/drawable/ic_icon_test_25.xml	(date 1669914077815)
+@@ -0,0 +1,6 @@
++<vector android:alpha="0.6" android:autoMirrored="true"
++    android:height="24dp" android:tint="#000000"
++    android:viewportHeight="24" android:viewportWidth="24"
++    android:width="24dp" xmlns:android="http://schemas.android.com/apk/res/android">
++    <path android:fillColor="@android:color/white" android:pathData="M21,3L3,3c-1.1,0 -2,0.9 -2,2v14c0,1.1 0.9,2 2,2h18c1.1,0 2,-0.9 2,-2L23,5c0,-1.1 -0.9,-2 -2,-2zM12,12L3,12L3,5h9v7z"/>
++</vector>

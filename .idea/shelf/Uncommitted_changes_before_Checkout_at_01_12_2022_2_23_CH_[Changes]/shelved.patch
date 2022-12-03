@@ -1,0 +1,62 @@
+Index: app/src/main/res/layout/fragment_trang_chu.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<LinearLayout xmlns:android=\"http://schemas.android.com/apk/res/android\"\r\n    xmlns:tools=\"http://schemas.android.com/tools\"\r\n    android:layout_width=\"match_parent\"\r\n    android:layout_height=\"match_parent\"\r\n    tools:context=\".Fragment.FragmentTrangChu\"\r\n    android:orientation=\"vertical\"\r\n    android:background=\"@color/white\"\r\n    >\r\n\r\n    <androidx.viewpager.widget.ViewPager\r\n        android:id=\"@+id/viewPager_slide\"\r\n        android:layout_width=\"match_parent\"\r\n        android:layout_height=\"220dp\"/>\r\n    <me.relex.circleindicator.CircleIndicator\r\n        android:id=\"@+id/circle_indicator\"\r\n        android:layout_width=\"100dp\"\r\n        android:layout_height=\"30dp\"\r\n        android:layout_gravity=\"center_horizontal\"\r\n        android:layout_marginTop=\"5dp\"\r\n\r\n        tools:ignore=\"MissingClass\" />\r\n\r\n    <HorizontalScrollView\r\n        android:id=\"@+id/scrollView\"\r\n        android:layout_width=\"match_parent\"\r\n        android:scrollbars=\"none\"\r\n        android:layout_height=\"wrap_content\"\r\n        >\r\n        <LinearLayout\r\n            android:layout_width=\"match_parent\"\r\n            android:layout_height=\"wrap_content\"\r\n            android:orientation=\"horizontal\">\r\n            <LinearLayout\r\n                android:layout_width=\"120dp\"\r\n                android:layout_height=\"120dp\"\r\n                android:orientation=\"vertical\"\r\n                android:gravity=\"center_horizontal\"\r\n                >\r\n                <ImageView\r\n                    android:layout_width=\"45dp\"\r\n                    android:layout_height=\"45dp\"\r\n                    android:src=\"@drawable/transport\"/>\r\n                <TextView\r\n                    android:layout_width=\"120dp\"\r\n                    android:layout_height=\"wrap_content\"\r\n                    android:layout_marginTop=\"5dp\"\r\n                    android:gravity=\"center\"\r\n                    android:textColor=\"#020202\"\r\n                    android:text=\"Miễn phí vận chuyển\"\r\n                    android:textSize=\"16dp\"/>\r\n            </LinearLayout>\r\n            <!-- 2-->\r\n            <LinearLayout\r\n                android:layout_width=\"120dp\"\r\n                android:layout_height=\"120dp\"\r\n                android:orientation=\"vertical\"\r\n                android:gravity=\"center_horizontal\"\r\n                >\r\n                <ImageView\r\n                    android:layout_width=\"45dp\"\r\n                    android:layout_height=\"45dp\"\r\n                    android:src=\"@drawable/tin_da_luu\"/>\r\n                <TextView\r\n                    android:layout_width=\"100dp\"\r\n                    android:layout_height=\"wrap_content\"\r\n                    android:layout_marginTop=\"5dp\"\r\n                    android:gravity=\"center\"\r\n                    android:textColor=\"#020202\"\r\n                    android:text=\"Tin đăng đã lưu\"\r\n                    android:textSize=\"16dp\"/>\r\n            </LinearLayout>\r\n            <!--        3-->\r\n            <LinearLayout\r\n                android:layout_width=\"100dp\"\r\n                android:layout_height=\"120dp\"\r\n                android:orientation=\"vertical\"\r\n                android:gravity=\"center_horizontal\"\r\n                >\r\n                <ImageView\r\n                    android:layout_width=\"45dp\"\r\n                    android:layout_height=\"45dp\"\r\n                    android:src=\"@drawable/danh_gia\"/>\r\n                <TextView\r\n                    android:layout_width=\"90dp\"\r\n                    android:layout_height=\"wrap_content\"\r\n                    android:layout_marginTop=\"5dp\"\r\n                    android:gravity=\"center\"\r\n                    android:textColor=\"#020202\"\r\n                    android:text=\"Đánh giá từ tôi\"\r\n                    android:textSize=\"16dp\"/>\r\n            </LinearLayout>\r\n            <!--        4-->\r\n            <LinearLayout\r\n                android:layout_width=\"120dp\"\r\n                android:layout_height=\"120dp\"\r\n                android:orientation=\"vertical\"\r\n                android:gravity=\"center_horizontal\"\r\n                >\r\n                <ImageView\r\n                    android:layout_width=\"45dp\"\r\n                    android:layout_height=\"45dp\"\r\n                    android:src=\"@drawable/history_search\"/>\r\n                <TextView\r\n                    android:layout_width=\"100dp\"\r\n                    android:layout_height=\"wrap_content\"\r\n                    android:layout_marginTop=\"5dp\"\r\n                    android:gravity=\"center\"\r\n                    android:textColor=\"#020202\"\r\n                    android:text=\"Tìm kiếm đã lưu\"\r\n                    android:textSize=\"16dp\"/>\r\n            </LinearLayout>\r\n            <!--        5-->\r\n            <LinearLayout\r\n                android:layout_width=\"120dp\"\r\n                android:layout_height=\"120dp\"\r\n                android:orientation=\"vertical\"\r\n                android:gravity=\"center_horizontal\"\r\n                >\r\n                <ImageView\r\n                    android:layout_width=\"45dp\"\r\n                    android:layout_height=\"45dp\"\r\n                    android:src=\"@drawable/history_search\"/>\r\n                <TextView\r\n                    android:layout_width=\"90dp\"\r\n                    android:layout_height=\"wrap_content\"\r\n                    android:layout_marginTop=\"5dp\"\r\n                    android:gravity=\"center\"\r\n                    android:textColor=\"#020202\"\r\n                    android:text=\"Chia sẻ\"\r\n                    android:textSize=\"16dp\"/>\r\n            </LinearLayout>\r\n            <!--        6-->\r\n            <LinearLayout\r\n                android:layout_width=\"120dp\"\r\n                android:layout_height=\"120dp\"\r\n                android:orientation=\"vertical\"\r\n                android:gravity=\"center_horizontal\"\r\n                >\r\n                <ImageView\r\n                    android:layout_width=\"45dp\"\r\n                    android:layout_height=\"45dp\"\r\n                    android:src=\"@drawable/img_vong_quay\"/>\r\n                <TextView\r\n                    android:layout_width=\"90dp\"\r\n                    android:layout_height=\"wrap_content\"\r\n                    android:layout_marginTop=\"5dp\"\r\n                    android:gravity=\"center\"\r\n                    android:textColor=\"#020202\"\r\n                    android:text=\"Vòng quay may mắn\"\r\n                    android:textSize=\"16dp\"/>\r\n            </LinearLayout>\r\n        </LinearLayout>\r\n    </HorizontalScrollView>\r\n\r\n</LinearLayout>
+===================================================================
+diff --git a/app/src/main/res/layout/fragment_trang_chu.xml b/app/src/main/res/layout/fragment_trang_chu.xml
+--- a/app/src/main/res/layout/fragment_trang_chu.xml	
++++ b/app/src/main/res/layout/fragment_trang_chu.xml	
+@@ -20,7 +20,6 @@
+         android:layout_marginTop="5dp"
+ 
+         tools:ignore="MissingClass" />
+-
+     <HorizontalScrollView
+         android:id="@+id/scrollView"
+         android:layout_width="match_parent"
+@@ -91,26 +90,28 @@
+                     android:textSize="16dp"/>
+             </LinearLayout>
+             <!--        4-->
++            <!--        5-->
+             <LinearLayout
+                 android:layout_width="120dp"
+                 android:layout_height="120dp"
+-                android:orientation="vertical"
+                 android:gravity="center_horizontal"
+-                >
++                android:orientation="vertical">
++
+                 <ImageView
+                     android:layout_width="45dp"
+                     android:layout_height="45dp"
+-                    android:src="@drawable/history_search"/>
++                    android:src="@drawable/history_search" />
++
+                 <TextView
+                     android:layout_width="100dp"
+                     android:layout_height="wrap_content"
+                     android:layout_marginTop="5dp"
+                     android:gravity="center"
++                    android:text="Tìm kiếm đã lưu"
+                     android:textColor="#020202"
+-                    android:text="Tìm kiếm đã lưu"
+-                    android:textSize="16dp"/>
++                    android:textSize="16dp" />
+             </LinearLayout>
+-            <!--        5-->
++
+             <LinearLayout
+                 android:layout_width="120dp"
+                 android:layout_height="120dp"
+@@ -153,4 +154,9 @@
+         </LinearLayout>
+     </HorizontalScrollView>
+ 
++    <androidx.recyclerview.widget.RecyclerView
++        android:id="@+id/rcv_dsachTinDeCu"
++        android:layout_width="match_parent"
++        android:layout_height="wrap_content"/>
++
+ </LinearLayout>
+\ No newline at end of file
