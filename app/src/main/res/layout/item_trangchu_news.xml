@@ -8,8 +8,8 @@
     android:padding="10dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="350dp">
+        android:layout_width="200dp"
+        android:layout_height="200dp">
         <ImageView
             android:id="@+id/img_item_trangchu_news_Pic"
             android:layout_width="match_parent"
@@ -68,7 +68,7 @@
             android:maxLength="55"
             android:text="TITLE"
             android:textColor="@color/black"
-            android:textSize="25dp" />
+            android:textSize="16dp" />
 
         <TextView
             android:id="@+id/tv_item_trangchu_descripsion"
@@ -77,7 +77,7 @@
             android:maxLength="29"
             android:text="descripsion"
             android:textColor="@color/gray_1"
-            android:textSize="25dp" />
+            android:textSize="16dp" />
 
         <TextView
             android:id="@+id/tv_item_trangchu_fee"
@@ -86,7 +86,7 @@
             android:maxLength="29"
             android:text="FEE"
             android:textColor="@color/red"
-            android:textSize="25dp"
+            android:textSize="20dp"
             android:textStyle="bold" />
         <LinearLayout
             android:layout_width="wrap_content"

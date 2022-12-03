@@ -5,20 +5,15 @@ import java.util.List;
 public class NewsTrangChu {
     private String title,descripsion, fee, time;
     private boolean favorite;
-    private List<String> ArrURL;
-    public int getsoluonganh(){
-        return getArrURL().size();
-    }
+    private String ArrURL;
+//    public int getsoluonganh(){
+//        return getArrURL().size();
+//    }
 
     public NewsTrangChu() {
     }
 
-    public NewsTrangChu(String title
-            , String descripsion
-            , String fee
-            , String time
-            , boolean favorite
-            , List<String> arrURL) {
+    public NewsTrangChu(String title, String descripsion, String fee, String time, boolean favorite, String arrURL) {
         this.title = title;
         this.descripsion = descripsion;
         this.fee = fee;
@@ -59,19 +54,19 @@ public class NewsTrangChu {
         this.time = time;
     }
 
+    public String getArrURL() {
+        return ArrURL;
+    }
+
+    public void setArrURL(String arrURL) {
+        ArrURL = arrURL;
+    }
+
     public boolean isFavorite() {
         return favorite;
     }
 
     public void setFavorite(boolean favorite) {
         this.favorite = favorite;
-    }
+    }}
 
-    public List<String> getArrURL() {
-        return ArrURL;
-    }
-
-    public void setArrURL(List<String> arrURL) {
-        ArrURL = arrURL;
-    }
-}

@@ -74,10 +74,10 @@ public class FragmentTrangChu extends Fragment {
     }
 
     private List<NewsTrangChu> getListNews() {
-        List<String> UrlArr = new ArrayList<>();
-        UrlArr.add("https://firebasestorage.googleapis.com/v0/b/cho-tot-du-an-1.appspot.com/o/Image.jpg%2FImage%20image%3A62%2FN%C6%B0%E1%BB%9Bc%20Hoa%20Chionhs%20H%C3%A3ng?alt=media&token=d6d9bfaf-f8bf-4225-b388-031e6456b149");
-        UrlArr.add("https://firebasestorage.googleapis.com/v0/b/cho-tot-du-an-1.appspot.com/o/Image.jpg%2FImage%20image%3A62%2FN%C6%B0%E1%BB%9Bc%20Hoa%20Chionhs%20H%C3%A3ng?alt=media&token=d6d9bfaf-f8bf-4225-b388-031e6456b149");
-        UrlArr.add("https://firebasestorage.googleapis.com/v0/b/cho-tot-du-an-1.appspot.com/o/Image.jpg%2FImage%20image%3A62%2FN%C6%B0%E1%BB%9Bc%20Hoa%20Chionhs%20H%C3%A3ng?alt=media&token=d6d9bfaf-f8bf-4225-b388-031e6456b149");
+//        List<String> UrlArr = new ArrayList<>();
+//        UrlArr.add("https://firebasestorage.googleapis.com/v0/b/cho-tot-du-an-1.appspot.com/o/Image.jpg%2FImage%20image%3A62%2FN%C6%B0%E1%BB%9Bc%20Hoa%20Chionhs%20H%C3%A3ng?alt=media&token=d6d9bfaf-f8bf-4225-b388-031e6456b149");
+//        UrlArr.add("https://firebasestorage.googleapis.com/v0/b/cho-tot-du-an-1.appspot.com/o/Image.jpg%2FImage%20image%3A62%2FN%C6%B0%E1%BB%9Bc%20Hoa%20Chionhs%20H%C3%A3ng?alt=media&token=d6d9bfaf-f8bf-4225-b388-031e6456b149");
+//        UrlArr.add("https://firebasestorage.googleapis.com/v0/b/cho-tot-du-an-1.appspot.com/o/Image.jpg%2FImage%20image%3A62%2FN%C6%B0%E1%BB%9Bc%20Hoa%20Chionhs%20H%C3%A3ng?alt=media&token=d6d9bfaf-f8bf-4225-b388-031e6456b149");
 
 
         newsTrangChuList.add(new NewsTrangChu(
@@ -86,20 +86,21 @@ public class FragmentTrangChu extends Fragment {
                 , "String fee"
                 , "String time"
                 , false
-            ,UrlArr));
+            ,"https://firebasestorage.googleapis.com/v0/b/cho-tot-du-an-1.appspot.com/o/Image.jpg%2FImage%20image%3A62%2FN%C6%B0%E1%BB%9Bc%20Hoa%20Chionhs%20H%C3%A3ng?alt=media&token=d6d9bfaf-f8bf-4225-b388-031e6456b149"));
         newsTrangChuList.add(new NewsTrangChu(
                 "String title2"
                 , "String descripsion"
                 , "String fee"
                 , "String time"
                 , false
-                ,UrlArr));newsTrangChuList.add(new NewsTrangChu(
+                ,"https://firebasestorage.googleapis.com/v0/b/cho-tot-du-an-1.appspot.com/o/Image.jpg%2FImage%20image%3A62%2FN%C6%B0%E1%BB%9Bc%20Hoa%20Chionhs%20H%C3%A3ng?alt=media&token=d6d9bfaf-f8bf-4225-b388-031e6456b149"));
+        newsTrangChuList.add(new NewsTrangChu(
                 "String title3"
                 , "String descripsion"
                 , "String fee"
                 , "String time"
                 , false
-                ,UrlArr));
+                ,"https://firebasestorage.googleapis.com/v0/b/cho-tot-du-an-1.appspot.com/o/Image.jpg%2FImage%20image%3A62%2FN%C6%B0%E1%BB%9Bc%20Hoa%20Chionhs%20H%C3%A3ng?alt=media&token=d6d9bfaf-f8bf-4225-b388-031e6456b149"));
         return newsTrangChuList;
     }
 

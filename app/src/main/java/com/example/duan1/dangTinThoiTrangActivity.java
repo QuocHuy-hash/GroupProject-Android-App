@@ -281,7 +281,7 @@ public class dangTinThoiTrangActivity extends AppCompatActivity implements photo
         tvTenDanhMuc = findViewById(R.id.tvTenDanhMucTT);
         Intent intent = getIntent();
         tvTenDanhMuc.setText("Danh Mục - " + intent.getStringExtra("tenDanhMuc"));
-        imgBackPage = findViewById(R.id.icon_backTT);
+        imgBackPage = findViewById(R.id.icon_back);
         spn_product_type = findViewById(R.id.spn_product_type);
         edtTitlePost = findViewById(R.id.title_postTT);
         edtDescription = findViewById(R.id.description_postTT);
