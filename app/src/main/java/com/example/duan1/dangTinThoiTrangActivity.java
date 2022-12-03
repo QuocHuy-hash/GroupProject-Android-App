@@ -11,14 +11,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 
 import android.Manifest;
-import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -30,7 +28,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.duan1.Adapter.photoAdapter;
-import com.example.duan1.model.Users;
 import com.example.duan1.model.product_type;
 import com.example.duan1.model.thoiTrangNews;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -45,7 +42,6 @@ import com.google.firebase.storage.UploadTask;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 
 public class dangTinThoiTrangActivity extends AppCompatActivity implements photoAdapter.CountOfImageWhenRemove {
@@ -57,13 +53,15 @@ public class dangTinThoiTrangActivity extends AppCompatActivity implements photo
     private com.example.duan1.Adapter.photoAdapter photoAdapter;
     private RecyclerView rcvView_select_img_fashion;
     StorageReference imageFolder;
-    private String strTitlePost, strDescription, strPrice, strLoaiSanPham, strAddress;
+    private String strTitlePost, strDescription, strPrice, strLoaiSanPham, strAddress, nameUser;
+    private int idUser;
     private double dbPrice;
+    chonDanhMucThoiTrangAcrivity chonDanhMucThoiTrangAcrivity;
 
 
     private int REQUEST_PERMISSION_CODE = 35;
     private int PICK_IMAGE = 1;
-    private int update_count = 0 , maxID = 0;
+    private int update_count = 0, maxID;
     private ArrayList<Uri> imageUri;
     private ProgressDialog progressDialog;
     DatabaseReference myData;
@@ -73,16 +71,23 @@ public class dangTinThoiTrangActivity extends AppCompatActivity implements photo
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dang_tin_thoi_trang);
         imageFolder = FirebaseStorage.getInstance().getReference().child("Image.jpg");
-        myData = FirebaseDatabase.getInstance().getReference("Tin");
+        myData = FirebaseDatabase.getInstance().getReference("Tin").child("ThoiTrang");
+
+        nameUser = chonDanhMucThoiTrangAcrivity.nameUser;
+        idUser = chonDanhMucThoiTrangAcrivity.IdUser;
+
+
         initUi();
         clickBAckPage();
         eventClickSPN();
         clickAddImageFashion();
+
         clickDangTin();
 
     }
 
-    public void getId() {
+
+    public void getIdIncrement() {
         myData.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -106,15 +111,17 @@ public class dangTinThoiTrangActivity extends AppCompatActivity implements photo
         btnDangTin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+
                 progressDialog = new ProgressDialog(dangTinThoiTrangActivity.this);
                 progressDialog.setMessage("Please wait for save");
-                getId();
+                getIdIncrement();
                 strTitlePost = edtTitlePost.getText().toString().trim();
                 strDescription = edtDescription.getText().toString();
                 strPrice = edtPrice.getText().toString();
                 try {
                     dbPrice = Double.parseDouble(strPrice);
-                } catch(Exception e) {
+                } catch (Exception e) {
                     System.err.println("Lỗi Parse kiểu dữ liệu");
                 }
 
@@ -145,12 +152,15 @@ public class dangTinThoiTrangActivity extends AppCompatActivity implements photo
                         });
                     }
                     String strId = String.valueOf(maxID);
-                    myData.child(tenDanhMuc).child(strId).setValue(new thoiTrangNews(maxID,
+                    Toast.makeText(dangTinThoiTrangActivity.this, "Max ID : " + maxID , Toast.LENGTH_SHORT).show();
+                    myData.child(tenDanhMuc).child(strId ).setValue(new thoiTrangNews(maxID ,
                                     strTitlePost,
                                     strDescription,
                                     strLoaiSanPham,
                                     dbPrice,
-                                    strAddress))
+                                    strAddress ,
+                                    idUser,
+                                    nameUser))
                             .addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
                                 public void onSuccess(Void unused) {
@@ -158,7 +168,6 @@ public class dangTinThoiTrangActivity extends AppCompatActivity implements photo
                                     progressDialog.dismiss();
                                 }
                             });
-
                 }
             }
         });
