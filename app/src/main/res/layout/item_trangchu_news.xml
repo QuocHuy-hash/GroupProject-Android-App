@@ -20,7 +20,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
         <LinearLayout
-            android:id="@+id/linearLayout"
+            android:id="@+id/layout_item_trangchu_news_SLA"
             android:layout_width="40dp"
             android:layout_height="35dp"
             android:layout_marginStart="10dp"

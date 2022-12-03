@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -49,15 +50,31 @@ public class NewsTrangChuAdapter extends RecyclerView.Adapter<NewsTrangChuAdapte
         h.tvFee.setText(OOP.getFee());
         h.tvTime.setText(OOP.getTime());
         h.tvDes.setText(OOP.getDescripsion());
-        h.tvSLAnh.setText(OOP.getsoluonganh());
 
-        Glide.with(context).load(OOP.getArrURL()).into(h.imgNews);
+        if(OOP.getsoluonganh() > 1){
+            h.linearLayout.setVisibility(View.VISIBLE);
+            h.tvSLAnh.setText(OOP.getsoluonganh());
+        }else{
+            h.linearLayout.setVisibility(View.INVISIBLE);
+        }
+
+        Glide.with(context).load(OOP.getArrURL().get(0)).into(h.imgNews);
 
         if(OOP.isFavorite()){
             h.imgFavorite.setImageResource(R.drawable.ic_item_trangchu_favorite);
         }else{
             h.imgFavorite.setImageResource(R.drawable.ic_item_trangchu_unfavorite);
         }
+        h.imgFavorite.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(OOP.isFavorite()){
+                    OOP.setFavorite(false);
+                }else{
+                    OOP.setFavorite(true);
+                }
+            }
+        });
     }
 
     @Override
@@ -68,7 +85,7 @@ public class NewsTrangChuAdapter extends RecyclerView.Adapter<NewsTrangChuAdapte
     public class ViewHolder extends RecyclerView.ViewHolder {
         private TextView tvSLAnh,tvTitle,tvFee,tvDes,tvTime;
         private ImageView imgNews,imgFavorite,imgLoaiTin;
-
+        private LinearLayout linearLayout;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             tvSLAnh = itemView.findViewById(R.id.tv_item_trangchu_news_SoLuongAnh);
@@ -81,6 +98,7 @@ public class NewsTrangChuAdapter extends RecyclerView.Adapter<NewsTrangChuAdapte
             imgNews = itemView.findViewById(R.id.img_item_trangchu_news_Pic);
             imgLoaiTin = itemView.findViewById(R.id.img_item_trangchu_news_LoaiTin);
 
+            linearLayout = itemView.findViewById(R.id.layout_item_trangchu_news_SLA);
         }
     }
 }

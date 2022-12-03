@@ -20,7 +20,6 @@
         android:layout_marginTop="5dp"
 
         tools:ignore="MissingClass" />
-
     <HorizontalScrollView
         android:id="@+id/scrollView"
         android:layout_width="match_parent"
@@ -156,4 +155,8 @@
         </LinearLayout>
     </HorizontalScrollView>
 
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rcv_news_trangchu"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 </LinearLayout>

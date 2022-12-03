@@ -13,7 +13,12 @@ public class NewsTrangChu {
     public NewsTrangChu() {
     }
 
-    public NewsTrangChu(String title, String descripsion, String fee, String time, boolean favorite, List<String> arrURL) {
+    public NewsTrangChu(String title
+            , String descripsion
+            , String fee
+            , String time
+            , boolean favorite
+            , List<String> arrURL) {
         this.title = title;
         this.descripsion = descripsion;
         this.fee = fee;

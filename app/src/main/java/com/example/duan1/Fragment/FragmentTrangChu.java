@@ -1,7 +1,10 @@
 package com.example.duan1.Fragment;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 
 import android.os.Handler;
@@ -10,9 +13,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.duan1.Adapter.NewsTrangChuAdapter;
 import com.example.duan1.Adapter.slidersAdapter;
 import com.example.duan1.MainActivity;
 import com.example.duan1.R;
+import com.example.duan1.model.NewsTrangChu;
 import com.example.duan1.model.photosSlider;
 
 
@@ -32,9 +37,15 @@ public class FragmentTrangChu extends Fragment {
     private slidersAdapter slidersAdapter;
     private List<photosSlider> mListPhoto = new ArrayList<>();
     private Timer mTimer;
+    private RecyclerView rcvNewsTrangChu;
+    private List<NewsTrangChu> newsTrangChuList = new ArrayList<>();
+    private NewsTrangChuAdapter mNewsTrangChuAdapter;
+
+
      public MainActivity mainActivity;
 
 
+    @SuppressLint("MissingInflatedId")
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -52,7 +63,44 @@ public class FragmentTrangChu extends Fragment {
 
         autoSliderImg();
 
+
+        rcvNewsTrangChu = view.findViewById(R.id.rcv_news_trangchu);
+        mNewsTrangChuAdapter = new NewsTrangChuAdapter(getContext());
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(),2);
+        rcvNewsTrangChu.setLayoutManager(gridLayoutManager);
+        mNewsTrangChuAdapter.setDATA(getListNews());
+        rcvNewsTrangChu.setAdapter(mNewsTrangChuAdapter);
         return view;
+    }
+
+    private List<NewsTrangChu> getListNews() {
+        List<String> UrlArr = new ArrayList<>();
+        UrlArr.add("https://firebasestorage.googleapis.com/v0/b/cho-tot-du-an-1.appspot.com/o/Image.jpg%2FImage%20image%3A62%2FN%C6%B0%E1%BB%9Bc%20Hoa%20Chionhs%20H%C3%A3ng?alt=media&token=d6d9bfaf-f8bf-4225-b388-031e6456b149");
+        UrlArr.add("https://firebasestorage.googleapis.com/v0/b/cho-tot-du-an-1.appspot.com/o/Image.jpg%2FImage%20image%3A62%2FN%C6%B0%E1%BB%9Bc%20Hoa%20Chionhs%20H%C3%A3ng?alt=media&token=d6d9bfaf-f8bf-4225-b388-031e6456b149");
+        UrlArr.add("https://firebasestorage.googleapis.com/v0/b/cho-tot-du-an-1.appspot.com/o/Image.jpg%2FImage%20image%3A62%2FN%C6%B0%E1%BB%9Bc%20Hoa%20Chionhs%20H%C3%A3ng?alt=media&token=d6d9bfaf-f8bf-4225-b388-031e6456b149");
+
+
+        newsTrangChuList.add(new NewsTrangChu(
+                "String title1"
+                , "String descripsion"
+                , "String fee"
+                , "String time"
+                , false
+            ,UrlArr));
+        newsTrangChuList.add(new NewsTrangChu(
+                "String title2"
+                , "String descripsion"
+                , "String fee"
+                , "String time"
+                , false
+                ,UrlArr));newsTrangChuList.add(new NewsTrangChu(
+                "String title3"
+                , "String descripsion"
+                , "String fee"
+                , "String time"
+                , false
+                ,UrlArr));
+        return newsTrangChuList;
     }
 
     private void autoSliderImg() {
