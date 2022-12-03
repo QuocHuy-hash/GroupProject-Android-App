@@ -11,6 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="350dp">
         <ImageView
+            android:id="@+id/img_item_trangchu_news_Pic"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:src="@color/gray_1"
@@ -58,29 +59,35 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         >
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="TITLE"
 
-            android:textSize="25dp"
+        <TextView
+            android:id="@+id/tv_item_trangchu_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:maxLength="55"
+            android:text="TITLE"
             android:textColor="@color/black"
-            android:maxLength="55"/>
+            android:textSize="25dp" />
+
         <TextView
+            android:id="@+id/tv_item_trangchu_descripsion"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:maxLength="29"
             android:text="descripsion"
-            android:textSize="25dp"
             android:textColor="@color/gray_1"
-            android:maxLength="29"/>
+            android:textSize="25dp" />
+
         <TextView
+            android:id="@+id/tv_item_trangchu_fee"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="descripsion"
-            android:textSize="25dp"
+            android:maxLength="29"
+            android:text="FEE"
             android:textColor="@color/red"
-            android:textStyle="bold"
-            android:maxLength="29"/>
+            android:textSize="25dp"
+            android:textStyle="bold" />
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
