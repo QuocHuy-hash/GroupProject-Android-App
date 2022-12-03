@@ -27,8 +27,8 @@ public class NewsTrangChuAdapter extends RecyclerView.Adapter<NewsTrangChuAdapte
         this.context = context;
     }
 
-    public void setDATA(List<NewsTrangChu> newsTrangChuList) {
-        this.newsTrangChuList = newsTrangChuList;
+    public void setDATA(List<NewsTrangChu> x) {
+        this.newsTrangChuList = x;
         notifyDataSetChanged();
     }
 
@@ -51,14 +51,14 @@ public class NewsTrangChuAdapter extends RecyclerView.Adapter<NewsTrangChuAdapte
         h.tvTime.setText(OOP.getTime());
         h.tvDes.setText(OOP.getDescripsion());
 
-        if(OOP.getsoluonganh() > 1){
-            h.linearLayout.setVisibility(View.VISIBLE);
-            h.tvSLAnh.setText(OOP.getsoluonganh());
-        }else{
-            h.linearLayout.setVisibility(View.INVISIBLE);
-        }
+//        if(OOP.getsoluonganh() > 1){
+//            h.linearLayout.setVisibility(View.VISIBLE);
+//            h.tvSLAnh.setText(OOP.getsoluonganh());
+//        }else{
+//            h.linearLayout.setVisibility(View.INVISIBLE);
+//        }
 
-        Glide.with(context).load(OOP.getArrURL().get(0)).into(h.imgNews);
+        Glide.with(context).load(OOP.getArrURL()).into(h.imgNews);
 
         if(OOP.isFavorite()){
             h.imgFavorite.setImageResource(R.drawable.ic_item_trangchu_favorite);
@@ -79,6 +79,10 @@ public class NewsTrangChuAdapter extends RecyclerView.Adapter<NewsTrangChuAdapte
 
     @Override
     public int getItemCount() {
+        if(newsTrangChuList != null){
+            return newsTrangChuList.size();
+        }
+
         return 0;
     }
 

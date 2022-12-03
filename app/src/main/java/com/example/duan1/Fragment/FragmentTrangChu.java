@@ -2,6 +2,8 @@ package com.example.duan1.Fragment;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
+
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -10,6 +12,7 @@ import androidx.viewpager.widget.ViewPager;
 import android.os.Handler;
 import android.os.Looper;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -70,6 +73,14 @@ public class FragmentTrangChu extends Fragment {
         rcvNewsTrangChu.setLayoutManager(gridLayoutManager);
         mNewsTrangChuAdapter.setDATA(getListNews());
         rcvNewsTrangChu.setAdapter(mNewsTrangChuAdapter);
+
+        rcvNewsTrangChu.addOnItemTouchListener(new RecyclerView.SimpleOnItemTouchListener(){
+            @Override
+            public boolean onInterceptTouchEvent(@NonNull RecyclerView rv, @NonNull MotionEvent e) {
+                return rv.getScrollState() == RecyclerView.SCROLL_STATE_DRAGGING;
+            }
+        });
+//        rcvNewsTrangChu.setLayoutFrozen(false);
         return view;
     }
 
