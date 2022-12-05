@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="10dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="200dp"
+        android:layout_height="200dp">
+
+        <ImageView
+            android:id="@+id/img_item_trangchu_news_Pic"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:src="@color/gray_1"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <LinearLayout
+            android:id="@+id/layout_item_trangchu_news_SLA"
+            android:background="@drawable/ic_item_trangchu_news_camerapic"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:id="@+id/tv_item_trangchu_news_SoLuongAnh"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:maxLength="99"
+                android:text="10"
+                android:textColor="@color/white"/>
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/img_item_trangchu_news_favorite"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginBottom="10dp"
+            android:src="@drawable/ic_item_trangchu_favorite"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+    <TextView
+        android:id="@+id/tv_item_trangchu_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="TIELE"
+        android:textColor="@color/black"/>
+    <TextView
+        android:id="@+id/tv_item_trangchu_descripsion"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="DESCRIPSION"
+        android:textColor="@color/gray_2"/>
+    <TextView
+        android:id="@+id/tv_item_trangchu_fee"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="FEE"
+        android:textStyle="bold"
+        android:textColor="@color/red"
+        android:textSize="20dp"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <ImageView
+            android:id="@+id/img_item_trangchu_news_LoaiTin"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:src="@drawable/ic_item_trangchu_news_camerapic"
+            android:layout_gravity="center"/>
+        <TextView
+            android:id="@+id/tv_item_trangchu_news_Time"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="TIME"
+            android:textColor="@color/gray_2"/>
+    </LinearLayout>
+
+
+</LinearLayout>
