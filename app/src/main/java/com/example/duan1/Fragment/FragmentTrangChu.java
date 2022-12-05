@@ -1,18 +1,26 @@
 package com.example.duan1.Fragment;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
+
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 
 import android.os.Handler;
 import android.os.Looper;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.duan1.Adapter.NewsTrangChuAdapter;
 import com.example.duan1.Adapter.slidersAdapter;
 import com.example.duan1.MainActivity;
 import com.example.duan1.R;
+import com.example.duan1.model.NewsTrangChu;
 import com.example.duan1.model.photosSlider;
 
 
@@ -20,7 +28,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
-
 
 
 import me.relex.circleindicator.CircleIndicator;
@@ -32,9 +39,12 @@ public class FragmentTrangChu extends Fragment {
     private slidersAdapter slidersAdapter;
     private List<photosSlider> mListPhoto = new ArrayList<>();
     private Timer mTimer;
-     public MainActivity mainActivity;
+    public MainActivity mainActivity;
+    private RecyclerView rcvNewsTrangChu;
+    private List<NewsTrangChu> newsTrangChuList = new ArrayList<>();
+    private NewsTrangChuAdapter mNewsTrangChuAdapter;
 
-
+    @SuppressLint("MissingInflatedId")
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -52,6 +62,18 @@ public class FragmentTrangChu extends Fragment {
 
         autoSliderImg();
 
+        rcvNewsTrangChu = view.findViewById(R.id.rcv_news_trangchu);
+        mNewsTrangChuAdapter = new NewsTrangChuAdapter(getContext());
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), 2);
+        rcvNewsTrangChu.setLayoutManager(gridLayoutManager);
+        mNewsTrangChuAdapter.setDATA(getListNews());
+        rcvNewsTrangChu.setAdapter(mNewsTrangChuAdapter);
+//        rcvNewsTrangChu.addOnItemTouchListener(new RecyclerView.SimpleOnItemTouchListener() {
+//            @Override
+//            public boolean onInterceptTouchEvent(@NonNull RecyclerView rv, @NonNull MotionEvent e) {
+//                return rv.getScrollState() == RecyclerView.SCROLL_STATE_DRAGGING;
+//            }
+//        });
         return view;
     }
 
@@ -94,7 +116,6 @@ public class FragmentTrangChu extends Fragment {
     }
 
 
-
     private List<photosSlider> getListPhoto() {
 //    List<photosSlider> list = new ArrayList<>();
 
@@ -103,7 +124,36 @@ public class FragmentTrangChu extends Fragment {
         mListPhoto.add(new photosSlider(R.drawable.img_slider3));
         mListPhoto.add(new photosSlider(R.drawable.img_slider4));
 
-        return  mListPhoto;
+        return mListPhoto;
     }
+    private List<NewsTrangChu> getListNews() {
+//        List<String> UrlArr = new ArrayList<>();
+//        UrlArr.add("https://firebasestorage.googleapis.com/v0/b/cho-tot-du-an-1.appspot.com/o/Image.jpg%2FImage%20image%3A62%2FN%C6%B0%E1%BB%9Bc%20Hoa%20Chionhs%20H%C3%A3ng?alt=media&token=d6d9bfaf-f8bf-4225-b388-031e6456b149");
+//        UrlArr.add("https://firebasestorage.googleapis.com/v0/b/cho-tot-du-an-1.appspot.com/o/Image.jpg%2FImage%20image%3A62%2FN%C6%B0%E1%BB%9Bc%20Hoa%20Chionhs%20H%C3%A3ng?alt=media&token=d6d9bfaf-f8bf-4225-b388-031e6456b149");
+//        UrlArr.add("https://firebasestorage.googleapis.com/v0/b/cho-tot-du-an-1.appspot.com/o/Image.jpg%2FImage%20image%3A62%2FN%C6%B0%E1%BB%9Bc%20Hoa%20Chionhs%20H%C3%A3ng?alt=media&token=d6d9bfaf-f8bf-4225-b388-031e6456b149");
 
+
+        newsTrangChuList.add(new NewsTrangChu(
+                "String title1"
+                , "String descripsion"
+                , "String fee"
+                , "String time"
+                , false
+                ,"https://firebasestorage.googleapis.com/v0/b/cho-tot-du-an-1.appspot.com/o/Image.jpg%2FImage%20image%3A62%2FN%C6%B0%E1%BB%9Bc%20Hoa%20Chionhs%20H%C3%A3ng?alt=media&token=d6d9bfaf-f8bf-4225-b388-031e6456b149"));
+        newsTrangChuList.add(new NewsTrangChu(
+                "String title2"
+                , "String descripsion"
+                , "String fee"
+                , "String time"
+                , false
+                ,"https://firebasestorage.googleapis.com/v0/b/cho-tot-du-an-1.appspot.com/o/Image.jpg%2FImage%20image%3A62%2FN%C6%B0%E1%BB%9Bc%20Hoa%20Chionhs%20H%C3%A3ng?alt=media&token=d6d9bfaf-f8bf-4225-b388-031e6456b149"));
+        newsTrangChuList.add(new NewsTrangChu(
+                "String title3"
+                , "String descripsion"
+                , "String fee"
+                , "String time"
+                , false
+                ,"https://firebasestorage.googleapis.com/v0/b/cho-tot-du-an-1.appspot.com/o/Image.jpg%2FImage%20image%3A62%2FN%C6%B0%E1%BB%9Bc%20Hoa%20Chionhs%20H%C3%A3ng?alt=media&token=d6d9bfaf-f8bf-4225-b388-031e6456b149"));
+        return newsTrangChuList;
+    }
 }
