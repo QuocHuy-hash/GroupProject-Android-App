@@ -52,7 +52,6 @@ public class dagTinGiaiTriActivity extends AppCompatActivity implements com.exam
     private LinearLayout layout_spnTypeProduct, addImageProduct;
     private EditText edtTitlePost, edtDescription, edtPrice, edtAddress ;
     private Button btnDangTin;
-    chonDanhMucThoiTrangAcrivity chonDanhMucThoiTrangAcrivity;
 
     private String strTitlePost , strDescription , strPrice , strAddress ,strLoaiSanPham , nameUser ,tenDanhMuc;
     private double dbPrice;
@@ -74,9 +73,9 @@ public class dagTinGiaiTriActivity extends AppCompatActivity implements com.exam
         setContentView(R.layout.activity_dag_tin_giai_tri);
 
         imageFolder = FirebaseStorage.getInstance().getReference().child("Image.jpg");
-        myData = FirebaseDatabase.getInstance().getReference("Tin");
+        myData = FirebaseDatabase.getInstance().getReference("Tin").child("GiaiTri");
         imageUri = new ArrayList<>();
-        getListGiaiTri();
+
         idUser = mainActivity.id;
         nameUser = mainActivity.name;
 
@@ -84,7 +83,7 @@ public class dagTinGiaiTriActivity extends AppCompatActivity implements com.exam
         clickBackPage();
         eventClickSPN();
         clickAddImageFashion();
-
+        getListGiaiTri();
         clickDangTin();
 
     }
@@ -245,7 +244,7 @@ public class dagTinGiaiTriActivity extends AppCompatActivity implements com.exam
     private List<giaiTriNews> getListGiaiTri() {
         listGiaiTri = new ArrayList<>();
         FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
-        DatabaseReference databaseReference = firebaseDatabase.getReference("Tin").child("BDS");
+        DatabaseReference databaseReference = firebaseDatabase.getReference("Tin").child("GiaiTri");
         databaseReference.child(tenDanhMuc).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {

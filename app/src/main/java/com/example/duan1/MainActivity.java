@@ -24,6 +24,7 @@ import com.example.duan1.Fragment.FragmentQuanLiTin;
 import com.example.duan1.Fragment.FragmentThem;
 import com.example.duan1.Fragment.FragmentTrangChu;
 import com.example.duan1.model.Users;
+import com.example.duan1.model.giaiTriNews;
 import com.facebook.login.LoginManager;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -261,4 +262,6 @@ public class MainActivity extends AppCompatActivity {
                 .setNegativeButton("Ok" , null);
         alertDialog.show();
     }
+
+
 }
