@@ -49,6 +49,7 @@ public class NewsTrangChuAdapter extends RecyclerView.Adapter<NewsTrangChuAdapte
         h.tvTime.setText(OOP.getTime());
         h.tvDes.setText(OOP.getDescripsion());
 
+//        áasasasasasasasasasasasassaas
 //        if(OOP.getsoluonganh() > 1){
 //            h.linearLayout.setVisibility(View.VISIBLE);
 //            h.tvSLAnh.setText(OOP.getsoluonganh());
