@@ -4,10 +4,8 @@ import android.annotation.SuppressLint;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 
@@ -19,21 +17,11 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.duan1.Adapter.NewsTrangChuAdapter;
-import com.example.duan1.Adapter.historyNewsAdapter;
 import com.example.duan1.Adapter.slidersAdapter;
 import com.example.duan1.MainActivity;
 import com.example.duan1.R;
-import com.example.duan1.model.BDSNews;
 import com.example.duan1.model.NewsTrangChu;
-import com.example.duan1.model.giaiTriNews;
-import com.example.duan1.model.historyNews;
 import com.example.duan1.model.photosSlider;
-import com.example.duan1.model.thoiTrangNews;
-import com.google.firebase.database.ChildEventListener;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 
 
 import java.util.ArrayList;
@@ -55,12 +43,6 @@ public class FragmentTrangChu extends Fragment {
     private RecyclerView rcvNewsTrangChu;
     private List<NewsTrangChu> newsTrangChuList = new ArrayList<>();
     private NewsTrangChuAdapter mNewsTrangChuAdapter;
-    private List<String> listChild = new ArrayList<>();
-    private List<String> listChild1 = new ArrayList<>();
-    private List<String> listChild2 = new ArrayList<>();
-    DatabaseReference myData = FirebaseDatabase.getInstance().getReference("Tin").child("GiaiTri");
-    DatabaseReference myData1 = FirebaseDatabase.getInstance().getReference("Tin").child("BDS");
-    DatabaseReference myData2 = FirebaseDatabase.getInstance().getReference("Tin").child("ThoiTrang");
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -68,7 +50,6 @@ public class FragmentTrangChu extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_trang_chu, container, false);
         mainActivity = (MainActivity) getActivity();
-
 
         viewPager = view.findViewById(R.id.viewPager_slide);
 
@@ -81,15 +62,12 @@ public class FragmentTrangChu extends Fragment {
         slidersAdapter.registerDataSetObserver(circleIndicator.getDataSetObserver());
 
         autoSliderImg();
-        listChild1();
-        listChild2();
-        listChild3();
-        getListNews();
+
         rcvNewsTrangChu = view.findViewById(R.id.rcv_news_trangchu);
         mNewsTrangChuAdapter = new NewsTrangChuAdapter(getContext());
         GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), 2);
         rcvNewsTrangChu.setLayoutManager(gridLayoutManager);
-        mNewsTrangChuAdapter.setDATA(newsTrangChuList);
+        mNewsTrangChuAdapter.setDATA(getListNews());
         rcvNewsTrangChu.setAdapter(mNewsTrangChuAdapter);
 //        rcvNewsTrangChu.addOnItemTouchListener(new RecyclerView.SimpleOnItemTouchListener() {
 //            @Override
@@ -149,141 +127,34 @@ public class FragmentTrangChu extends Fragment {
 
         return mListPhoto;
     }
-    private void getListNews() {
-        for (int i = 0; i < listChild.size(); i++) {
-            myData.child(listChild.get(i)).addChildEventListener(new ChildEventListener() {
-                @Override
-                public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-                    giaiTriNews giaiTriNews = snapshot.getValue(giaiTriNews.class);
-                    newsTrangChuList.add(new NewsTrangChu(giaiTriNews.getTitle() , giaiTriNews.getDescription(),
-                            giaiTriNews.getPrice(),giaiTriNews.getDate(),true, ""));
+    private List<NewsTrangChu> getListNews() {
+//        List<String> UrlArr = new ArrayList<>();
+//        UrlArr.add("https://firebasestorage.googleapis.com/v0/b/cho-tot-du-an-1.appspot.com/o/Image.jpg%2FImage%20image%3A62%2FN%C6%B0%E1%BB%9Bc%20Hoa%20Chionhs%20H%C3%A3ng?alt=media&token=d6d9bfaf-f8bf-4225-b388-031e6456b149");
+//        UrlArr.add("https://firebasestorage.googleapis.com/v0/b/cho-tot-du-an-1.appspot.com/o/Image.jpg%2FImage%20image%3A62%2FN%C6%B0%E1%BB%9Bc%20Hoa%20Chionhs%20H%C3%A3ng?alt=media&token=d6d9bfaf-f8bf-4225-b388-031e6456b149");
+//        UrlArr.add("https://firebasestorage.googleapis.com/v0/b/cho-tot-du-an-1.appspot.com/o/Image.jpg%2FImage%20image%3A62%2FN%C6%B0%E1%BB%9Bc%20Hoa%20Chionhs%20H%C3%A3ng?alt=media&token=d6d9bfaf-f8bf-4225-b388-031e6456b149");
 
 
-                }
-
-                @Override
-                public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-
-                }
-
-                @Override
-                public void onChildRemoved(@NonNull DataSnapshot snapshot) {
-
-                }
-
-                @Override
-                public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-
-                }
-
-                @Override
-                public void onCancelled(@NonNull DatabaseError error) {
-
-                }
-            });
-
-        }
-        for (int i = 0; i < listChild1.size(); i++) {
-            myData2.child(listChild1.get(i)).addChildEventListener(new ChildEventListener() {
-                @Override
-                public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-                    thoiTrangNews thoiTrangNews = snapshot.getValue(com.example.duan1.model.thoiTrangNews.class);
-                    newsTrangChuList.add(new NewsTrangChu(thoiTrangNews.getTitlePost(), thoiTrangNews.getDescriptionPost(),
-                            thoiTrangNews.getPrice(), thoiTrangNews.getDate(), true , ""));
-
-                }
-
-                @Override
-                public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-
-                }
-
-                @Override
-                public void onChildRemoved(@NonNull DataSnapshot snapshot) {
-
-                }
-
-                @Override
-                public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-
-                }
-
-                @Override
-                public void onCancelled(@NonNull DatabaseError error) {
-
-                }
-            });
-        }
-        for (int i = 0; i < listChild2.size(); i++) {
-            myData1.child(listChild2.get(i)).addChildEventListener(new ChildEventListener() {
-                @Override
-                public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-                    BDSNews bdsNews = snapshot.getValue(BDSNews.class);
-
-                    newsTrangChuList.add(new NewsTrangChu(bdsNews.getTitle() , bdsNews.getDescription() ,
-                            bdsNews.getPrice(),bdsNews.getDate(),false , ""));
-                    mNewsTrangChuAdapter = new NewsTrangChuAdapter(getContext());
-                    GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), 2);
-                    rcvNewsTrangChu.setLayoutManager(gridLayoutManager);
-                    mNewsTrangChuAdapter.setDATA(newsTrangChuList);
-                    rcvNewsTrangChu.setAdapter(mNewsTrangChuAdapter);
-                }
-
-                @Override
-                public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-
-                }
-
-                @Override
-                public void onChildRemoved(@NonNull DataSnapshot snapshot) {
-
-                }
-
-                @Override
-                public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-
-                }
-
-                @Override
-                public void onCancelled(@NonNull DatabaseError error) {
-
-                }
-            });
-
-        }
-
-
-
-    }
-    private List<String> listChild1() {
-        listChild.add(new String("Nhạc cụ"));
-        listChild.add(new String("Sách"));
-        listChild.add(new String("Đồ thể thao, Dã ngoại"));
-        listChild.add(new String("Đồ sưu tầm  ,Đồ cổ"));
-        listChild.add(new String("Thiết bị chơi game"));
-        listChild.add(new String("Sở thích khác"));
-
-        return listChild;
-    }
-
-    private List<String> listChild2() {
-        listChild1.add(new String("Quần áo"));
-        listChild1.add(new String("Đồng hồ"));
-        listChild1.add(new String("Giày dép"));
-        listChild1.add(new String("Túi xách"));
-        listChild1.add(new String("Nước hoa"));
-        listChild1.add(new String("Phụ kiện khác"));
-
-        return listChild1;
-    }
-
-    private List<String> listChild3() {
-        listChild2.add(new String("Chung cư"));
-        listChild2.add(new String("Nhà ở"));
-        listChild2.add(new String("Đất"));
-        listChild2.add(new String("Văn Phòng"));
-        listChild2.add(new String("Phòng trọ"));
-
-        return listChild2;
+        newsTrangChuList.add(new NewsTrangChu(
+                "String title1"
+                , "String descripsion"
+                , "String fee"
+                , "String time"
+                , false
+                ,"https://firebasestorage.googleapis.com/v0/b/cho-tot-du-an-1.appspot.com/o/Image.jpg%2FImage%20image%3A62%2FN%C6%B0%E1%BB%9Bc%20Hoa%20Chionhs%20H%C3%A3ng?alt=media&token=d6d9bfaf-f8bf-4225-b388-031e6456b149"));
+        newsTrangChuList.add(new NewsTrangChu(
+                "String title2"
+                , "String descripsion"
+                , "String fee"
+                , "String time"
+                , false
+                ,"https://firebasestorage.googleapis.com/v0/b/cho-tot-du-an-1.appspot.com/o/Image.jpg%2FImage%20image%3A62%2FN%C6%B0%E1%BB%9Bc%20Hoa%20Chionhs%20H%C3%A3ng?alt=media&token=d6d9bfaf-f8bf-4225-b388-031e6456b149"));
+        newsTrangChuList.add(new NewsTrangChu(
+                "String title3"
+                , "String descripsion"
+                , "String fee"
+                , "String time"
+                , false
+                ,"https://firebasestorage.googleapis.com/v0/b/cho-tot-du-an-1.appspot.com/o/Image.jpg%2FImage%20image%3A62%2FN%C6%B0%E1%BB%9Bc%20Hoa%20Chionhs%20H%C3%A3ng?alt=media&token=d6d9bfaf-f8bf-4225-b388-031e6456b149"));
+        return newsTrangChuList;
     }
 }
