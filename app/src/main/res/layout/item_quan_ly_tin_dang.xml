@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+    <ImageView
+        android:id="@+id/imgTinDang"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:src="@drawable/ic_message"
+        android:layout_margin="10dp"/>
+
+    <LinearLayout
+        android:id="@+id/lnnLayout"
+        android:layout_width="281dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:layout_toEndOf="@+id/imgTinDang"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/title_historyNews"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Tiêu đề tin đăng"
+            android:textSize="20dp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/desc_historyNews"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
+            android:text="Mô tả tin đăng "
+            android:textColor="#F4BD33"
+            android:textSize="18dp" />
+
+        <TextView
+            android:id="@+id/time_historyNews"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="12-11-2022"
+            android:textColor="#BFBBB2"
+            android:textSize="18dp" />
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/icon_option"
+        android:layout_width="34dp"
+        android:layout_height="34dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="10dp"
+        android:layout_toEndOf="@+id/lnnLayout"
+        android:src="@drawable/ic_option" />
+</RelativeLayout>

@@ -10,7 +10,6 @@ public class giaiTriNews {
     private int idUser;
     private String nameUser;
 
-
     public giaiTriNews() {
     }
 
@@ -23,22 +22,6 @@ public class giaiTriNews {
         this.price = price;
         this.typeProduct = typeProduct;
         this.idUser = idUser;
-        this.nameUser = nameUser;
-    }
-
-    public int getIdUser() {
-        return idUser;
-    }
-
-    public void setIdUser(int idUser) {
-        this.idUser = idUser;
-    }
-
-    public String getNameUser() {
-        return nameUser;
-    }
-
-    public void setNameUser(String nameUser) {
         this.nameUser = nameUser;
     }
 
@@ -88,5 +71,21 @@ public class giaiTriNews {
 
     public void setTypeProduct(String typeProduct) {
         this.typeProduct = typeProduct;
+    }
+
+    public int getIdUser() {
+        return idUser;
+    }
+
+    public void setIdUser(int idUser) {
+        this.idUser = idUser;
+    }
+
+    public String getNameUser() {
+        return nameUser;
+    }
+
+    public void setNameUser(String nameUser) {
+        this.nameUser = nameUser;
     }
 }
