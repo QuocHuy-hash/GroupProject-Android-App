@@ -71,7 +71,7 @@ public class FragmentTrangChu extends Fragment {
 
 
         viewPager = view.findViewById(R.id.viewPager_slide);
-        
+
         circleIndicator = view.findViewById(R.id.circle_indicator);
 
         slidersAdapter = new slidersAdapter(getContext(), getListPhoto());
