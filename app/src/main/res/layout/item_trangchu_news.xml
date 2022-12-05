@@ -23,7 +23,7 @@
 
         <LinearLayout
             android:id="@+id/layout_item_trangchu_news_SLA"
-            android:background="@drawable/ic_item_trangchu_news_camerapic"
+            android:background="@drawable/ic_item_trangchu_camerapic"
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:layout_marginStart="10dp"
@@ -80,7 +80,7 @@
             android:id="@+id/img_item_trangchu_news_LoaiTin"
             android:layout_width="16dp"
             android:layout_height="16dp"
-            android:src="@drawable/ic_item_trangchu_news_camerapic"
+            android:src="@drawable/ic_item_trangchu_camerapic"
             android:layout_gravity="center"/>
         <TextView
             android:id="@+id/tv_item_trangchu_news_Time"

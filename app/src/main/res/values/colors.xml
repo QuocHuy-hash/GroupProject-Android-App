@@ -16,5 +16,5 @@
     <color name="blue_black">#084D9B</color>
     <color name="trans...">#00000000</color>
     <color name="white_opacity_50">#CCFFFFFF</color>
-<color name="red">#FF0000</color>
+    <color name="red">#FF0000</color>
 </resources>

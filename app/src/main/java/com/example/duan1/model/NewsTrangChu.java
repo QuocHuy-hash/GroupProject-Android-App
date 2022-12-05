@@ -4,6 +4,7 @@ public class NewsTrangChu {
     private String title,descripsion, fee, time;
     private boolean favorite;
     private String ArrURL;
+
 //    public int getsoluonganh(){
 //        return getArrURL().size();
 //    }
