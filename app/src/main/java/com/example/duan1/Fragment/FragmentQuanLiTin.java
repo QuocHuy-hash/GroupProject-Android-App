@@ -62,7 +62,7 @@ public class FragmentQuanLiTin extends Fragment {
         imageFolder = FirebaseStorage.getInstance().getReference().child("Image.jpg");
 
         myData = FirebaseDatabase.getInstance().getReference("Tin").child("GiaiTri");
-        myData1 = FirebaseDatabase.getInstance().getReference("Tin").child("BSD");
+        myData1 = FirebaseDatabase.getInstance().getReference("Tin").child("BDS");
         myData2 = FirebaseDatabase.getInstance().getReference("Tin").child("ThoiTrang");
 
 
@@ -145,6 +145,7 @@ public class FragmentQuanLiTin extends Fragment {
             });
         }
         for(int i = 0; i < listChild2.size(); i++) {
+            System.out.println("List child 2 : " + listChild2.get(i));
             myData1.child(listChild2.get(i)).addChildEventListener(new ChildEventListener() {
                 @Override
                 public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
