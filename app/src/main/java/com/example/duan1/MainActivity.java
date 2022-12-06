@@ -24,8 +24,7 @@ import com.example.duan1.Fragment.FragmentQuanLiTin;
 import com.example.duan1.Fragment.FragmentThem;
 import com.example.duan1.Fragment.FragmentTrangChu;
 import com.example.duan1.model.Users;
-import com.example.duan1.model.giaiTriNews;
-import com.facebook.login.LoginManager;
+
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationBarView;
@@ -36,7 +35,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.squareup.picasso.Picasso;
+
 
 import java.util.ArrayList;
 import java.util.List;
@@ -54,8 +53,9 @@ public class MainActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private FirebaseDatabase database;
     private DatabaseReference myRef;
-    public static String name ;
+    public static String name;
     public static int id;
+
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -66,22 +66,23 @@ public class MainActivity extends AppCompatActivity {
 
         mAuth = FirebaseAuth.getInstance();
         currentUser = mAuth.getCurrentUser();
-        FirebaseAuth auth = FirebaseAuth.getInstance();
-        FirebaseUser user = auth.getCurrentUser();
-         database = FirebaseDatabase.getInstance();
-         myRef = database.getReference("Users");
+
+        database = FirebaseDatabase.getInstance();
+        myRef = database.getReference("Users");
+        getUser();
 
 
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+//        currentUser = mAuth.getCurrentUser();
 
-                currentUser = mAuth.getCurrentUser();
-                if(currentUser != null) {
+                if (currentUser != null) {
+
                     showDialogChooseListProduct();
 
                 } else {
-                    MainActivity.showDiaLogWarning(MainActivity.this , "Vui lòng đăng nhập để có thể đăng bán sản phẩm");
+                    MainActivity.showDiaLogWarning(MainActivity.this, "Vui lòng đăng nhập để có thể đăng bán sản phẩm");
                 }
             }
         });
@@ -89,7 +90,7 @@ public class MainActivity extends AppCompatActivity {
         bottomNavigationView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                switch (item.getItemId()){
+                switch (item.getItemId()) {
                     case R.id.home:
                         getSupportFragmentManager().beginTransaction().replace(R.id.container, fragmentTrangChu).commit();
                         return true;
@@ -113,12 +114,10 @@ public class MainActivity extends AppCompatActivity {
                 return false;
             }
         });
-        
+
     }
 
-
-
-    private void showDialogChooseListProduct() {
+    private void getUser() {
         List<Users> mListUser = new ArrayList<>();
 
         String email = currentUser.getEmail();
@@ -126,13 +125,13 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 mListUser.clear();
-                for (DataSnapshot snapshot1 : snapshot.getChildren()){
+                for (DataSnapshot snapshot1 : snapshot.getChildren()) {
                     Users user = snapshot1.getValue(Users.class);
                     mListUser.add(user);
                 }
 
-                for (int i = 0; i < mListUser.size(); i++){
-                    if (mListUser.get(i).getEmail().equals(email)){
+                for (int i = 0; i < mListUser.size(); i++) {
+                    if (mListUser.get(i).getEmail().equals(email)) {
                         name = (mListUser.get(i).getName());
                         id = mListUser.get(i).getId();
                     }
@@ -144,110 +143,114 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(MainActivity.this, "Error get Id and Name from Firebase", Toast.LENGTH_SHORT).show();
             }
         });
+    }
 
-            final Dialog dialog = new Dialog(this);
-            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-            dialog.setContentView(R.layout.layout_dialog_chon_danh_muc);
+    private void showDialogChooseListProduct() {
 
-            Window window = dialog.getWindow();
-            if(window == null) {
-                return;
+
+        final Dialog dialog = new Dialog(this);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.layout_dialog_chon_danh_muc);
+        getUser();
+        Window window = dialog.getWindow();
+        if (window == null) {
+            return;
+        }
+        window.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+        WindowManager.LayoutParams windowAttributes = window.getAttributes();
+        windowAttributes.gravity = Gravity.BOTTOM;
+        window.setAttributes(windowAttributes);
+
+        RelativeLayout layout_batDongSan = dialog.findViewById(R.id.layout_batDongSan);
+        RelativeLayout layout_XeCo = dialog.findViewById(R.id.layout_XeCo);
+        RelativeLayout layout_thoiTrang = dialog.findViewById(R.id.layout_thoiTrang);
+        RelativeLayout layout_dienTu = dialog.findViewById(R.id.layout_dienTu);
+        RelativeLayout layout_giaiTri = dialog.findViewById(R.id.layout_giaiTri);
+        RelativeLayout layout_dienGiaDung = dialog.findViewById(R.id.layout_dienGiaDung);
+        ImageView icon_close = dialog.findViewById(R.id.icon_close);
+
+        icon_close.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
             }
-            window.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT);
-            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
-            WindowManager.LayoutParams windowAttributes = window.getAttributes();
-            windowAttributes.gravity = Gravity.BOTTOM;
-            window.setAttributes(windowAttributes);
+        });
+        layout_giaiTri.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getApplicationContext(), chonDanhMucGiaiTriActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putString("Name", name);
+                bundle.putInt("Id", id);
+                intent.putExtras(bundle);
+                startActivity(intent);
+            }
+        });
+        layout_dienGiaDung.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(MainActivity.this, "Id : " + id + " NAme : " + name, Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(getApplicationContext(), chonDanhMucDienMayActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putString("Name", name);
+                bundle.putInt("Id", id);
+                intent.putExtras(bundle);
+                startActivity(intent);
+            }
+        });
+        layout_batDongSan.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(MainActivity.this, "Id : " + id + " NAme : " + name, Toast.LENGTH_SHORT).show();
 
-            RelativeLayout layout_batDongSan = dialog.findViewById(R.id.layout_batDongSan);
-            RelativeLayout layout_XeCo = dialog.findViewById(R.id.layout_XeCo);
-            RelativeLayout layout_thoiTrang = dialog.findViewById(R.id.layout_thoiTrang);
-            RelativeLayout layout_dienTu = dialog.findViewById(R.id.layout_dienTu);
-            RelativeLayout layout_giaiTri = dialog.findViewById(R.id.layout_giaiTri);
-            RelativeLayout layout_dienGiaDung = dialog.findViewById(R.id.layout_dienGiaDung);
-            ImageView icon_close = dialog.findViewById(R.id.icon_close);
+                Intent intent = new Intent(getApplicationContext(), chonDanhMucBDSActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putString("Name", name);
+                bundle.putInt("Id", id);
+                intent.putExtras(bundle);
+                startActivity(intent);
+            }
+        });
+        layout_XeCo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(MainActivity.this, "Id : " + id + " NAme : " + name, Toast.LENGTH_SHORT).show();
 
-            icon_close.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    dialog.dismiss();
-                }
-            });
-            layout_giaiTri.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Intent intent = new Intent(getApplicationContext() , chonDanhMucGiaiTriActivity.class);
-                    Bundle bundle = new Bundle();
-                    bundle.putString("Name" , name);
-                    bundle.putInt("Id" , id);
-                    intent.putExtras(bundle);
-                    startActivity(intent);
-                }
-            });
-            layout_dienGiaDung.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Toast.makeText(MainActivity.this, "Id : " +id + " NAme : " + name, Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent(getApplicationContext() , chonDanhMucDienMayActivity.class);
-                    Bundle bundle = new Bundle();
-                    bundle.putString("Name" , name);
-                    bundle.putInt("Id" , id);
-                    intent.putExtras(bundle);
-                    startActivity(intent);
-                }
-            });
-            layout_batDongSan.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Toast.makeText(MainActivity.this, "Id : " +id + " NAme : " + name, Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(getApplicationContext(), chonDanhMucXeCoActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putString("Name", name);
+                bundle.putInt("Id", id);
+                intent.putExtras(bundle);
+                startActivity(intent);
+            }
+        });
+        layout_thoiTrang.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
 
-                    Intent intent = new Intent(getApplicationContext() , chonDanhMucBDSActivity.class);
-                    Bundle bundle = new Bundle();
-                    bundle.putString("Name" , name);
-                    bundle.putInt("Id" , id);
-                    intent.putExtras(bundle);
-                    startActivity(intent);
-                }
-            });
-            layout_XeCo.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Toast.makeText(MainActivity.this, "Id : " +id + " NAme : " + name, Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(getApplicationContext(), chonDanhMucThoiTrangAcrivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putString("Name", name);
+                bundle.putInt("Id", id);
+                intent.putExtras(bundle);
+                startActivity(intent);
+            }
+        });
+        layout_dienTu.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(MainActivity.this, "Id : " + id + " NAme : " + name, Toast.LENGTH_SHORT).show();
 
-                    Intent intent = new Intent(getApplicationContext() , chonDanhMucXeCoActivity.class);
-                    Bundle bundle = new Bundle();
-                    bundle.putString("Name" , name);
-                    bundle.putInt("Id" , id);
-                    intent.putExtras(bundle);
-                    startActivity(intent);
-                }
-            });
-            layout_thoiTrang.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-
-                    Intent intent = new Intent(getApplicationContext() , chonDanhMucThoiTrangAcrivity.class);
-                    Bundle bundle = new Bundle();
-                    bundle.putString("Name" , name);
-                    bundle.putInt("Id" , id);
-                    intent.putExtras(bundle);
-                    startActivity(intent);
-                }
-            });
-            layout_dienTu.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Toast.makeText(MainActivity.this, "Id : " +id + " NAme : " + name, Toast.LENGTH_SHORT).show();
-
-                    Intent intent = new Intent(getApplicationContext() , chonDanhMucDoDienTuActivity.class);
-                    Bundle bundle = new Bundle();
-                    bundle.putString("Name" , name);
-                    bundle.putInt("Id" , id);
-                    intent.putExtras(bundle);
-                    startActivity(intent);
-                }
-            });
-            dialog.show();
+                Intent intent = new Intent(getApplicationContext(), chonDanhMucDoDienTuActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putString("Name", name);
+                bundle.putInt("Id", id);
+                intent.putExtras(bundle);
+                startActivity(intent);
+            }
+        });
+        dialog.show();
     }
 
     private void initUi() {
@@ -256,10 +259,11 @@ public class MainActivity extends AppCompatActivity {
 
         getSupportFragmentManager().beginTransaction().replace(R.id.container, fragmentTrangChu).commit();
     }
-    public static void showDiaLogWarning(Context context , String text) {
+
+    public static void showDiaLogWarning(Context context, String text) {
         final AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);
         alertDialog.setMessage(text).setTitle("Warning").setIcon(R.drawable.ic_warning)
-                .setNegativeButton("Ok" , null);
+                .setNegativeButton("Ok", null);
         alertDialog.show();
     }
 
