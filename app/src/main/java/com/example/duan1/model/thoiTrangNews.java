@@ -14,12 +14,13 @@ public class thoiTrangNews {
     private String address;
     private int idUser;
     private String nameUser;
+    private String tenDanhMuc;
 
     public thoiTrangNews() {
     }
 
     public thoiTrangNews(int id, String titlePost, String descriptionPost, String typeproduct
-            , double price, String address, int idUser, String nameUser) {
+            , double price, String address, int idUser, String nameUser, String tenDanhMuc) {
         this.id = id;
         this.titlePost = titlePost;
         this.descriptionPost = descriptionPost;
@@ -28,6 +29,15 @@ public class thoiTrangNews {
         this.address = address;
         this.idUser = idUser;
         this.nameUser = nameUser;
+        this.tenDanhMuc = tenDanhMuc;
+    }
+
+    public String getTenDanhMuc() {
+        return tenDanhMuc;
+    }
+
+    public void setTenDanhMuc(String tenDanhMuc) {
+        this.tenDanhMuc = tenDanhMuc;
     }
 
     public int getIdUser() {

@@ -31,6 +31,9 @@ import com.example.duan1.Adapter.photoAdapter;
 import com.example.duan1.model.product_type;
 import com.example.duan1.model.thoiTrangNews;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.appcheck.FirebaseAppCheck;
+import com.google.firebase.appcheck.playintegrity.PlayIntegrityAppCheckProviderFactory;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -54,18 +57,20 @@ public class dangTinThoiTrangActivity extends AppCompatActivity implements photo
     private com.example.duan1.Adapter.photoAdapter photoAdapter;
     private RecyclerView rcvView_select_img_fashion;
     StorageReference imageFolder;
+
     private String strTitlePost, strDescription, strPrice, strLoaiSanPham, strAddress, nameUser
             , tenDanhMuc;
     private int idUser;
     private double dbPrice;
     private List<thoiTrangNews> listFashion;
     chonDanhMucThoiTrangAcrivity chonDanhMucThoiTrangAcrivity;
-
+    FirebaseApp firebaseApp;
+    FirebaseAppCheck firebaseAppCheck;
 
     private int REQUEST_PERMISSION_CODE = 35;
     private int PICK_IMAGE = 1;
     private int update_count = 0, maxID;
-    private ArrayList<Uri> imageUri;
+    private ArrayList<Uri> imageUri = new ArrayList<>();
     private ProgressDialog progressDialog;
     DatabaseReference myData;
 
@@ -73,11 +78,12 @@ public class dangTinThoiTrangActivity extends AppCompatActivity implements photo
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dang_tin_thoi_trang);
-        imageFolder = FirebaseStorage.getInstance().getReference().child("Image.jpg");
+        imageFolder = FirebaseStorage.getInstance().getReference().child("Image").child("images" + System.currentTimeMillis() +"jpg");
         myData = FirebaseDatabase.getInstance().getReference("Tin").child("ThoiTrang");
 
         nameUser = chonDanhMucThoiTrangAcrivity.nameUser;
         idUser = chonDanhMucThoiTrangAcrivity.IdUser;
+
 
 
         initUi();
@@ -99,7 +105,9 @@ public class dangTinThoiTrangActivity extends AppCompatActivity implements photo
         btnDangTin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                firebaseApp.initializeApp(dangTinThoiTrangActivity.this);
+                firebaseAppCheck = FirebaseAppCheck.getInstance();
+                firebaseAppCheck.installAppCheckProviderFactory(PlayIntegrityAppCheckProviderFactory.getInstance());
 
                 progressDialog = new ProgressDialog(dangTinThoiTrangActivity.this);
                 progressDialog.setMessage("Please wait for save");
@@ -121,24 +129,25 @@ public class dangTinThoiTrangActivity extends AppCompatActivity implements photo
 
                 } else {
                     progressDialog.show();
-                    for (update_count = 0; update_count < imageUri.size(); update_count++) {
-                        Uri indexImage = imageUri.get(update_count);
-                        StorageReference imageName = imageFolder.child("Image " + indexImage.getLastPathSegment());
-                        imageName.child(strTitlePost).putFile(indexImage).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                            @Override
-                            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                                imageName.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                                    @Override
-                                    public void onSuccess(Uri uri) {
-                                        String Url = String.valueOf(uri);
-                                        StoreLick(Url);
+                for (update_count = 0; update_count < imageUri.size(); update_count++) {
+                    Uri indexImage = imageUri.get(update_count);
+                    StorageReference imageName = imageFolder.child("Image " + indexImage.getLastPathSegment());
+                    imageName.child(strTitlePost).putFile(indexImage).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                            imageName.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                @Override
+                                public void onSuccess(Uri uri) {
+                                    String Url = String.valueOf(uri);
+                                    StoreLick(Url);
 
-                                    }
-                                });
-                            }
-                        });
+                                }
+                            });
+                        }
+                    });
+                }
                     }
-                    maxID = listFashion.size();
+                    maxID = listFashion.size() + 1;
                     String strId = String.valueOf(maxID);
                     myData.child(tenDanhMuc).child(strId ).setValue(new thoiTrangNews(maxID ,
                                     strTitlePost,
@@ -147,15 +156,13 @@ public class dangTinThoiTrangActivity extends AppCompatActivity implements photo
                                     dbPrice,
                                     strAddress ,
                                     idUser,
-                                    nameUser))
-                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    nameUser,tenDanhMuc)) .addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
                                 public void onSuccess(Void unused) {
                                     Toast.makeText(dangTinThoiTrangActivity.this, "Đăng tin thành công", Toast.LENGTH_SHORT).show();
                                     progressDialog.dismiss();
                                 }
                             });
-                }
             }
         });
 
@@ -166,13 +173,13 @@ public class dangTinThoiTrangActivity extends AppCompatActivity implements photo
         HashMap<String, String> hashMap = new HashMap<>();
         hashMap.put("Imglink", url);
         databaseReference.push().setValue(hashMap);
-
     }
 
     private List<thoiTrangNews> getListFashion() {
          listFashion = new ArrayList<>();
         FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
         DatabaseReference databaseReference = firebaseDatabase.getReference("Tin").child("ThoiTrang");
+
         databaseReference.child(tenDanhMuc).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -193,15 +200,15 @@ public class dangTinThoiTrangActivity extends AppCompatActivity implements photo
 
     }
 
-    /*
-     * @Override
-     * public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-     *  Task<Uri> urlTask = taskSnapshot.getStorage().getDownloadUrl();
-     * while (!urlTask.isSuccessful());
-     * Uri downloadUrl = urlTask.getResult();
-     *  FriendlyMessage friendlyMessage = new FriendlyMessage(null, mUsername, downloadUrl.toString());
-     *  mDatabaseReference.push().setValue(friendlyMessage); }
-     * */
+
+//      @Override
+//      public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+//       Task<Uri> urlTask = taskSnapshot.getStorage().getDownloadUrl();
+//      while (!urlTask.isSuccessful());
+//      Uri downloadUrl = urlTask.getResult();
+//       FriendlyMessage friendlyMessage = new FriendlyMessage(null, mUsername, downloadUrl.toString());
+//      mDatabaseReference.push().setValue(friendlyMessage); }
+
     private void clickAddImageFashion() {
         photoAdapter = new photoAdapter(imageUri, this, this);
         rcvView_select_img_fashion.setLayoutManager(new GridLayoutManager(dangTinThoiTrangActivity.this, 6));

@@ -36,12 +36,13 @@ import java.util.List;
 public class FragmentQuanLiTin extends Fragment {
     private RecyclerView rcvQuanLyTinDang;
     private historyNewsAdapter historyNewsAdapter;
-    private List<historyNews> listHistoryNews = new ArrayList<>();
+    private List<historyNews> listHistoryNews;
     private String nameUser;
     private int idUser;
     private List<String> listChild = new ArrayList<>();
     private List<String> listChild1 = new ArrayList<>();
     private List<String> listChild2 = new ArrayList<>();
+    int id = 0;
 
     DatabaseReference myData = FirebaseDatabase.getInstance().getReference("Tin").child("GiaiTri");
     DatabaseReference myData1 = FirebaseDatabase.getInstance().getReference("Tin").child("BDS");
@@ -61,21 +62,20 @@ public class FragmentQuanLiTin extends Fragment {
         listChild1();
         listChild2();
         listChild3();
-
+        getListHistoryNews();
         Toast.makeText(mainActivity, "Id : " + idUser, Toast.LENGTH_SHORT).show();
         Toast.makeText(mainActivity, "Name : " + nameUser, Toast.LENGTH_SHORT).show();
 
 
-
-            historyNewsAdapter = new historyNewsAdapter(getContext(), getListHistoryNews());
-            rcvQuanLyTinDang.setLayoutManager(new LinearLayoutManager(getContext()));
-            rcvQuanLyTinDang.setAdapter(historyNewsAdapter);
+//            historyNewsAdapter = new historyNewsAdapter(getContext(), getListHistoryNews());
+//            rcvQuanLyTinDang.setLayoutManager(new LinearLayoutManager(getContext()));
+//            rcvQuanLyTinDang.setAdapter(historyNewsAdapter);
 
         return view;
     }
 
-    private List<historyNews> getListHistoryNews() {
-
+    public void getListHistoryNews() {
+        listHistoryNews = new ArrayList<>();
         for (int i = 0; i < listChild.size(); i++) {
             myData.child(listChild.get(i)).addChildEventListener(new ChildEventListener() {
                 @Override
@@ -84,7 +84,8 @@ public class FragmentQuanLiTin extends Fragment {
 
                     if (giaiTriNews.getIdUser() == idUser) {
 
-                        listHistoryNews.add(new historyNews(1, giaiTriNews.getTitle(), giaiTriNews.getDescription(), "12-12-2022"));
+                        listHistoryNews.add(new historyNews(id , giaiTriNews.getTitle(), giaiTriNews.getDescription(), "12-12-2022"));
+                           id++;
                     }
 
 
@@ -120,8 +121,8 @@ public class FragmentQuanLiTin extends Fragment {
 
                     if (thoiTrangNews.getIdUser() == idUser) {
 
-                        listHistoryNews.add(new historyNews(1, thoiTrangNews.getTitlePost(), thoiTrangNews.getDescriptionPost(), "12-12-2022"));
-
+                        listHistoryNews.add(new historyNews(id, thoiTrangNews.getTitlePost(), thoiTrangNews.getDescriptionPost(), "12-12-2022"));
+                        id++;
                     }
 
                 }
@@ -155,9 +156,15 @@ public class FragmentQuanLiTin extends Fragment {
 
                     if (bdsNews.getIdUser() == idUser) {
 
-                        listHistoryNews.add(new historyNews(1, bdsNews.getTitle(), bdsNews.getDescription(), "12-11-2002"));
+                        listHistoryNews.add(new historyNews(id, bdsNews.getTitle(), bdsNews.getDescription(), "12-11-2002"));
+                        id++;
 
+                        historyNewsAdapter = new historyNewsAdapter(getContext(), listHistoryNews);
+                        rcvQuanLyTinDang.setLayoutManager(new LinearLayoutManager(getContext()));
+                        rcvQuanLyTinDang.setAdapter(historyNewsAdapter);
+                        historyNewsAdapter.notifyDataSetChanged();
                     }
+
                 }
 
                 @Override
@@ -180,9 +187,10 @@ public class FragmentQuanLiTin extends Fragment {
 
                 }
             });
+
         }
 
-        return listHistoryNews;
+
     }
 
     private List<String> listChild1() {
