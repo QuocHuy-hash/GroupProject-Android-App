@@ -183,12 +183,12 @@ public class dangTinBDSActivity extends AppCompatActivity implements com.example
                             }
                         });
                     }
-                    maxID = listBDS.size();
+                    maxID = listBDS.size() +1;
                     String strId = String.valueOf(maxID);
                     myData.child(tenDanhMuc).child(strId ).setValue(
                             new BDSNews(maxID ,strTitlePost , strDescription , dbPrice
                                     ,strDienTich ,strAddress ,strTenKhu ,strLoaiHinhDat ,
-                                    strSoPhongNgu,strSoPhongWc ,idUser,nameUser))
+                                    strSoPhongNgu,strSoPhongWc ,idUser,nameUser ,tenDanhMuc))
                             .addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
                                 public void onSuccess(Void unused) {

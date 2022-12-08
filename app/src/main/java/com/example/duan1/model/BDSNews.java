@@ -14,15 +14,17 @@ public class BDSNews {
     private String soPhongWc;
     private int idUser;
     private String nameUser;
+    private String tenDanhMuc;
 
     public BDSNews() {
     }
 
-    public BDSNews(int maxID, String strTitlePost, String strDescription, double dbPrice, String strDienTich, String strAddress, String strTenKhu, String strLoaiHinhDat, String strSoPhongNgu, String strSoPhongWc, int idUser, String nameUser) {
+    public BDSNews(int maxID, String strTitlePost, String strDescription, double dbPrice, String strDienTich, String strAddress, String strTenKhu, String strLoaiHinhDat,
+                   String strSoPhongNgu, String strSoPhongWc, int idUser, String nameUser , String tenDanhMuc) {
     }
 
     public BDSNews(int id, String title, String description, double price, String dienTich, String adress, String tenPhanKhu, String loaiDat,
-                   String direction, String soPhongNgu, String soPhongWc, int idUser, String nameUser) {
+                   String direction, String soPhongNgu, String soPhongWc, int idUser, String nameUser,String tenDanhMuc) {
         this.id = id;
         this.title = title;
         this.description = description;
@@ -36,11 +38,12 @@ public class BDSNews {
         this.soPhongWc = soPhongWc;
         this.idUser = idUser;
         this.nameUser = nameUser;
+        this.tenDanhMuc = tenDanhMuc;
     }
 
     public BDSNews(int id, String title, String description, double price,
                    String dienTich, String adress
-                  , int idUser, String nameUser
+                  , int idUser, String nameUser , String tenDanhMuc
     ) {
         this.id = id;
         this.title = title;
@@ -50,11 +53,12 @@ public class BDSNews {
         this.adress = adress;
         this.idUser = idUser;
         this.nameUser = nameUser;
+        this.tenDanhMuc = tenDanhMuc;
     }
 
     public BDSNews(int id, String title, String description, double price,
                    String dienTich, String adress, String tenPhanKhu, String loaiDat, String direction
-            , int idUser, String nameUser ) {
+            , int idUser, String nameUser,String tenDanhMuc ) {
         this.id = id;
         this.title = title;
         this.description = description;
@@ -66,6 +70,16 @@ public class BDSNews {
         this.direction = direction;
         this.idUser = idUser;
         this.nameUser = nameUser;
+        this.tenDanhMuc = tenDanhMuc;
+    }
+
+
+    public String getTenDanhMuc() {
+        return tenDanhMuc;
+    }
+
+    public void setTenDanhMuc(String tenDanhMuc) {
+        this.tenDanhMuc = tenDanhMuc;
     }
 
     public int getIdUser() {

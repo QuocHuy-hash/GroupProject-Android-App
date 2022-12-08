@@ -53,5 +53,5 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="10dp"
         android:layout_toEndOf="@+id/lnnLayout"
-        android:src="@drawable/ic_option" />
+        android:src="@drawable/ic_delete" />
 </RelativeLayout>

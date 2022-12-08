@@ -222,10 +222,10 @@ public class dagTinGiaiTriActivity extends AppCompatActivity implements com.exam
                             }
                         });
                     }
-                    maxID = listGiaiTri.size();
+                    maxID = listGiaiTri.size() +1;
                     String strId = String.valueOf(maxID);
                     myData.child(tenDanhMuc).child(strId ).setValue(new giaiTriNews(maxID ,strTitlePost , strDescription ,strAddress, dbPrice
-                                      ,strLoaiSanPham ,idUser ,nameUser))
+                                      ,strLoaiSanPham ,idUser ,nameUser , tenDanhMuc))
                             .addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
                                 public void onSuccess(Void unused) {

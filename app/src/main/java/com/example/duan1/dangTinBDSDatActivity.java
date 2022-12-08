@@ -227,10 +227,11 @@ public class dangTinBDSDatActivity extends AppCompatActivity implements com.exam
                             }
                         });
                     }
-                    maxID = listBDS.size();
+                    maxID = listBDS.size() +1;
                     String strId = String.valueOf(maxID);
                     myData.child(tenDanhMuc).child(strId).setValue(new BDSNews(maxID, strTitlePost, strDescription, dbPrice
-                                    , strDienTich, strAddress, strTenPhanKhu, strLoaiHinhDat, strDirection, idUser, nameUser))
+                                    , strDienTich, strAddress, strTenPhanKhu, strLoaiHinhDat,
+                                    strDirection, idUser, nameUser,tenDanhMuc))
                             .addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
                                 public void onSuccess(Void unused) {

@@ -9,12 +9,13 @@ public class giaiTriNews {
     private String typeProduct;
     private int idUser;
     private String nameUser;
+    private String tenDanhMuc;
 
     public giaiTriNews() {
     }
 
     public giaiTriNews(int id, String title, String description, String address, double price,
-                       String typeProduct, int idUser, String nameUser) {
+                       String typeProduct, int idUser, String nameUser , String tenDanhMuc) {
         this.id = id;
         this.title = title;
         this.description = description;
@@ -23,6 +24,15 @@ public class giaiTriNews {
         this.typeProduct = typeProduct;
         this.idUser = idUser;
         this.nameUser = nameUser;
+        this.tenDanhMuc = tenDanhMuc;
+    }
+
+    public String getTenDanhMuc() {
+        return tenDanhMuc;
+    }
+
+    public void setTenDanhMuc(String tenDanhMuc) {
+        this.tenDanhMuc = tenDanhMuc;
     }
 
     public int getId() {
