@@ -52,7 +52,7 @@ public class dmucBatDongSanAdapter extends RecyclerView.Adapter<dmucBatDongSanAd
             public void onClick(View view) {
                 if(dmBDS.getTenDanhMuc().equalsIgnoreCase("Văn Phòng")
                         || dmBDS.getTenDanhMuc().equalsIgnoreCase("Nhà ở")
-                        || dmBDS.getTenDanhMuc().equalsIgnoreCase("Căn hộ/Chung cư")
+                        || dmBDS.getTenDanhMuc().equalsIgnoreCase("Chung cư")
                 ) {
                     Intent intent = new Intent(context, dangTinBDSActivity.class);
                     intent.putExtra("tenDanhMuc" , dmBDS.getTenDanhMuc());

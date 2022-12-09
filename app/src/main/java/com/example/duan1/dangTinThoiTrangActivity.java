@@ -53,17 +53,17 @@ public class dangTinThoiTrangActivity extends AppCompatActivity implements photo
     private ImageView imgBackPage, addImageProduct;
     private Spinner spn_product_type;
     private EditText edtTitlePost, edtDescription, edtPrice, edtAddress;
-    private Button btnDangTin;
+    private Button btnDangTin ;
     private com.example.duan1.Adapter.photoAdapter photoAdapter;
     private RecyclerView rcvView_select_img_fashion;
     StorageReference imageFolder;
 
     private String strTitlePost, strDescription, strPrice, strLoaiSanPham, strAddress, nameUser
-            , tenDanhMuc;
+            , tenDanhMuc , title_Post;
     private int idUser;
     private double dbPrice;
     private List<thoiTrangNews> listFashion;
-    chonDanhMucThoiTrangAcrivity chonDanhMucThoiTrangAcrivity;
+    thoiTrangNews newsFashion;
     FirebaseApp firebaseApp;
     FirebaseAppCheck firebaseAppCheck;
 
@@ -73,6 +73,7 @@ public class dangTinThoiTrangActivity extends AppCompatActivity implements photo
     private ArrayList<Uri> imageUri = new ArrayList<>();
     private ProgressDialog progressDialog;
     DatabaseReference myData;
+    MainActivity mainActivity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,8 +82,8 @@ public class dangTinThoiTrangActivity extends AppCompatActivity implements photo
         imageFolder = FirebaseStorage.getInstance().getReference().child("Image").child("images" + System.currentTimeMillis() +"jpg");
         myData = FirebaseDatabase.getInstance().getReference("Tin").child("ThoiTrang");
 
-        nameUser = chonDanhMucThoiTrangAcrivity.nameUser;
-        idUser = chonDanhMucThoiTrangAcrivity.IdUser;
+        nameUser = mainActivity.name;
+        idUser = mainActivity.id;
 
 
 
@@ -93,14 +94,13 @@ public class dangTinThoiTrangActivity extends AppCompatActivity implements photo
         getListFashion();
         clickDangTin();
 
+
     }
 
 
 
 
     private void clickDangTin() {
-
-
 
         btnDangTin.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -147,7 +147,7 @@ public class dangTinThoiTrangActivity extends AppCompatActivity implements photo
                     });
                 }
                     }
-                    maxID = listFashion.size() + 1;
+                    maxID = newsFashion.getId() + 1;
                     String strId = String.valueOf(maxID);
                     myData.child(tenDanhMuc).child(strId ).setValue(new thoiTrangNews(maxID ,
                                     strTitlePost,
@@ -187,6 +187,7 @@ public class dangTinThoiTrangActivity extends AppCompatActivity implements photo
                 for (DataSnapshot snapshot1 : snapshot.getChildren() ){
                     thoiTrangNews thoiTrangNews = snapshot1.getValue(thoiTrangNews.class);
                     listFashion.add(thoiTrangNews);
+                    newsFashion = thoiTrangNews;
                 }
             }
 
@@ -308,11 +309,15 @@ public class dangTinThoiTrangActivity extends AppCompatActivity implements photo
         btnDangTin = findViewById(R.id.btnDangTinTT);
         rcvView_select_img_fashion = findViewById(R.id.rcvView_select_img_fashion);
         addImageProduct = findViewById(R.id.addImageProductTT);
-
+    ;
 
         imageUri = new ArrayList<>();
         Intent intent1 = getIntent();
         tenDanhMuc = intent1.getStringExtra("tenDanhMuc");
+        title_Post = intent1.getStringExtra("title");
+        Toast.makeText(dangTinThoiTrangActivity.this, "title : " + title_Post, Toast.LENGTH_SHORT).show();
+//        Intent intent2 =  getIntent();
+
     }
 
     @Override

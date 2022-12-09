@@ -19,27 +19,24 @@ public class BDSNews {
     public BDSNews() {
     }
 
-    public BDSNews(int maxID, String strTitlePost, String strDescription, double dbPrice, String strDienTich, String strAddress, String strTenKhu, String strLoaiHinhDat,
+    public BDSNews(int maxID, String strTitlePost, String strDescription, double dbPrice, String strDienTich,
+                   String strAddress, String strTenKhu, String strLoaiHinhDat,
                    String strSoPhongNgu, String strSoPhongWc, int idUser, String nameUser , String tenDanhMuc) {
-    }
-
-    public BDSNews(int id, String title, String description, double price, String dienTich, String adress, String tenPhanKhu, String loaiDat,
-                   String direction, String soPhongNgu, String soPhongWc, int idUser, String nameUser,String tenDanhMuc) {
-        this.id = id;
-        this.title = title;
-        this.description = description;
-        this.price = price;
-        this.dienTich = dienTich;
-        this.adress = adress;
-        this.tenPhanKhu = tenPhanKhu;
-        this.loaiDat = loaiDat;
-        this.direction = direction;
-        this.soPhongNgu = soPhongNgu;
-        this.soPhongWc = soPhongWc;
+        this.id = maxID;
+        this.title = strTitlePost;
+        this.description = strDescription;
+        this.price = dbPrice;
+        this.dienTich = strDienTich;
+        this.adress = strAddress;
+        this.tenPhanKhu = strTenKhu;
+        this.loaiDat = strLoaiHinhDat;
+        this.soPhongNgu = strSoPhongNgu;
+        this.soPhongWc = strSoPhongWc;
         this.idUser = idUser;
         this.nameUser = nameUser;
         this.tenDanhMuc = tenDanhMuc;
     }
+
 
     public BDSNews(int id, String title, String description, double price,
                    String dienTich, String adress

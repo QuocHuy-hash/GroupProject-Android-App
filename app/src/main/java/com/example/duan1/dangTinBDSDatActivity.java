@@ -32,6 +32,7 @@ import com.example.duan1.model.BDSNews;
 import com.example.duan1.model.direction;
 import com.example.duan1.model.thoiTrangNews;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -51,10 +52,12 @@ public class dangTinBDSDatActivity extends AppCompatActivity implements com.exam
 
     private EditText edtTitlePost, edtDescription, edtTenPhanKhu, edtLoaiHinhDat, edtAddress, edtDienTich, edtPrice;
     private LinearLayout addImageProduct;
-    private Button btnDangTin;
+    private Button btnDangTin ,btnSuaTin;
     private Spinner spn_Direction;
-    private String strTitlePost, strDescription, strTenPhanKhu, strAddress, strLoaiHinhDat, strDienTich, strPrice, strDirection, nameUser, tenDanhMuc;
+    private String strTitlePost, strDescription, strTenPhanKhu, strAddress, strLoaiHinhDat, strDienTich,
+            strPrice, strDirection, nameUser, tenDanhMuc ;
     private double dbPrice;
+    private String title_Post = null;
     private chonDanhMucThoiTrangAcrivity chonDanhMucThoiTrangAcrivity;
 
 
@@ -63,12 +66,14 @@ public class dangTinBDSDatActivity extends AppCompatActivity implements com.exam
     private ArrayList<Uri> imageUri;
     private int REQUEST_PERMISSION_CODE = 35;
     private int PICK_IMAGE = 1;
-    private int update_count = 0, maxID, idUser;
+    private int update_count = 0, maxID, idUser , idEdit;
     private ProgressDialog progressDialog;
     DatabaseReference myData;
     StorageReference imageFolder;
     private List<BDSNews> listBDS;
     MainActivity mainActivity;
+    BDSNews bdsNewsId;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,15 +84,135 @@ public class dangTinBDSDatActivity extends AppCompatActivity implements com.exam
         myData = FirebaseDatabase.getInstance().getReference("Tin").child("BDS");
         imageUri = new ArrayList<>();
 
-
         nameUser = mainActivity.name;
         idUser = mainActivity.id;
+
         initUi();
         clickBackPage();
         eventClickSpinner();
         getListBds();
         clickAddImageFashion();
         clickDangTin();
+        if(title_Post == null || title_Post.equals("")){
+            btnDangTin.setVisibility(View.VISIBLE);
+            btnSuaTin.setVisibility(View.INVISIBLE);
+        }else {
+            btnSuaTin.setVisibility(View.VISIBLE);
+            btnDangTin.setVisibility(View.INVISIBLE);
+            setTextInput();
+            editNews();
+        }
+    }
+
+    private void editNews() {
+        btnSuaTin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                progressDialog = new ProgressDialog(dangTinBDSDatActivity.this);
+                progressDialog.setMessage("Please wait for save");
+
+                strTitlePost = edtTitlePost.getText().toString().trim();
+                strDescription = edtDescription.getText().toString();
+                strTenPhanKhu = edtTenPhanKhu.getText().toString().trim();
+                strLoaiHinhDat = edtLoaiHinhDat.getText().toString().trim();
+                strAddress = edtAddress.getText().toString().trim();
+                strPrice = edtPrice.getText().toString();
+                strDienTich = edtDienTich.getText().toString();
+                try {
+                    dbPrice = Double.parseDouble(strPrice);
+
+                } catch (Exception e) {
+                    System.err.println("Lỗi Parse kiểu dữ liệu");
+                }
+
+                strDirection = spn_Direction.getSelectedItem().toString();
+
+
+                if (strTitlePost.isEmpty() || strDescription.isEmpty() || strPrice.isEmpty()
+                        || strAddress.isEmpty() || strTenPhanKhu.isEmpty() || strLoaiHinhDat.isEmpty()
+                        || strDienTich.isEmpty()) {
+                    MainActivity.showDiaLogWarning(dangTinBDSDatActivity.this, "vui lòng nhập đầy đủ thông tin");
+
+                } else {
+                    progressDialog.show();
+                    for (update_count = 0; update_count < imageUri.size(); update_count++) {
+                        Uri indexImage = imageUri.get(update_count);
+                        StorageReference imageName = imageFolder.child("Image " + indexImage.getLastPathSegment());
+                        imageName.child(strTitlePost).putFile(indexImage).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                            @Override
+                            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                                imageName.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                    @Override
+                                    public void onSuccess(Uri uri) {
+                                        String Url = String.valueOf(uri);
+                                        StoreLick(Url);
+
+                                    }
+                                });
+                            }
+                        });
+                    }
+
+                    String strId = String.valueOf(idEdit);
+                    myData.child(tenDanhMuc).child(strId).setValue(new BDSNews(idEdit, strTitlePost, strDescription, dbPrice
+                                    , strDienTich, strAddress, strTenPhanKhu, strLoaiHinhDat,
+                                    strDirection, idUser, nameUser,tenDanhMuc))
+                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void unused) {
+                                    Toast.makeText(dangTinBDSDatActivity.this, "Sửa tin thành công", Toast.LENGTH_SHORT).show();
+                                    progressDialog.dismiss();
+                                }
+                            });
+
+                }
+            }
+        });
+    }
+
+    private void setTextInput() {
+        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+        DatabaseReference databaseReference = firebaseDatabase.getReference("Tin").child("BDS");
+        databaseReference.child(tenDanhMuc).addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+                BDSNews bdsNews = snapshot.getValue(BDSNews.class);
+                listBDS.clear();
+                listBDS.add(bdsNews);
+                if (bdsNews.getTitle().equals(title_Post)){
+                    edtTitlePost.setText(bdsNews.getTitle());
+                    edtDescription.setText(bdsNews.getDescription());
+                    String price = String.valueOf(bdsNews.getPrice());
+                    edtPrice.setText(price);
+                    edtAddress.setText(bdsNews.getAdress());
+                    edtDienTich.setText(bdsNews.getDienTich());
+                    edtLoaiHinhDat.setText(bdsNews.getLoaiDat());
+                    edtTenPhanKhu.setText(bdsNews.getTenPhanKhu());
+                    idEdit = bdsNews.getId();
+
+                }
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot snapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
     }
 
     private void clickBackPage() {
@@ -193,7 +318,7 @@ public class dangTinBDSDatActivity extends AppCompatActivity implements com.exam
                 strLoaiHinhDat = edtLoaiHinhDat.getText().toString().trim();
                 strAddress = edtAddress.getText().toString().trim();
                 strPrice = edtPrice.getText().toString();
-
+                strDienTich = edtDienTich.getText().toString();
                 try {
                     dbPrice = Double.parseDouble(strPrice);
 
@@ -227,11 +352,11 @@ public class dangTinBDSDatActivity extends AppCompatActivity implements com.exam
                             }
                         });
                     }
-                    maxID = listBDS.size() +1;
+                    maxID = bdsNewsId.getId() + 1;
                     String strId = String.valueOf(maxID);
                     myData.child(tenDanhMuc).child(strId).setValue(new BDSNews(maxID, strTitlePost, strDescription, dbPrice
                                     , strDienTich, strAddress, strTenPhanKhu, strLoaiHinhDat,
-                                    strDirection, idUser, nameUser,tenDanhMuc))
+                                    strDirection, idUser, nameUser, tenDanhMuc))
                             .addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
                                 public void onSuccess(Void unused) {
@@ -258,6 +383,7 @@ public class dangTinBDSDatActivity extends AppCompatActivity implements com.exam
                 for (DataSnapshot snapshot1 : snapshot.getChildren()) {
                     BDSNews bdsNews = snapshot1.getValue(BDSNews.class);
                     listBDS.add(bdsNews);
+                    bdsNewsId = bdsNews;
                 }
             }
 
@@ -282,6 +408,7 @@ public class dangTinBDSDatActivity extends AppCompatActivity implements com.exam
     private void initUi() {
         tvTenDanhMuc = findViewById(R.id.tvTenDanhMuc);
         Intent intent = getIntent();
+        title_Post = intent.getStringExtra("title");
         tvTenDanhMuc.setText("Danh Mục - " + intent.getStringExtra("tenDanhMuc"));
         imgBackPage = findViewById(R.id.icon_back);
         spn_Direction = findViewById(R.id.spn_Direction);
@@ -294,6 +421,7 @@ public class dangTinBDSDatActivity extends AppCompatActivity implements com.exam
         edtDienTich = findViewById(R.id.dienTichDat);
         edtPrice = findViewById(R.id.price);
         btnDangTin = findViewById(R.id.btnDangTin);
+        btnSuaTin = findViewById(R.id.btnSuaTin);
         rcvView_select_img_Dat = findViewById(R.id.rcvView_select_img_Dat);
         Intent intent1 = getIntent();
         tenDanhMuc = intent1.getStringExtra("tenDanhMuc");

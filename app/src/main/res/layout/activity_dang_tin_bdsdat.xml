@@ -242,6 +242,13 @@
         android:padding="6dp"
         android:layout_height="wrap_content"
         android:text="Đăng tin"/>
+        <Button
+            android:id="@+id/btnSuaTin"
+            android:layout_width="match_parent"
+            android:layout_margin="20dp"
+            android:padding="6dp"
+            android:layout_height="wrap_content"
+            android:text="Sửa tin"/>
     </LinearLayout>
 
     </ScrollView>
