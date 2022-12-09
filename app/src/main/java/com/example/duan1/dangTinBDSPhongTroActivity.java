@@ -27,6 +27,7 @@ import com.example.duan1.Adapter.photoAdapter;
 import com.example.duan1.model.BDSNews;
 import com.example.duan1.model.thoiTrangNews;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -36,7 +37,9 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 
@@ -45,9 +48,7 @@ public class dangTinBDSPhongTroActivity extends AppCompatActivity implements com
     private ImageView imgBackPage;
     private EditText title_post, description, address, dienTich, price;
     private LinearLayout addImageProduct;
-    private Button btnDangTin;
-    private chonDanhMucThoiTrangAcrivity chonDanhMucThoiTrangAcrivity;
-
+    private Button btnDangTin, btnSuaTin;
 
     private com.example.duan1.Adapter.photoAdapter photoAdapter;
     private RecyclerView rcvView_select_img_PhongTro;
@@ -57,7 +58,7 @@ public class dangTinBDSPhongTroActivity extends AppCompatActivity implements com
     private int update_count = 0, idUser;
     private int maxID;
     private ProgressDialog progressDialog;
-    private String strTitle, strDesc, strAddress, strDienTich, strPrice, tenDanhMuc, nameUser;
+    private String strTitle, strDesc, strAddress, strDienTich, strPrice, tenDanhMuc, nameUser, date, title_Post1;
     private Double dbPrice;
     private List<BDSNews> listBDS;
     MainActivity mainActivity;
@@ -83,8 +84,128 @@ public class dangTinBDSPhongTroActivity extends AppCompatActivity implements com
         clickAddImageFashion();
         getListBds();
         clickDangTin();
+        getCurrentDate();
+        if (title_Post1 == null || title_Post1.equals("")) {
+            btnDangTin.setVisibility(View.VISIBLE);
+            btnSuaTin.setVisibility(View.INVISIBLE);
+        } else {
+            btnSuaTin.setVisibility(View.VISIBLE);
+            btnDangTin.setVisibility(View.INVISIBLE);
+            setTextInput();
+            suaTin();
+        }
     }
 
+    private void suaTin() {
+        btnSuaTin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                progressDialog = new ProgressDialog(dangTinBDSPhongTroActivity.this);
+                progressDialog.setMessage("Please wait for save");
+
+                strTitle = title_post.getText().toString().trim();
+                strDesc = description.getText().toString().trim();
+                strPrice = price.getText().toString().trim();
+
+                strDienTich = dienTich.getText().toString().trim();
+                strAddress = address.getText().toString().trim();
+                try {
+                    dbPrice = Double.parseDouble(strPrice);
+                } catch (Exception e) {
+                    Toast.makeText(dangTinBDSPhongTroActivity.this, "Lỗi chuyển đổi kiểu dữ liệu", Toast.LENGTH_SHORT).show();
+                }
+
+                if (strAddress.isEmpty() || strPrice.isEmpty() || strDesc.isEmpty() || strTitle.isEmpty() || strDienTich.isEmpty()) {
+                    MainActivity.showDiaLogWarning(dangTinBDSPhongTroActivity.this, "vui lòng nhập đầy đủ thông tin");
+
+                } else {
+                    progressDialog.show();
+                    for (update_count = 0; update_count < imageUri.size(); update_count++) {
+                        Uri indexImage = imageUri.get(update_count);
+                        StorageReference imageName = imageFolder.child("Image " + indexImage.getLastPathSegment());
+                        imageName.child(strTitle).putFile(indexImage).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                            @Override
+                            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                                imageName.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                    @Override
+                                    public void onSuccess(Uri uri) {
+                                        String Url = String.valueOf(uri);
+                                        StoreLick(Url);
+
+                                    }
+                                });
+                            }
+                        });
+                    }
+
+                    maxID = bdsNewsId.getId();
+                    String strId = String.valueOf(maxID);
+
+                    myData.child(tenDanhMuc).child(strId).setValue(
+                            new BDSNews(maxID, strTitle, strDesc, dbPrice, strDienTich, strAddress,
+                                    idUser, nameUser,tenDanhMuc, date
+                            )).addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void unused) {
+                            Toast.makeText(dangTinBDSPhongTroActivity.this, "Sửa tin thành công", Toast.LENGTH_SHORT).show();
+                            progressDialog.dismiss();
+                        }
+                    });
+                }
+            }
+        });
+    }
+
+    private void setTextInput() {
+        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+        DatabaseReference databaseReference1 = firebaseDatabase.getReference("Tin").child("BDS");
+        databaseReference1.child(tenDanhMuc).addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+                BDSNews bdsNews = snapshot.getValue(BDSNews.class);
+                listBDS.add(bdsNews);
+                if(bdsNews.getTitle().equals(title_Post1)){
+                    title_post.setText(bdsNews.getTitle());
+                    description.setText(bdsNews.getDescription());
+                    address.setText(bdsNews.getAdress());
+                    dienTich.setText(bdsNews.getDienTich());
+                    String strPrice = String.valueOf(bdsNews.getPrice());
+                    price.setText(strPrice);
+                    bdsNewsId = bdsNews;
+                }
+
+
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot snapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+
+    private void getCurrentDate() {
+
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+        Calendar c = Calendar.getInstance();
+        date = sdf.format(c.getTime());
+        System.out.println("Date : " + date);
+    }
 
     private void clickBackPage() {
         imgBackPage.setOnClickListener(new View.OnClickListener() {
@@ -197,12 +318,12 @@ public class dangTinBDSPhongTroActivity extends AppCompatActivity implements com
                         });
                     }
 
-                    maxID = bdsNewsId.getId() +1;
+                    maxID = bdsNewsId.getId() + 1;
                     String strId = String.valueOf(maxID);
 
                     myData.child(tenDanhMuc).child(strId).setValue(
                             new BDSNews(maxID, strTitle, strDesc, dbPrice, strDienTich, strAddress,
-                                    idUser, nameUser,tenDanhMuc
+                                    idUser, nameUser, tenDanhMuc, date
                             )).addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void unused) {
@@ -250,10 +371,12 @@ public class dangTinBDSPhongTroActivity extends AppCompatActivity implements com
     private void initUi() {
         tvTenDanhMuc = findViewById(R.id.tvTenDanhMuc);
         Intent intent = getIntent();
+        title_Post1 = intent.getStringExtra("title1");
         tvTenDanhMuc.setText("Danh Mục - " + intent.getStringExtra("tenDanhMuc"));
         imgBackPage = findViewById(R.id.icon_back);
         addImageProduct = findViewById(R.id.addImageProduct);
         btnDangTin = findViewById(R.id.btnDangTinPT);
+        btnSuaTin = findViewById(R.id.btnSuaTinPT);
         title_post = findViewById(R.id.title_post);
         description = findViewById(R.id.description_post);
         address = findViewById(R.id.address);

@@ -18,12 +18,12 @@ import com.example.duan1.R;
 import com.example.duan1.dagTinGiaiTriActivity;
 import com.example.duan1.dangTinBDSActivity;
 import com.example.duan1.dangTinBDSDatActivity;
+import com.example.duan1.dangTinBDSPhongTroActivity;
+import com.example.duan1.dangTinThoiTrangActivity;
 import com.example.duan1.model.BDSNews;
 import com.example.duan1.model.giaiTriNews;
 import com.example.duan1.model.historyNews;
 import com.example.duan1.model.thoiTrangNews;
-import com.example.duan1.suaTinPhongTroActivity;
-import com.example.duan1.suaTinThoiTrangActivity;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -70,7 +70,7 @@ public class historyNewsAdapter extends RecyclerView.Adapter<historyNewsAdapter.
         listChild3();
         holder.title_historyNews.setText(giaiTriNews.getTitle_historyNews());
         holder.desc_historyNews.setText(giaiTriNews.getDesc_historyNews());
-        holder.time_historyNews.setText("12-12-2002");
+        holder.time_historyNews.setText(giaiTriNews.getTime_historyNews());
         holder.icon_option.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -85,13 +85,13 @@ public class historyNewsAdapter extends RecyclerView.Adapter<historyNewsAdapter.
 
                 if(tenDanhMuc.equals("Quần áo") || tenDanhMuc.equals("Đồng hồ") || tenDanhMuc.equals("Giày dép") ||tenDanhMuc.equals("Túi xách")
                 || tenDanhMuc.equals("Nước hoa") ){
-                    Intent intent = new Intent(mContext , suaTinThoiTrangActivity.class);
-                    intent.putExtra("title" , Title_Post);
+                    Intent intent = new Intent(mContext , dangTinThoiTrangActivity.class);
+                    intent.putExtra("title1" , Title_Post);
                     intent.putExtra("tenDanhMuc" , tenDanhMuc);
                     mContext.startActivity(intent);
                 }else if(tenDanhMuc.equals("Phòng trọ")) {
-                    Intent intent = new Intent(mContext , suaTinPhongTroActivity.class);
-                    intent.putExtra("title" , Title_Post);
+                    Intent intent = new Intent(mContext , dangTinBDSPhongTroActivity.class);
+                    intent.putExtra("title1" , Title_Post);
                     intent.putExtra("tenDanhMuc" , tenDanhMuc);
                     mContext.startActivity(intent);
                 }else if(tenDanhMuc.equals("Đất")) {

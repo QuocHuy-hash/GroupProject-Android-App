@@ -42,7 +42,9 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 
@@ -54,7 +56,7 @@ public class dagTinGiaiTriActivity extends AppCompatActivity implements com.exam
     private EditText edtTitlePost, edtDescription, edtPrice, edtAddress ;
     private Button btnDangTin ,btnSuaTinGT;
 
-    private String strTitlePost , strDescription , strPrice , strAddress ,strLoaiSanPham , nameUser ,tenDanhMuc ,title_Post = null;
+    private String date , strTitlePost , strDescription , strPrice , strAddress ,strLoaiSanPham , nameUser ,tenDanhMuc ,title_Post = null;
     private double dbPrice;
     private com.example.duan1.Adapter.photoAdapter photoAdapter;
     private RecyclerView rcvView_select_img_GiaiTri;
@@ -88,6 +90,7 @@ public class dagTinGiaiTriActivity extends AppCompatActivity implements com.exam
         clickAddImageFashion();
         getListGiaiTri();
         clickDangTin();
+        getCurrentDate();
         if(title_Post == null || title_Post.equals("")) {
             btnDangTin.setVisibility(View.VISIBLE);
            btnSuaTinGT.setVisibility(View.INVISIBLE);
@@ -102,6 +105,14 @@ public class dagTinGiaiTriActivity extends AppCompatActivity implements com.exam
                 }
             });
         }
+    }
+
+    private void getCurrentDate() {
+
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+        Calendar c = Calendar.getInstance();
+        date = sdf.format(c.getTime());
+        System.out.println("Date : " + date);
     }
 
     private void editNews() {
@@ -153,7 +164,7 @@ public class dagTinGiaiTriActivity extends AppCompatActivity implements com.exam
 
                     String strId = String.valueOf(id);
                     myData.child(tenDanhMuc).child(strId ).setValue(new giaiTriNews(id ,strTitlePost , strDescription ,strAddress, dbPrice
-                                    ,strLoaiSanPham ,idUser ,nameUser , tenDanhMuc))
+                                    ,strLoaiSanPham ,idUser ,nameUser , tenDanhMuc, date))
                             .addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
                                 public void onSuccess(Void unused) {
@@ -348,7 +359,7 @@ public class dagTinGiaiTriActivity extends AppCompatActivity implements com.exam
 
                     String strId = String.valueOf(maxID);
                     myData.child(tenDanhMuc).child(strId ).setValue(new giaiTriNews(maxID ,strTitlePost , strDescription ,strAddress, dbPrice
-                                      ,strLoaiSanPham ,idUser ,nameUser , tenDanhMuc))
+                                      ,strLoaiSanPham ,idUser ,nameUser , tenDanhMuc ,date))
                             .addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
                                 public void onSuccess(Void unused) {

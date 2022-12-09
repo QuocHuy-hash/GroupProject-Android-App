@@ -42,7 +42,9 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 
@@ -55,7 +57,7 @@ public class dangTinBDSDatActivity extends AppCompatActivity implements com.exam
     private Button btnDangTin ,btnSuaTin;
     private Spinner spn_Direction;
     private String strTitlePost, strDescription, strTenPhanKhu, strAddress, strLoaiHinhDat, strDienTich,
-            strPrice, strDirection, nameUser, tenDanhMuc ;
+            strPrice, strDirection, nameUser, tenDanhMuc ,date;
     private double dbPrice;
     private String title_Post = null;
     private chonDanhMucThoiTrangAcrivity chonDanhMucThoiTrangAcrivity;
@@ -93,6 +95,7 @@ public class dangTinBDSDatActivity extends AppCompatActivity implements com.exam
         getListBds();
         clickAddImageFashion();
         clickDangTin();
+        getCurrentDate();
         if(title_Post == null || title_Post.equals("")){
             btnDangTin.setVisibility(View.VISIBLE);
             btnSuaTin.setVisibility(View.INVISIBLE);
@@ -103,7 +106,13 @@ public class dangTinBDSDatActivity extends AppCompatActivity implements com.exam
             editNews();
         }
     }
+    private void getCurrentDate() {
 
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+        Calendar c = Calendar.getInstance();
+        date = sdf.format(c.getTime());
+        System.out.println("Date : " + date);
+    }
     private void editNews() {
         btnSuaTin.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -156,7 +165,7 @@ public class dangTinBDSDatActivity extends AppCompatActivity implements com.exam
                     String strId = String.valueOf(idEdit);
                     myData.child(tenDanhMuc).child(strId).setValue(new BDSNews(idEdit, strTitlePost, strDescription, dbPrice
                                     , strDienTich, strAddress, strTenPhanKhu, strLoaiHinhDat,
-                                    strDirection, idUser, nameUser,tenDanhMuc))
+                                    strDirection, idUser, nameUser,tenDanhMuc, date))
                             .addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
                                 public void onSuccess(Void unused) {
@@ -356,7 +365,7 @@ public class dangTinBDSDatActivity extends AppCompatActivity implements com.exam
                     String strId = String.valueOf(maxID);
                     myData.child(tenDanhMuc).child(strId).setValue(new BDSNews(maxID, strTitlePost, strDescription, dbPrice
                                     , strDienTich, strAddress, strTenPhanKhu, strLoaiHinhDat,
-                                    strDirection, idUser, nameUser, tenDanhMuc))
+                                    strDirection, idUser, nameUser, tenDanhMuc ,date))
                             .addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
                                 public void onSuccess(Void unused) {

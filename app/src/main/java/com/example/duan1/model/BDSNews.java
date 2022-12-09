@@ -15,13 +15,14 @@ public class BDSNews {
     private int idUser;
     private String nameUser;
     private String tenDanhMuc;
+    private String date;
 
     public BDSNews() {
     }
 
     public BDSNews(int maxID, String strTitlePost, String strDescription, double dbPrice, String strDienTich,
                    String strAddress, String strTenKhu, String strLoaiHinhDat,
-                   String strSoPhongNgu, String strSoPhongWc, int idUser, String nameUser , String tenDanhMuc) {
+                   String strSoPhongNgu, String strSoPhongWc, int idUser, String nameUser , String tenDanhMuc, String date) {
         this.id = maxID;
         this.title = strTitlePost;
         this.description = strDescription;
@@ -35,12 +36,13 @@ public class BDSNews {
         this.idUser = idUser;
         this.nameUser = nameUser;
         this.tenDanhMuc = tenDanhMuc;
+        this.date = date;
     }
 
 
     public BDSNews(int id, String title, String description, double price,
                    String dienTich, String adress
-                  , int idUser, String nameUser , String tenDanhMuc
+                  , int idUser, String nameUser , String tenDanhMuc, String date
     ) {
         this.id = id;
         this.title = title;
@@ -51,11 +53,12 @@ public class BDSNews {
         this.idUser = idUser;
         this.nameUser = nameUser;
         this.tenDanhMuc = tenDanhMuc;
+        this.date = date;
     }
 
     public BDSNews(int id, String title, String description, double price,
                    String dienTich, String adress, String tenPhanKhu, String loaiDat, String direction
-            , int idUser, String nameUser,String tenDanhMuc ) {
+            , int idUser, String nameUser,String tenDanhMuc, String date ) {
         this.id = id;
         this.title = title;
         this.description = description;
@@ -68,8 +71,16 @@ public class BDSNews {
         this.idUser = idUser;
         this.nameUser = nameUser;
         this.tenDanhMuc = tenDanhMuc;
+        this.date = date;
     }
 
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
+    }
 
     public String getTenDanhMuc() {
         return tenDanhMuc;
