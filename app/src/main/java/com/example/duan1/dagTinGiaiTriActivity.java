@@ -32,6 +32,7 @@ import com.example.duan1.model.direction;
 import com.example.duan1.model.giaiTriNews;
 import com.example.duan1.model.product_type;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -51,19 +52,21 @@ public class dagTinGiaiTriActivity extends AppCompatActivity implements com.exam
     private Spinner spn_product_type;
     private LinearLayout layout_spnTypeProduct, addImageProduct;
     private EditText edtTitlePost, edtDescription, edtPrice, edtAddress ;
-    private Button btnDangTin;
+    private Button btnDangTin ,btnSuaTinGT;
 
-    private String strTitlePost , strDescription , strPrice , strAddress ,strLoaiSanPham , nameUser ,tenDanhMuc;
+    private String strTitlePost , strDescription , strPrice , strAddress ,strLoaiSanPham , nameUser ,tenDanhMuc ,title_Post = null;
     private double dbPrice;
     private com.example.duan1.Adapter.photoAdapter photoAdapter;
     private RecyclerView rcvView_select_img_GiaiTri;
     private ArrayList<Uri> imageUri;
     private int REQUEST_PERMISSION_CODE = 35;
     private int PICK_IMAGE = 1;
-    private int update_count = 0 , maxID  , idUser;
+    private int update_count = 0 , maxID  , idUser , id;
     private ProgressDialog progressDialog;
     private List<giaiTriNews> listGiaiTri;
     MainActivity mainActivity;
+    giaiTriNews giaiTriNewsId;
+    giaiTriNews giaiTriNewsIdEdit;
     private
     DatabaseReference myData;
     StorageReference imageFolder;
@@ -85,7 +88,122 @@ public class dagTinGiaiTriActivity extends AppCompatActivity implements com.exam
         clickAddImageFashion();
         getListGiaiTri();
         clickDangTin();
+        if(title_Post == null || title_Post.equals("")) {
+            btnDangTin.setVisibility(View.VISIBLE);
+           btnSuaTinGT.setVisibility(View.INVISIBLE);
+        }else {
+            btnSuaTinGT.setVisibility(View.VISIBLE);
+            btnDangTin.setVisibility(View.INVISIBLE);
+            setTextInput();
+            btnSuaTinGT.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    editNews();
+                }
+            });
+        }
+    }
 
+    private void editNews() {
+        btnSuaTinGT.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                progressDialog = new ProgressDialog(dagTinGiaiTriActivity.this);
+                progressDialog.setMessage("Please wait for save");
+
+                strTitlePost = edtTitlePost.getText().toString().trim();
+                strDescription = edtDescription.getText().toString();
+                strLoaiSanPham = spn_product_type.getSelectedItem().toString().trim();
+                strAddress = edtAddress.getText().toString().trim();
+                strPrice = edtPrice.getText().toString();
+
+                try {
+                    dbPrice = Double.parseDouble(strPrice);
+
+                } catch(Exception e) {
+                    System.err.println("Lỗi Parse kiểu dữ liệu");
+                }
+
+
+
+                if (strTitlePost.isEmpty() || strDescription.isEmpty() || strPrice.isEmpty()
+                        || strAddress.isEmpty() ||  strLoaiSanPham.isEmpty()) {
+                    MainActivity.showDiaLogWarning(dagTinGiaiTriActivity.this, "vui lòng nhập đầy đủ thông tin");
+
+                } else {
+                    progressDialog.show();
+                    for (update_count = 0; update_count < imageUri.size(); update_count++) {
+                        Uri indexImage = imageUri.get(update_count);
+                        StorageReference imageName = imageFolder.child("Image " + indexImage.getLastPathSegment());
+                        imageName.child(strTitlePost).putFile(indexImage).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                            @Override
+                            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                                imageName.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                    @Override
+                                    public void onSuccess(Uri uri) {
+                                        String Url = String.valueOf(uri);
+                                        StoreLick(Url);
+
+                                    }
+                                });
+                            }
+                        });
+                    }
+                    id = giaiTriNewsIdEdit.getId();
+
+                    String strId = String.valueOf(id);
+                    myData.child(tenDanhMuc).child(strId ).setValue(new giaiTriNews(id ,strTitlePost , strDescription ,strAddress, dbPrice
+                                    ,strLoaiSanPham ,idUser ,nameUser , tenDanhMuc))
+                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void unused) {
+                                    Toast.makeText(dagTinGiaiTriActivity.this, "Sửa tin thành công", Toast.LENGTH_SHORT).show();
+                                    progressDialog.dismiss();
+                                }
+                            });
+
+                }
+            }
+        });
+    }
+
+    private void setTextInput() {
+        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+        DatabaseReference databaseReference = firebaseDatabase.getReference("Tin").child("GiaiTri");
+        databaseReference.child(tenDanhMuc).addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+                giaiTriNews giaiTriNews = snapshot.getValue(com.example.duan1.model.giaiTriNews.class);
+                if(giaiTriNews.getTitle().equals(title_Post)) {
+                    edtTitlePost.setText(giaiTriNews.getTitle());
+                    edtDescription.setText(giaiTriNews.getDescription());
+                    String price = String.valueOf(giaiTriNews.getPrice());
+                    edtPrice.setText(price);
+                    edtAddress.setText(giaiTriNews.getAddress());
+                    giaiTriNewsIdEdit = giaiTriNews;
+                }
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot snapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
     }
 
     private void clickBackPage() {
@@ -222,7 +340,12 @@ public class dagTinGiaiTriActivity extends AppCompatActivity implements com.exam
                             }
                         });
                     }
-                    maxID = listGiaiTri.size() +1;
+                    if(giaiTriNewsId == null) {
+                        maxID = 1;
+                    }else {
+                        maxID = listGiaiTri.size() +1;
+                    }
+
                     String strId = String.valueOf(maxID);
                     myData.child(tenDanhMuc).child(strId ).setValue(new giaiTriNews(maxID ,strTitlePost , strDescription ,strAddress, dbPrice
                                       ,strLoaiSanPham ,idUser ,nameUser , tenDanhMuc))
@@ -252,6 +375,7 @@ public class dagTinGiaiTriActivity extends AppCompatActivity implements com.exam
                 for (DataSnapshot snapshot1 : snapshot.getChildren() ){
                     giaiTriNews giaiTriNews = snapshot1.getValue(giaiTriNews.class);
                     listGiaiTri.add(giaiTriNews);
+                    giaiTriNewsId = giaiTriNews;
                 }
             }
 
@@ -277,6 +401,7 @@ public class dagTinGiaiTriActivity extends AppCompatActivity implements com.exam
     private void initUi() {
         tvTenDanhMuc = findViewById(R.id.tvTenDanhMuc);
         Intent intent = getIntent();
+        title_Post = intent.getStringExtra("title");
         tvTenDanhMuc.setText("Danh Mục - " + intent.getStringExtra("tenDanhMuc"));
         imgBackPage = findViewById(R.id.icon_back);
         spn_product_type = findViewById(R.id.spn_product_type);
@@ -288,7 +413,7 @@ public class dagTinGiaiTriActivity extends AppCompatActivity implements com.exam
         edtAddress = findViewById(R.id.address);
         btnDangTin = findViewById(R.id.btnSubmit);
         addImageProduct = findViewById(R.id.addImageProduct);
-
+        btnSuaTinGT = findViewById(R.id.btnSuaTinGT);
         rcvView_select_img_GiaiTri = findViewById(R.id.rcvView_select_img_GiaiTri);
 
         Intent intent1 = getIntent();

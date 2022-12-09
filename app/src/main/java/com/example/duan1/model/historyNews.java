@@ -5,12 +5,14 @@ public class historyNews {
     private String title_historyNews;
     private String desc_historyNews;
     private String time_historyNews;
+    private String tenDanhMuc;
 
-    public historyNews(int id, String title_historyNews, String desc_historyNews ,String time_historyNews) {
+    public historyNews(int id, String title_historyNews, String desc_historyNews ,String time_historyNews ,String tenDanhMuc) {
         this.id = id;
         this.title_historyNews = title_historyNews;
         this.desc_historyNews = desc_historyNews;
         this.time_historyNews = time_historyNews;
+        this.tenDanhMuc = tenDanhMuc;
     }
 
     public historyNews() {
@@ -24,6 +26,13 @@ public class historyNews {
         this.time_historyNews = time_historyNews;
     }
 
+    public String getTenDanhMuc() {
+        return tenDanhMuc;
+    }
+
+    public void setTenDanhMuc(String tenDanhMuc) {
+        this.tenDanhMuc = tenDanhMuc;
+    }
 
     public int getId() {
         return id;

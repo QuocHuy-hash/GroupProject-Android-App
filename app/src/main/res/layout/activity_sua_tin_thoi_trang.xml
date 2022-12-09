@@ -31,13 +31,14 @@
             android:textColor="#0B0B0B"
             android:textSize="20dp"
             android:textStyle="bold" />
+
         <ImageView
             android:id="@+id/iconCloser"
             android:layout_width="35dp"
             android:layout_height="35dp"
-            android:src="@drawable/ic_close"
-            android:layout_marginLeft="10dp"
             android:layout_alignParentEnd="true"
+            android:layout_marginLeft="10dp"
+            android:src="@drawable/ic_close"
 
             />
     </RelativeLayout>
@@ -65,7 +66,7 @@
                     android:textSize="12dp" />
 
                 <TextView
-                    android:id="@+id/tvTenDanhMucTT"
+                    android:id="@+id/tvTenDanhMucTT1"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Bất động sản - Nhà ở"
@@ -204,14 +205,14 @@
                     android:padding="10dp"
                     tools:ignore="DuplicateIds" />
 
+
                 <Button
-                    android:id="@+id/btnDangTinTT"
+                    android:id="@+id/btnSuaTinTT"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="10dp"
                     android:padding="10dp"
-                    android:text="Đăng tin" />
-
+                    android:text="Sửa tin" />
 
             </LinearLayout>
         </LinearLayout>

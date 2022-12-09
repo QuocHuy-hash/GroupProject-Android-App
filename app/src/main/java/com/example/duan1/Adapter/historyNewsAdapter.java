@@ -1,16 +1,12 @@
 package com.example.duan1.Adapter;
 
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.media.Image;
+import android.content.Intent;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.PopupMenu;
-import android.widget.Switch;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -19,10 +15,15 @@ import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.duan1.R;
+import com.example.duan1.dagTinGiaiTriActivity;
+import com.example.duan1.dangTinBDSActivity;
+import com.example.duan1.dangTinBDSDatActivity;
 import com.example.duan1.model.BDSNews;
 import com.example.duan1.model.giaiTriNews;
 import com.example.duan1.model.historyNews;
 import com.example.duan1.model.thoiTrangNews;
+import com.example.duan1.suaTinPhongTroActivity;
+import com.example.duan1.suaTinThoiTrangActivity;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -47,7 +48,7 @@ public class historyNewsAdapter extends RecyclerView.Adapter<historyNewsAdapter.
 
     public historyNewsAdapter(Context mContext, List<historyNews> listHistory) {
         this.mContext = mContext;
-        this.listHistory = listHistory;
+        this.listHistory =listHistory;
     }
 
     @NonNull
@@ -58,9 +59,12 @@ public class historyNewsAdapter extends RecyclerView.Adapter<historyNewsAdapter.
         return new HolderView(view);
     }
 
+
     @Override
-    public void onBindViewHolder(@NonNull HolderView holder, int position) {
-        historyNews giaiTriNews = listHistory.get(position);
+    public void onBindViewHolder(@NonNull HolderView holder,final int position) {
+        historyNews giaiTriNews =  listHistory.get(position);
+        String tenDanhMuc = giaiTriNews.getTenDanhMuc();
+        String Title_Post = giaiTriNews.getTitle_historyNews();
         listChild1();
         listChild2();
         listChild3();
@@ -75,6 +79,42 @@ public class historyNewsAdapter extends RecyclerView.Adapter<historyNewsAdapter.
 
             }
         });
+        holder.layout_item.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                if(tenDanhMuc.equals("Quần áo") || tenDanhMuc.equals("Đồng hồ") || tenDanhMuc.equals("Giày dép") ||tenDanhMuc.equals("Túi xách")
+                || tenDanhMuc.equals("Nước hoa") ){
+                    Intent intent = new Intent(mContext , suaTinThoiTrangActivity.class);
+                    intent.putExtra("title" , Title_Post);
+                    intent.putExtra("tenDanhMuc" , tenDanhMuc);
+                    mContext.startActivity(intent);
+                }else if(tenDanhMuc.equals("Phòng trọ")) {
+                    Intent intent = new Intent(mContext , suaTinPhongTroActivity.class);
+                    intent.putExtra("title" , Title_Post);
+                    intent.putExtra("tenDanhMuc" , tenDanhMuc);
+                    mContext.startActivity(intent);
+                }else if(tenDanhMuc.equals("Đất")) {
+                    Intent intent = new Intent(mContext , dangTinBDSDatActivity.class);
+                    intent.putExtra("title" , Title_Post);
+                    intent.putExtra("tenDanhMuc" , tenDanhMuc);
+                    mContext.startActivity(intent);
+                }else if(tenDanhMuc.equals("Văn Phòng")
+                        || tenDanhMuc.equalsIgnoreCase("Nhà ở")
+                        || tenDanhMuc.equalsIgnoreCase("Chung cư")){
+                    Intent intent = new Intent(mContext , dangTinBDSActivity.class);
+                    intent.putExtra("title" , Title_Post);
+                    intent.putExtra("tenDanhMuc" , tenDanhMuc);
+                    mContext.startActivity(intent);
+                }else {
+                    Intent intent = new Intent(mContext , dagTinGiaiTriActivity.class);
+                    intent.putExtra("title" , Title_Post);
+                    intent.putExtra("tenDanhMuc" , tenDanhMuc);
+                    mContext.startActivity(intent);
+                }
+            }
+        });
+
 
     }
 
@@ -204,7 +244,7 @@ private void XoaTin(String title){
             }
         });
     }
-    System.out.println("Title : " + id);
+
 }
 
 
@@ -213,13 +253,14 @@ private void XoaTin(String title){
     public class HolderView extends RecyclerView.ViewHolder {
         private TextView title_historyNews, desc_historyNews, time_historyNews;
         private ImageView icon_option;
-
+    private RelativeLayout layout_item;
         public HolderView(@NonNull View itemView) {
             super(itemView);
             title_historyNews = itemView.findViewById(R.id.title_historyNews);
             desc_historyNews = itemView.findViewById(R.id.desc_historyNews);
             time_historyNews = itemView.findViewById(R.id.time_historyNews);
             icon_option = itemView.findViewById(R.id.icon_option);
+            layout_item = itemView.findViewById(R.id.layout_item);
 
         }
 
