@@ -45,7 +45,8 @@ public class NewsTrangChuAdapter extends RecyclerView.Adapter<NewsTrangChuAdapte
             return;
         }
         h.tvTitle.setText(OOP.getTitle());
-        h.tvFee.setText(OOP.getFee());
+        String free = String.valueOf(OOP.getFee());
+        h.tvFee.setText(free);
         h.tvTime.setText(OOP.getTime());
         h.tvDes.setText(OOP.getDescripsion());
 

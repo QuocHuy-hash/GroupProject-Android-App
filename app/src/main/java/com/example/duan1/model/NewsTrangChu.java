@@ -1,7 +1,8 @@
 package com.example.duan1.model;
 
 public class NewsTrangChu {
-    private String title,descripsion, fee, time;
+    private String title,descripsion,  time;
+    private double fee;
     private boolean favorite;
     private String ArrURL;
 
@@ -12,7 +13,7 @@ public class NewsTrangChu {
     public NewsTrangChu() {
     }
 
-    public NewsTrangChu(String title, String descripsion, String fee, String time, boolean favorite, String arrURL) {
+    public NewsTrangChu(String title, String descripsion, Double fee, String time, boolean favorite, String arrURL) {
         this.title = title;
         this.descripsion = descripsion;
         this.fee = fee;
@@ -37,11 +38,11 @@ public class NewsTrangChu {
         this.descripsion = descripsion;
     }
 
-    public String getFee() {
+    public Double getFee() {
         return fee;
     }
 
-    public void setFee(String fee) {
+    public void setFee(Double fee) {
         this.fee = fee;
     }
 
