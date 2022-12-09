@@ -82,7 +82,7 @@ public class FragmentQuanLiTin extends Fragment {
 
                     if (giaiTriNews.getIdUser() == idUser) {
 
-                        listHistoryNews.add(new historyNews(id, giaiTriNews.getTitle(), giaiTriNews.getDescription() , "12-12-2022", giaiTriNews.getTenDanhMuc()));
+                        listHistoryNews.add(new historyNews(id, giaiTriNews.getTitle(), giaiTriNews.getDescription() , giaiTriNews.getDate(), giaiTriNews.getTenDanhMuc()));
                         id++;
                     }
 
@@ -119,7 +119,7 @@ public class FragmentQuanLiTin extends Fragment {
 
                     if (thoiTrangNews.getIdUser() == idUser) {
 
-                        listHistoryNews.add(new historyNews(id, thoiTrangNews.getTitlePost(), thoiTrangNews.getDescriptionPost(), "12-12-2022",thoiTrangNews.getTenDanhMuc()));
+                        listHistoryNews.add(new historyNews(id, thoiTrangNews.getTitlePost(), thoiTrangNews.getDescriptionPost(), thoiTrangNews.getDate(),thoiTrangNews.getTenDanhMuc()));
                         id++;
 
 
@@ -156,7 +156,7 @@ public class FragmentQuanLiTin extends Fragment {
 
                     if (bdsNews.getIdUser() == idUser) {
 
-                        listHistoryNews.add(new historyNews(id, bdsNews.getTitle(), bdsNews.getDescription() , "12-11-2002", bdsNews.getTenDanhMuc()));
+                        listHistoryNews.add(new historyNews(id, bdsNews.getTitle(), bdsNews.getDescription() , bdsNews.getDate(), bdsNews.getTenDanhMuc()));
                         id++;
 
                         historyNewsAdapter = new historyNewsAdapter(getContext(), listHistoryNews);

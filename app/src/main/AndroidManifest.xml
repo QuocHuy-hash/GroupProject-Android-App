@@ -24,12 +24,6 @@
         android:theme="@style/Theme.DuAn1"
         tools:targetApi="31">
         <activity
-            android:name=".suaTinPhongTroActivity"
-            android:exported="false" />
-        <activity
-            android:name=".suaTinThoiTrangActivity"
-            android:exported="false" />
-        <activity
             android:name=".dagTinGiaiTriActivity"
             android:exported="false" />
         <activity
