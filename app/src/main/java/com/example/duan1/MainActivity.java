@@ -69,8 +69,9 @@ public class MainActivity extends AppCompatActivity {
 
         database = FirebaseDatabase.getInstance();
         myRef = database.getReference("Users");
-        getUser();
-
+        if (currentUser!= null){
+            getUser();
+        }
 
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override

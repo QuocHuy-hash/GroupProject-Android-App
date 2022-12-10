@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,6 +28,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
@@ -38,7 +40,6 @@ public class FragmentQuanLiTin extends Fragment {
     private historyNewsAdapter historyNewsAdapter;
     private List<historyNews> listHistoryNews;
 
-    private List<historyNews> listHistoryNewsAll;
     private String nameUser;
     private int idUser;
     private List<String> listChild = new ArrayList<>();
@@ -50,10 +51,7 @@ public class FragmentQuanLiTin extends Fragment {
     DatabaseReference myData = FirebaseDatabase.getInstance().getReference("Tin").child("GiaiTri");
     DatabaseReference myData1 = FirebaseDatabase.getInstance().getReference("Tin").child("BDS");
     DatabaseReference myData2 = FirebaseDatabase.getInstance().getReference("Tin").child("ThoiTrang");
-    StorageReference imageFolder = FirebaseStorage.getInstance().getReference().child("Image.jpg");
     MainActivity mainActivity;
-
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -67,13 +65,19 @@ public class FragmentQuanLiTin extends Fragment {
         listChild2();
         listChild3();
         getListHistoryNews();
-
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                historyNewsAdapter = new historyNewsAdapter(getContext(), listHistoryNews);
+                rcvQuanLyTinDang.setLayoutManager(new LinearLayoutManager(getContext()));
+                rcvQuanLyTinDang.setAdapter(historyNewsAdapter);
+            }
+        }, 500);
 
         return view;
     }
 
-    public List<historyNews> getListHistoryNews() {
-
+    public void getListHistoryNews() {
         for (int i = 0; i < listChild.size(); i++) {
             myData.child(listChild.get(i)).addChildEventListener(new ChildEventListener() {
                 @Override
@@ -85,8 +89,6 @@ public class FragmentQuanLiTin extends Fragment {
                         listHistoryNews.add(new historyNews(id, giaiTriNews.getTitle(), giaiTriNews.getDescription() , giaiTriNews.getDate(), giaiTriNews.getTenDanhMuc()));
                         id++;
                     }
-
-
                 }
 
                 @Override
@@ -109,20 +111,16 @@ public class FragmentQuanLiTin extends Fragment {
 
                 }
             });
-
         }
         for (int i = 0; i < listChild1.size(); i++) {
             myData2.child(listChild1.get(i)).addChildEventListener(new ChildEventListener() {
                 @Override
                 public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
                     thoiTrangNews thoiTrangNews = snapshot.getValue(com.example.duan1.model.thoiTrangNews.class);
-
                     if (thoiTrangNews.getIdUser() == idUser) {
 
                         listHistoryNews.add(new historyNews(id, thoiTrangNews.getTitlePost(), thoiTrangNews.getDescriptionPost(), thoiTrangNews.getDate(),thoiTrangNews.getTenDanhMuc()));
                         id++;
-
-
                     }
 
                 }
@@ -149,38 +147,16 @@ public class FragmentQuanLiTin extends Fragment {
             });
         }
         for (int i = 0; i < listChild2.size(); i++) {
-            myData1.child(listChild2.get(i)).addChildEventListener(new ChildEventListener() {
+            myData1.child(listChild2.get(i)).addValueEventListener(new ValueEventListener() {
                 @Override
-                public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-                    BDSNews bdsNews = snapshot.getValue(BDSNews.class);
-
-                    if (bdsNews.getIdUser() == idUser) {
-
-                        listHistoryNews.add(new historyNews(id, bdsNews.getTitle(), bdsNews.getDescription() , bdsNews.getDate(), bdsNews.getTenDanhMuc()));
-                        id++;
-
-                        historyNewsAdapter = new historyNewsAdapter(getContext(), listHistoryNews);
-                        rcvQuanLyTinDang.setLayoutManager(new LinearLayoutManager(getContext()));
-                        rcvQuanLyTinDang.setAdapter(historyNewsAdapter);
-                        historyNewsAdapter.notifyDataSetChanged();
-
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    for (DataSnapshot snapshot1: snapshot.getChildren()){
+                        BDSNews bdsNews = snapshot1.getValue(BDSNews.class);
+                        if (bdsNews.getIdUser() == idUser) {
+                            listHistoryNews.add(new historyNews(id, bdsNews.getTitle(), bdsNews.getDescription() , bdsNews.getDate(), bdsNews.getTenDanhMuc(), bdsNews.getImage()));
+                            id++;
+                        }
                     }
-
-                }
-
-                @Override
-                public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-
-                }
-
-                @Override
-                public void onChildRemoved(@NonNull DataSnapshot snapshot) {
-
-                }
-
-                @Override
-                public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-
                 }
 
                 @Override
@@ -191,8 +167,6 @@ public class FragmentQuanLiTin extends Fragment {
 
         }
 
-
-        return listHistoryNews;
     }
 
     private List<String> listChild1() {

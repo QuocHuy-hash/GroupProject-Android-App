@@ -3,21 +3,26 @@
     android:layout_width="match_parent"
     android:id="@+id/layout_item"
     android:layout_height="wrap_content">
+
     <ImageView
         android:id="@+id/imgTinDang"
         android:layout_width="100dp"
         android:layout_height="100dp"
-        android:src="@drawable/ic_message"
-        android:layout_margin="10dp"/>
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="10dp"
+        android:src="@drawable/ic_message" />
 
     <LinearLayout
         android:id="@+id/lnnLayout"
-        android:layout_width="281dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
+        android:layout_marginStart="5dp"
         android:layout_marginTop="10dp"
         android:layout_marginBottom="10dp"
         android:layout_toEndOf="@+id/imgTinDang"
+        android:layout_marginEnd="35dp"
         android:orientation="vertical">
 
         <TextView
@@ -51,8 +56,9 @@
         android:id="@+id/icon_option"
         android:layout_width="34dp"
         android:layout_height="34dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="10dp"
-        android:layout_toEndOf="@+id/lnnLayout"
+        android:layout_marginTop="40dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentTop="true"
+
         android:src="@drawable/ic_delete" />
 </RelativeLayout>

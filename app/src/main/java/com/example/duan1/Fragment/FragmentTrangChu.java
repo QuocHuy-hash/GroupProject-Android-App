@@ -84,13 +84,24 @@ public class FragmentTrangChu extends Fragment {
         listChild1();
         listChild2();
         listChild3();
+        newsTrangChuList.clear();
         getListNews();
         rcvNewsTrangChu = view.findViewById(R.id.rcv_news_trangchu);
-        mNewsTrangChuAdapter = new NewsTrangChuAdapter(getContext());
-        GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), 2);
-        rcvNewsTrangChu.setLayoutManager(gridLayoutManager);
-        mNewsTrangChuAdapter.setDATA(newsTrangChuList);
-        rcvNewsTrangChu.setAdapter(mNewsTrangChuAdapter);
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                mNewsTrangChuAdapter = new NewsTrangChuAdapter(getContext());
+                GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), 2);
+                rcvNewsTrangChu.setLayoutManager(gridLayoutManager);
+                mNewsTrangChuAdapter.setDATA(newsTrangChuList);
+                rcvNewsTrangChu.setAdapter(mNewsTrangChuAdapter);
+            }
+        },500);
+//        mNewsTrangChuAdapter = new NewsTrangChuAdapter(getContext());
+//        GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), 2);
+//        rcvNewsTrangChu.setLayoutManager(gridLayoutManager);
+//        mNewsTrangChuAdapter.setDATA(newsTrangChuList);
+//        rcvNewsTrangChu.setAdapter(mNewsTrangChuAdapter);
 //        rcvNewsTrangChu.addOnItemTouchListener(new RecyclerView.SimpleOnItemTouchListener() {
 //            @Override
 //            public boolean onInterceptTouchEvent(@NonNull RecyclerView rv, @NonNull MotionEvent e) {
@@ -156,9 +167,8 @@ public class FragmentTrangChu extends Fragment {
                 public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
                     giaiTriNews giaiTriNews = snapshot.getValue(giaiTriNews.class);
                     newsTrangChuList.add(new NewsTrangChu(giaiTriNews.getTitle() , giaiTriNews.getDescription(),
-                            giaiTriNews.getPrice(),giaiTriNews.getDate(),true, ""));
-
-
+                            giaiTriNews.getDate(),giaiTriNews.getPrice(),true, ""));
+                    mNewsTrangChuAdapter.notifyDataSetChanged();
                 }
 
                 @Override
@@ -189,8 +199,8 @@ public class FragmentTrangChu extends Fragment {
                 public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
                     thoiTrangNews thoiTrangNews = snapshot.getValue(com.example.duan1.model.thoiTrangNews.class);
                     newsTrangChuList.add(new NewsTrangChu(thoiTrangNews.getTitlePost(), thoiTrangNews.getDescriptionPost(),
-                            thoiTrangNews.getPrice(), thoiTrangNews.getDate(), true , ""));
-
+                            thoiTrangNews.getDate(), thoiTrangNews.getPrice(), true , ""));
+                    mNewsTrangChuAdapter.notifyDataSetChanged();
                 }
 
                 @Override
@@ -221,12 +231,8 @@ public class FragmentTrangChu extends Fragment {
                     BDSNews bdsNews = snapshot.getValue(BDSNews.class);
 
                     newsTrangChuList.add(new NewsTrangChu(bdsNews.getTitle() , bdsNews.getDescription() ,
-                            bdsNews.getPrice(),bdsNews.getDate(),false , ""));
-                    mNewsTrangChuAdapter = new NewsTrangChuAdapter(getContext());
-                    GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), 2);
-                    rcvNewsTrangChu.setLayoutManager(gridLayoutManager);
-                    mNewsTrangChuAdapter.setDATA(newsTrangChuList);
-                    rcvNewsTrangChu.setAdapter(mNewsTrangChuAdapter);
+                            bdsNews.getDate(),bdsNews.getPrice(), true, bdsNews.getImage()));
+                            mNewsTrangChuAdapter.notifyDataSetChanged();
                 }
 
                 @Override
@@ -251,8 +257,6 @@ public class FragmentTrangChu extends Fragment {
             });
 
         }
-
-
 
     }
     private List<String> listChild1() {
@@ -285,5 +289,11 @@ public class FragmentTrangChu extends Fragment {
         listChild2.add(new String("Phòng trọ"));
 
         return listChild2;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        newsTrangChuList.clear();
     }
 }
