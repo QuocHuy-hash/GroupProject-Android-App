@@ -29,6 +29,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,7 +40,7 @@ public class historyNewsAdapter extends RecyclerView.Adapter<historyNewsAdapter.
     private List<String> listChild = new ArrayList<>();
     private List<String> listChild1 = new ArrayList<>();
     private List<String> listChild2 = new ArrayList<>();
-    private String title_News ;
+    private String title_News;
     private int id;
 
     DatabaseReference myData = FirebaseDatabase.getInstance().getReference("Tin").child("GiaiTri");
@@ -65,20 +66,27 @@ public class historyNewsAdapter extends RecyclerView.Adapter<historyNewsAdapter.
         historyNews giaiTriNews =  listHistory.get(position);
         String tenDanhMuc = giaiTriNews.getTenDanhMuc();
         String Title_Post = giaiTriNews.getTitle_historyNews();
+
         listChild1();
         listChild2();
         listChild3();
         holder.title_historyNews.setText(giaiTriNews.getTitle_historyNews());
         holder.desc_historyNews.setText(giaiTriNews.getDesc_historyNews());
         holder.time_historyNews.setText(giaiTriNews.getTime_historyNews());
+        String strImage = giaiTriNews.getImage();
+        Picasso.with(mContext)
+                .load(strImage)
+                .placeholder(R.drawable.ic_message)
+                .error(R.drawable.ic_message)
+                .into(holder.imgSP);
         holder.icon_option.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 XoaTin(giaiTriNews.getTitle_historyNews());
-
-
+//                System.out.println(giaiTriNews.getTitle_historyNews());
             }
         });
+        int id = giaiTriNews.getId();
         holder.layout_item.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -88,6 +96,7 @@ public class historyNewsAdapter extends RecyclerView.Adapter<historyNewsAdapter.
                     Intent intent = new Intent(mContext , dangTinThoiTrangActivity.class);
                     intent.putExtra("title1" , Title_Post);
                     intent.putExtra("tenDanhMuc" , tenDanhMuc);
+
                     mContext.startActivity(intent);
                 }else if(tenDanhMuc.equals("Phòng trọ")) {
                     Intent intent = new Intent(mContext , dangTinBDSPhongTroActivity.class);
@@ -98,6 +107,7 @@ public class historyNewsAdapter extends RecyclerView.Adapter<historyNewsAdapter.
                     Intent intent = new Intent(mContext , dangTinBDSDatActivity.class);
                     intent.putExtra("title" , Title_Post);
                     intent.putExtra("tenDanhMuc" , tenDanhMuc);
+                    intent.putExtra("id", id);
                     mContext.startActivity(intent);
                 }else if(tenDanhMuc.equals("Văn Phòng")
                         || tenDanhMuc.equalsIgnoreCase("Nhà ở")
@@ -114,11 +124,7 @@ public class historyNewsAdapter extends RecyclerView.Adapter<historyNewsAdapter.
                 }
             }
         });
-
-
     }
-
-
     @Override
     public int getItemCount() {
         if (listHistory != null) {
@@ -129,7 +135,6 @@ public class historyNewsAdapter extends RecyclerView.Adapter<historyNewsAdapter.
     }
 private void XoaTin(String title){
     for(int i = 0 ; i < listChild.size() ;i++) {
-
         myData.child(listChild.get(i)).addChildEventListener(new ChildEventListener() {
 
             @Override
@@ -138,11 +143,9 @@ private void XoaTin(String title){
                 if(giaiTriNew.getTitle().equals(title)){
                     String id = String.valueOf(giaiTriNew.getId());
                     String tenDanhMuc = String.valueOf(giaiTriNew.getTenDanhMuc());
-
                         myData.child(tenDanhMuc).child(id).removeValue();
                         notifyDataSetChanged();
                         Toast.makeText(mContext.getApplicationContext(), "Đã xóa Tin", Toast.LENGTH_SHORT).show();
-
                 }
             }
 
@@ -176,13 +179,11 @@ private void XoaTin(String title){
                 if(bdsNews.getTitle().equals(title)){
                     String id = String.valueOf(bdsNews.getId());
                     String tenDanhMuc = String.valueOf(bdsNews.getTenDanhMuc());
-                    
+                    System.out.println(tenDanhMuc);
                     myData1.child(tenDanhMuc).child(id).removeValue();
                     notifyDataSetChanged();
                     Toast.makeText(mContext.getApplicationContext(), "Đã xóa Tin", Toast.LENGTH_SHORT).show();
-
                 }
-
             }
 
             @Override
@@ -220,7 +221,6 @@ private void XoaTin(String title){
                     notifyDataSetChanged();
                     Toast.makeText(mContext, "Xóa Thành công", Toast.LENGTH_SHORT).show();
                 }
-
             }
 
             @Override
@@ -247,12 +247,9 @@ private void XoaTin(String title){
 
 }
 
-
-
-
     public class HolderView extends RecyclerView.ViewHolder {
         private TextView title_historyNews, desc_historyNews, time_historyNews;
-        private ImageView icon_option;
+        private ImageView icon_option, imgSP;
     private RelativeLayout layout_item;
         public HolderView(@NonNull View itemView) {
             super(itemView);
@@ -261,6 +258,7 @@ private void XoaTin(String title){
             time_historyNews = itemView.findViewById(R.id.time_historyNews);
             icon_option = itemView.findViewById(R.id.icon_option);
             layout_item = itemView.findViewById(R.id.layout_item);
+            imgSP = itemView.findViewById(R.id.imgTinDang);
 
         }
 
@@ -268,8 +266,6 @@ private void XoaTin(String title){
 
 
     }
-
-
 
     private void suaTin() {
     }
@@ -305,4 +301,5 @@ private void XoaTin(String title){
 
         return listChild2;
     }
+
 }

@@ -13,13 +13,14 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.duan1.R;
+import com.example.duan1.model.BDSNews;
 import com.example.duan1.model.NewsTrangChu;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
 public class NewsTrangChuAdapter extends RecyclerView.Adapter<NewsTrangChuAdapter.ViewHolder> {private Context context;
     private List<NewsTrangChu> newsTrangChuList;
-
     public NewsTrangChuAdapter(Context context) {
         this.context = context;
     }
@@ -49,7 +50,11 @@ public class NewsTrangChuAdapter extends RecyclerView.Adapter<NewsTrangChuAdapte
         h.tvFee.setText(free);
         h.tvTime.setText(OOP.getTime());
         h.tvDes.setText(OOP.getDescripsion());
-
+        String strimage = OOP.getImage();
+        System.out.println(strimage);
+        Picasso.with(context)
+                .load(strimage)
+                .into(h.imgNews);
 //        if(OOP.getsoluonganh() > 1){
 //            h.linearLayout.setVisibility(View.VISIBLE);
 //            h.tvSLAnh.setText(OOP.getsoluonganh());
@@ -57,7 +62,7 @@ public class NewsTrangChuAdapter extends RecyclerView.Adapter<NewsTrangChuAdapte
 //            h.linearLayout.setVisibility(View.INVISIBLE);
 //        }
 
-        Glide.with(context).load(OOP.getArrURL()).into(h.imgNews);
+//        Glide.with(context).load(OOP.getImage()).into(h.imgNews);
 
         if(OOP.isFavorite()){
             h.imgFavorite.setImageResource(R.drawable.ic_item_trangchu_favorite);

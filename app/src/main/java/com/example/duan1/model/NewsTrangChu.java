@@ -1,10 +1,10 @@
 package com.example.duan1.model;
 
 public class NewsTrangChu {
-    private String title,descripsion,  time;
+    private String title,descripsion, time;
     private double fee;
     private boolean favorite;
-    private String ArrURL;
+    private String image;
 
 //    public int getsoluonganh(){
 //        return getArrURL().size();
@@ -13,13 +13,14 @@ public class NewsTrangChu {
     public NewsTrangChu() {
     }
 
-    public NewsTrangChu(String title, String descripsion, Double fee, String time, boolean favorite, String arrURL) {
+
+    public NewsTrangChu(String title, String descripsion, String time, double fee, boolean favorite, String image) {
         this.title = title;
         this.descripsion = descripsion;
-        this.fee = fee;
         this.time = time;
+        this.fee = fee;
         this.favorite = favorite;
-        ArrURL = arrURL;
+        this.image = image;
     }
 
     public String getTitle() {
@@ -62,11 +63,15 @@ public class NewsTrangChu {
         this.favorite = favorite;
     }
 
-    public String getArrURL() {
-        return ArrURL;
+    public void setFee(double fee) {
+        this.fee = fee;
     }
 
-    public void setArrURL(String arrURL) {
-        ArrURL = arrURL;
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
     }
 }
