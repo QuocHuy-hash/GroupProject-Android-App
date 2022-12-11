@@ -51,6 +51,10 @@ public class historyNewsAdapter extends RecyclerView.Adapter<historyNewsAdapter.
         this.mContext = mContext;
         this.listHistory =listHistory;
     }
+public void setFilter(List<historyNews> listFilter){
+        this.listHistory = listFilter;
+        notifyDataSetChanged();
+}
 
     @NonNull
     @Override

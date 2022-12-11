@@ -1,0 +1,1037 @@
+Index: app/src/main/java/com/example/duan1/dangTinBDSActivity.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.duan1;\r\n\r\nimport androidx.annotation.NonNull;\r\nimport androidx.annotation.Nullable;\r\nimport androidx.appcompat.app.AppCompatActivity;\r\nimport androidx.core.app.ActivityCompat;\r\nimport androidx.core.content.ContextCompat;\r\nimport androidx.recyclerview.widget.GridLayoutManager;\r\nimport androidx.recyclerview.widget.RecyclerView;\r\n\r\nimport android.Manifest;\r\nimport android.app.ProgressDialog;\r\nimport android.content.Intent;\r\nimport android.content.pm.PackageManager;\r\nimport android.graphics.Bitmap;\r\nimport android.net.Uri;\r\nimport android.os.Build;\r\nimport android.os.Bundle;\r\nimport android.provider.MediaStore;\r\nimport android.view.View;\r\nimport android.widget.AdapterView;\r\nimport android.widget.ArrayAdapter;\r\nimport android.widget.Button;\r\nimport android.widget.EditText;\r\nimport android.widget.ImageView;\r\nimport android.widget.LinearLayout;\r\nimport android.widget.Spinner;\r\nimport android.widget.TextView;\r\nimport android.widget.Toast;\r\n\r\nimport com.example.duan1.Adapter.photoAdapter;\r\nimport com.example.duan1.model.BDSNews;\r\nimport com.example.duan1.model.direction;\r\nimport com.google.android.gms.tasks.OnFailureListener;\r\nimport com.google.android.gms.tasks.OnSuccessListener;\r\nimport com.google.firebase.database.ChildEventListener;\r\nimport com.google.firebase.database.DataSnapshot;\r\nimport com.google.firebase.database.DatabaseError;\r\nimport com.google.firebase.database.DatabaseReference;\r\nimport com.google.firebase.database.FirebaseDatabase;\r\nimport com.google.firebase.database.ValueEventListener;\r\nimport com.google.firebase.storage.FirebaseStorage;\r\nimport com.google.firebase.storage.StorageReference;\r\nimport com.google.firebase.storage.UploadTask;\r\n\r\nimport java.io.ByteArrayOutputStream;\r\nimport java.io.IOException;\r\nimport java.text.SimpleDateFormat;\r\nimport java.util.ArrayList;\r\nimport java.util.Calendar;\r\nimport java.util.HashMap;\r\nimport java.util.List;\r\n\r\npublic class dangTinBDSActivity extends AppCompatActivity implements com.example.duan1.Adapter.photoAdapter.CountOfImageWhenRemove {\r\n    private Spinner spn_Direction;\r\n    private TextView tvTenDanhMuc;\r\n    private Bitmap bitmapselect;\r\n    private ImageView imgBackPage, iconCloser;\r\n    private EditText edtTitlePost, edtDescription, edtTenKhuDanCu, edtAddress, edtLoaiHinh, edtSoPhongNgu,\r\n            edtSoPhongWc, edtPrice, edtDienTich;\r\n    private LinearLayout addImageProduct;\r\n    private Button btnDangTin, suaTinBDS;\r\n\r\n    private String date, strTitlePost, strDescription, strTenKhu, strAddress, strLoaiHinhDat, strSoPhongNgu, strSoPhongWc, strPrice, strDienTich, nameUser, tenDanhMuc;\r\n    private double dbPrice;\r\n    private int maxID;\r\n    private String title_Post = null;\r\n    private com.example.duan1.Adapter.photoAdapter photoAdapter;\r\n    private RecyclerView rcvView_select_img_BDS;\r\n    private ArrayList<Uri> imageUri;\r\n    private int REQUEST_PERMISSION_CODE = 35;\r\n    private int PICK_IMAGE = 1;\r\n    private int update_count = 0, idUser, idEdit;\r\n    private List<BDSNews> listBDS;\r\n    private MainActivity mainActivity;\r\n    BDSNews bdsNewsId;\r\n\r\n    private ProgressDialog progressDialog;\r\n    DatabaseReference myData;\r\n    StorageReference imageFolder;\r\n    private Calendar calendar = Calendar.getInstance();\r\n\r\n    @Override\r\n    protected void onCreate(Bundle savedInstanceState) {\r\n        super.onCreate(savedInstanceState);\r\n        setContentView(R.layout.activity_dang_tin_bdsactivity);\r\n\r\n        imageFolder = FirebaseStorage.getInstance().getReference().child(\"Image.jpg\");\r\n        myData = FirebaseDatabase.getInstance().getReference(\"Tin\").child(\"BDS\");\r\n        imageUri = new ArrayList<>();\r\n\r\n        nameUser = mainActivity.name;\r\n        idUser = mainActivity.id;\r\n        initUi();\r\n        eventClickSpinner();\r\n        getListBds();\r\n        clickBackPage();\r\n        clickAddImageFashion();\r\n        clickDangTin();\r\n        getCurrentDate();\r\n        if (title_Post == null) {\r\n            btnDangTin.setVisibility(View.VISIBLE);\r\n            suaTinBDS.setVisibility(View.INVISIBLE);\r\n        } else {\r\n            suaTinBDS.setVisibility(View.VISIBLE);\r\n            btnDangTin.setVisibility(View.INVISIBLE);\r\n            setTextInput();\r\n            editNews();\r\n        }\r\n    }\r\n    private void getCurrentDate() {\r\n\r\n        SimpleDateFormat sdf = new SimpleDateFormat(\"dd/MM/yyyy\");\r\n        Calendar c = Calendar.getInstance();\r\n        date = sdf.format(c.getTime());\r\n        System.out.println(\"Date : \" + date);\r\n    }\r\n    private void editNews() {\r\n        suaTinBDS.setOnClickListener(new View.OnClickListener() {\r\n            @Override\r\n            public void onClick(View view) {\r\n                progressDialog = new ProgressDialog(dangTinBDSActivity.this);\r\n                progressDialog.setMessage(\"Please wait for save\");\r\n                strTitlePost = edtTitlePost.getText().toString().trim();\r\n                strDescription = edtDescription.getText().toString();\r\n                strTenKhu = edtTenKhuDanCu.getText().toString().trim();\r\n                strLoaiHinhDat = edtLoaiHinh.getText().toString().trim();\r\n                strAddress = edtAddress.getText().toString().trim();\r\n                strPrice = edtPrice.getText().toString();\r\n                strDienTich = edtDienTich.getText().toString().trim();\r\n                strSoPhongNgu = edtSoPhongNgu.getText().toString().trim();\r\n                strSoPhongWc = edtSoPhongWc.getText().toString().trim();\r\n                try {\r\n                    dbPrice = Double.parseDouble(strPrice);\r\n\r\n                } catch(Exception e) {\r\n                    System.err.println(\"Lỗi Parse kiểu dữ liệu\");\r\n                }\r\n                if (strTitlePost.isEmpty() || strDescription.isEmpty() || strPrice.isEmpty()\r\n                        || strAddress.isEmpty() ||  strTenKhu.isEmpty()|| strLoaiHinhDat.isEmpty() ||strDienTich.isEmpty()\r\n                        ||strSoPhongWc.isEmpty() || strSoPhongNgu.isEmpty()) {\r\n                    MainActivity.showDiaLogWarning(dangTinBDSActivity.this, \"vui lòng nhập đầy đủ thông tin\");\r\n\r\n                } else {\r\n                    progressDialog.show();\r\n\r\n                    upImage(idEdit);\r\n//                    for (update_count = 0; update_count < imageUri.size(); update_count++) {\r\n//                        Uri indexImage = imageUri.get(0);\r\n//                        StorageReference imageName = imageFolder.child(\"ImageTin/\" + indexImage + calendar);\r\n//                        imageName.putFile(indexImage).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {\r\n//                            @Override\r\n//                            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {\r\n//                                imageName.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {\r\n//                                    @Override\r\n//                                    public void onSuccess(Uri uri) {\r\n//                                        String Url = String.valueOf(uri);\r\n//                                        StoreLick(Url);\r\n//\r\n//                                    }\r\n//                                });\r\n//                            }\r\n//                        });\r\n//                    }\r\n\r\n                    String strId = String.valueOf(idEdit);\r\n                    myData.child(tenDanhMuc).child(strId ).setValue(\r\n                                    new BDSNews(idEdit ,strTitlePost , strDescription , dbPrice\r\n                                            ,strDienTich ,strAddress ,strTenKhu ,strLoaiHinhDat ,\r\n                                            strSoPhongNgu,strSoPhongWc ,idUser,nameUser ,tenDanhMuc, date))\r\n                            .addOnSuccessListener(new OnSuccessListener<Void>() {\r\n                                @Override\r\n                                public void onSuccess(Void unused) {\r\n                                    Toast.makeText(dangTinBDSActivity.this, \"Sửa tin thành công\", Toast.LENGTH_SHORT).show();\r\n                                    progressDialog.dismiss();\r\n                                }\r\n                            });\r\n\r\n                }\r\n            }\r\n        });\r\n    }\r\n\r\n    private void setTextInput() {\r\n        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();\r\n        DatabaseReference databaseReference = firebaseDatabase.getReference(\"Tin\").child(\"BDS\");\r\n        databaseReference.child(tenDanhMuc).addChildEventListener(new ChildEventListener() {\r\n            @Override\r\n            public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {\r\n                BDSNews bdsNews = snapshot.getValue(BDSNews.class);\r\n                if (title_Post.equals(bdsNews.getTitle())) {\r\n                    edtTitlePost.setText(bdsNews.getTitle());\r\n                    edtAddress.setText(bdsNews.getAdress());\r\n                    edtDienTich.setText(bdsNews.getDienTich());\r\n                    edtDescription.setText(bdsNews.getDescription());\r\n                    edtLoaiHinh.setText(bdsNews.getLoaiDat());\r\n                    edtSoPhongNgu.setText(bdsNews.getSoPhongNgu());\r\n                    edtSoPhongWc.setText(bdsNews.getSoPhongWc());\r\n                    edtTenKhuDanCu.setText(bdsNews.getTenPhanKhu());\r\n                    String price = String.valueOf(bdsNews.getPrice());\r\n                    edtPrice.setText(price);\r\n\r\n                    idEdit = bdsNews.getId();\r\n                }\r\n            }\r\n\r\n            @Override\r\n            public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {\r\n\r\n            }\r\n\r\n            @Override\r\n            public void onChildRemoved(@NonNull DataSnapshot snapshot) {\r\n\r\n            }\r\n\r\n            @Override\r\n            public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {\r\n\r\n            }\r\n\r\n            @Override\r\n            public void onCancelled(@NonNull DatabaseError error) {\r\n\r\n            }\r\n        });\r\n    }\r\n\r\n    private void clickBackPage() {\r\n        imgBackPage.setOnClickListener(new View.OnClickListener() {\r\n            @Override\r\n            public void onClick(View view) {\r\n                finish();\r\n            }\r\n        });\r\n        iconCloser.setOnClickListener(new View.OnClickListener() {\r\n            @Override\r\n            public void onClick(View view) {\r\n                finish();\r\n            }\r\n        });\r\n    }\r\n\r\n    private void eventClickSpinner() {\r\n        direction[] directions = EmployeeDataUtils.getEmployees();\r\n        ArrayAdapter<direction> adapter = new ArrayAdapter<direction>(this, android.R.layout.simple_spinner_item, directions);\r\n        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);\r\n        spn_Direction.setAdapter(adapter);\r\n\r\n        spn_Direction.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {\r\n            @Override\r\n            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {\r\n                Toast.makeText(dangTinBDSActivity.this, \"Hướng \" + i, Toast.LENGTH_SHORT).show();\r\n            }\r\n\r\n            @Override\r\n            public void onNothingSelected(AdapterView<?> adapterView) {\r\n\r\n            }\r\n        });\r\n    }\r\n\r\n\r\n    private void clickDangTin() {\r\n        btnDangTin.setOnClickListener(new View.OnClickListener() {\r\n            @Override\r\n            public void onClick(View view) {\r\n                progressDialog = new ProgressDialog(dangTinBDSActivity.this);\r\n                progressDialog.setMessage(\"Please wait for save\");\r\n\r\n                strTitlePost = edtTitlePost.getText().toString().trim();\r\n                strDescription = edtDescription.getText().toString();\r\n                strTenKhu = edtTenKhuDanCu.getText().toString().trim();\r\n                strLoaiHinhDat = edtLoaiHinh.getText().toString().trim();\r\n                strAddress = edtAddress.getText().toString().trim();\r\n                strPrice = edtPrice.getText().toString();\r\n                strDienTich = edtDienTich.getText().toString().trim();\r\n                strSoPhongNgu = edtSoPhongNgu.getText().toString().trim();\r\n                strSoPhongWc = edtSoPhongWc.getText().toString().trim();\r\n\r\n                try {\r\n                    dbPrice = Double.parseDouble(strPrice);\r\n\r\n                } catch (Exception e) {\r\n                    System.err.println(\"Lỗi Parse kiểu dữ liệu\");\r\n                }\r\n\r\n\r\n                if (strTitlePost.isEmpty() || strDescription.isEmpty() || strPrice.isEmpty()\r\n                        || strAddress.isEmpty() || strTenKhu.isEmpty() || strLoaiHinhDat.isEmpty() || strDienTich.isEmpty()\r\n                        || strSoPhongWc.isEmpty() || strSoPhongNgu.isEmpty()) {\r\n                    MainActivity.showDiaLogWarning(dangTinBDSActivity.this, \"vui lòng nhập đầy đủ thông tin\");\r\n\r\n                } else {\r\n                    progressDialog.show();\r\n                    if (bdsNewsId == null) {\r\n                        maxID = 0;\r\n                    } else {\r\n                        maxID = bdsNewsId.getId() + 1;\r\n                    }\r\n\r\n                        upImage(maxID);\r\n//                    for (update_count = 0; update_count < imageUri.size(); update_count++) {\r\n//                        Uri indexImage = imageUri.get(update_count);\r\n//                        StorageReference imageName = imageFolder.child(\"ImageTin/\" + indexImage + calendar);\r\n//                        imageName.child(strTitlePost).putFile(indexImage).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {\r\n//                            @Override\r\n//                            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {\r\n//                                imageName.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {\r\n//                                    @Override\r\n//                                    public void onSuccess(Uri uri) {\r\n//                                        String Url = String.valueOf(uri);\r\n//                                        UpdateImageUrl(Url);\r\n//\r\n//                                    }\r\n//                                });\r\n//                            }\r\n//                        });\r\n//                    }\r\n                    String strId = String.valueOf(maxID);\r\n                    myData.child(tenDanhMuc).child(strId).setValue(\r\n                                    new BDSNews(maxID, strTitlePost, strDescription, dbPrice\r\n                                            , strDienTich, strAddress, strTenKhu, strLoaiHinhDat,\r\n                                            strSoPhongNgu, strSoPhongWc, idUser, nameUser, tenDanhMuc, date))\r\n                            .addOnSuccessListener(new OnSuccessListener<Void>() {\r\n                                @Override\r\n                                public void onSuccess(Void unused) {\r\n                                    Toast.makeText(dangTinBDSActivity.this, \"Đăng tin thành công\", Toast.LENGTH_SHORT).show();\r\n                                    progressDialog.dismiss();\r\n                                }\r\n                            });\r\n\r\n                }\r\n            }\r\n        });\r\n\r\n    }\r\n\r\n    private void UpdateImageUrl(String url, int id) {\r\n\r\n        DatabaseReference databaseReference = FirebaseDatabase.getInstance()\r\n                .getReference()\r\n                .child(\"Tin/BDS/Chung cư/\"+id+\"/image\");\r\n        databaseReference.setValue(url);\r\n\r\n    }\r\n\r\n    private List<BDSNews> getListBds() {\r\n        listBDS = new ArrayList<>();\r\n        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();\r\n        DatabaseReference databaseReference = firebaseDatabase.getReference(\"Tin\").child(\"BDS\");\r\n        databaseReference.child(tenDanhMuc).addValueEventListener(new ValueEventListener() {\r\n            @Override\r\n            public void onDataChange(@NonNull DataSnapshot snapshot) {\r\n                listBDS.clear();\r\n                for (DataSnapshot snapshot1 : snapshot.getChildren()) {\r\n                    BDSNews bdsNews = snapshot1.getValue(BDSNews.class);\r\n                    listBDS.add(bdsNews);\r\n                    bdsNewsId = bdsNews;\r\n                }\r\n            }\r\n\r\n            @Override\r\n            public void onCancelled(@NonNull DatabaseError error) {\r\n                Toast.makeText(dangTinBDSActivity.this, \"Load data Error\", Toast.LENGTH_SHORT).show();\r\n            }\r\n        });\r\n\r\n        return listBDS;\r\n\r\n    }\r\n\r\n    private void initUi() {\r\n        spn_Direction = findViewById(R.id.spn_Direction);\r\n        tvTenDanhMuc = findViewById(R.id.tvTenDanhMuc);\r\n        Intent intent = getIntent();\r\n        title_Post = intent.getStringExtra(\"title\");\r\n\r\n        tvTenDanhMuc.setText(\"Danh Mục - \" + intent.getStringExtra(\"tenDanhMuc\"));\r\n        imgBackPage = findViewById(R.id.icon_back);\r\n        addImageProduct = findViewById(R.id.addImageProduct);\r\n        edtTitlePost = findViewById(R.id.title_post);\r\n        edtDescription = findViewById(R.id.description_post);\r\n        edtTenKhuDanCu = findViewById(R.id.tenKhuDanCu);\r\n        edtAddress = findViewById(R.id.address);\r\n        edtLoaiHinh = findViewById(R.id.loaiHinh);\r\n        edtSoPhongNgu = findViewById(R.id.soPhongNgu);\r\n        edtSoPhongWc = findViewById(R.id.soPhongWc);\r\n        edtPrice = findViewById(R.id.price);\r\n        edtDienTich = findViewById(R.id.dienTich);\r\n        btnDangTin = findViewById(R.id.dangTinBDS);\r\n        iconCloser = findViewById(R.id.iconCloser);\r\n        suaTinBDS = findViewById(R.id.suaTinBDS);\r\n\r\n        rcvView_select_img_BDS = findViewById(R.id.rcvView_select_img_BDS);\r\n        Intent intent1 = getIntent();\r\n        tenDanhMuc = intent1.getStringExtra(\"tenDanhMuc\");\r\n\r\n    }\r\n\r\n\r\n    private void clickAddImageFashion() {\r\n        photoAdapter = new photoAdapter(imageUri, this, this);\r\n        rcvView_select_img_BDS.setLayoutManager(new GridLayoutManager(dangTinBDSActivity.this, 6));\r\n        rcvView_select_img_BDS.setAdapter(photoAdapter);\r\n\r\n        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)\r\n                != PackageManager.PERMISSION_GRANTED) {\r\n            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},\r\n                    REQUEST_PERMISSION_CODE);\r\n            return;\r\n        }\r\n\r\n        addImageProduct.setOnClickListener(new View.OnClickListener() {\r\n            @Override\r\n            public void onClick(View view) {\r\n                Intent intent = new Intent(Intent.ACTION_GET_CONTENT);\r\n                intent.setType(\"image/*\");\r\n                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {\r\n                    intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);\r\n                }\r\n                startActivityForResult(Intent.createChooser(intent, \"select Picture\"), PICK_IMAGE);\r\n            }\r\n        });\r\n    }\r\n\r\n    @Override\r\n    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {\r\n        super.onActivityResult(requestCode, resultCode, data);\r\n        if (requestCode == PICK_IMAGE && resultCode == RESULT_OK && data != null) {\r\n            if (data.getClipData() != null) {\r\n                int count = data.getClipData().getItemCount();\r\n\r\n                for (int i = 0; i < count; i++) {\r\n                    if (imageUri.size() < 9) {\r\n                        Uri imgUri = (data.getClipData().getItemAt(i).getUri());\r\n                        imageUri.add(imgUri);\r\n                    } else {\r\n                        Toast.makeText(this, \"Chỉ đăng tối đa 9 hình ảnh\", Toast.LENGTH_SHORT).show();\r\n                    }\r\n\r\n                }\r\n                photoAdapter.notifyDataSetChanged();\r\n            } else {\r\n                if (imageUri.size() < 9) {\r\n                    Uri imgUri = data.getData();\r\n                    imageUri.add(imgUri);\r\n                } else {\r\n                    Toast.makeText(this, \"Chỉ đăng tối đa 9 hình ảnh\", Toast.LENGTH_SHORT).show();\r\n                }\r\n\r\n\r\n            }\r\n            photoAdapter.notifyDataSetChanged();\r\n        } else {\r\n            Toast.makeText(this, \"you haven't pick any Image\", Toast.LENGTH_SHORT).show();\r\n        }\r\n    }\r\n\r\n    @Override\r\n    public void clicked(int getSize) {\r\n\r\n    }\r\n\r\n    public static class EmployeeDataUtils {\r\n        public static direction[] getEmployees() {\r\n            direction drt1 = new direction(\"Nam\");\r\n            direction drt2 = new direction(\"Bắc\");\r\n            direction drt3 = new direction(\"Đông\");\r\n            direction drt4 = new direction(\"Tây\");\r\n            direction drt5 = new direction(\"Đông-Nam\");\r\n            direction drt6 = new direction(\"Tây-Băc\");\r\n            direction drt7 = new direction(\"Đông-Bắc\");\r\n            direction drt8 = new direction(\"Tây-Nam\");\r\n            return new direction[]{drt1, drt2, drt3, drt4, drt5, drt6, drt7, drt8};\r\n        }\r\n    }\r\n\r\n    private void upImage(int id) {\r\n        if (imageUri.size() == 0){\r\n            return;\r\n        }\r\n        Uri uri = imageUri.get(0);\r\n        try {\r\n            bitmapselect = MediaStore.Images.Media.getBitmap(getContentResolver(),uri);\r\n            FirebaseStorage storage = FirebaseStorage.getInstance();\r\n            StorageReference storageRef = storage.getReference();\r\n            StorageReference mountainsRef = storageRef.child(tenDanhMuc+\"/image\"+calendar.getTimeInMillis());\r\n            ByteArrayOutputStream baos = new ByteArrayOutputStream();\r\n            bitmapselect.compress(Bitmap.CompressFormat.JPEG, 100, baos);\r\n            byte[] dataImage = baos.toByteArray();\r\n\r\n            UploadTask uploadTask = mountainsRef.putBytes(dataImage);\r\n            uploadTask.addOnFailureListener(new OnFailureListener() {\r\n                @Override\r\n                public void onFailure(@NonNull Exception exception) {\r\n                    // Handle unsuccessful uploads\r\n                    progressDialog.dismiss();\r\n                    Toast.makeText(dangTinBDSActivity.this, \"Lỗi cập nhật hình ảnh!\", Toast.LENGTH_SHORT).show();\r\n                }\r\n            }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {\r\n                @Override\r\n                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {\r\n                    // taskSnapshot.getMetadata() contains file metadata such as size, content-type, etc.\r\n\r\n                    mountainsRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {\r\n                        @Override\r\n                        public void onSuccess(Uri uri) {\r\n                            String strImage = String.valueOf(uri);\r\n                            UpdateImageUrl(strImage, id);\r\n                            progressDialog.dismiss();\r\n                        }\r\n                    }).addOnFailureListener(new OnFailureListener() {\r\n                        @Override\r\n                        public void onFailure(@NonNull Exception exception) {\r\n                            // Handle any errors\r\n                            progressDialog.dismiss();\r\n                            Toast.makeText(dangTinBDSActivity.this, \"Lỗi tải URL hình ảnh!\", Toast.LENGTH_SHORT).show();\r\n                        }\r\n                    });\r\n                }\r\n            });\r\n        } catch (IOException e) {\r\n            Toast.makeText(mainActivity, \"Lỗi try-catch\", Toast.LENGTH_SHORT).show();\r\n        }\r\n\r\n    }\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/duan1/dangTinBDSActivity.java b/app/src/main/java/com/example/duan1/dangTinBDSActivity.java
+--- a/app/src/main/java/com/example/duan1/dangTinBDSActivity.java	(revision 8b530af99d85d04b50d11e1e6b9cac2474dd3bc2)
++++ b/app/src/main/java/com/example/duan1/dangTinBDSActivity.java	(date 1670680553287)
+@@ -167,7 +167,7 @@
+                     myData.child(tenDanhMuc).child(strId ).setValue(
+                                     new BDSNews(idEdit ,strTitlePost , strDescription , dbPrice
+                                             ,strDienTich ,strAddress ,strTenKhu ,strLoaiHinhDat ,
+-                                            strSoPhongNgu,strSoPhongWc ,idUser,nameUser ,tenDanhMuc, date))
++                                            strSoPhongNgu,strSoPhongWc ,idUser,nameUser ,tenDanhMuc, date ))
+                             .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                 @Override
+                                 public void onSuccess(Void unused) {
+Index: app/src/main/java/com/example/duan1/Adapter/NewsTrangChuAdapter.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.duan1.Adapter;\r\n\r\nimport android.content.Context;\r\nimport android.view.LayoutInflater;\r\nimport android.view.View;\r\nimport android.view.ViewGroup;\r\nimport android.widget.ImageView;\r\nimport android.widget.LinearLayout;\r\nimport android.widget.TextView;\r\n\r\nimport androidx.annotation.NonNull;\r\nimport androidx.recyclerview.widget.RecyclerView;\r\n\r\nimport com.bumptech.glide.Glide;\r\nimport com.example.duan1.R;\r\nimport com.example.duan1.model.BDSNews;\r\nimport com.example.duan1.model.NewsTrangChu;\r\nimport com.squareup.picasso.Picasso;\r\n\r\nimport java.util.List;\r\n\r\npublic class NewsTrangChuAdapter extends RecyclerView.Adapter<NewsTrangChuAdapter.ViewHolder> {private Context context;\r\n    private List<NewsTrangChu> newsTrangChuList;\r\n    public NewsTrangChuAdapter(Context context) {\r\n        this.context = context;\r\n    }\r\n\r\n    public void setDATA(List<NewsTrangChu> x) {\r\n        this.newsTrangChuList = x;\r\n        notifyDataSetChanged();\r\n    }\r\n\r\n    @NonNull\r\n    @Override\r\n    public NewsTrangChuAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {\r\n        View view = LayoutInflater.from(\r\n                parent.getContext()).inflate(R.layout.item_trangchu_news,parent,false);\r\n\r\n        return new ViewHolder(view);\r\n    }\r\n\r\n    @Override\r\n    public void onBindViewHolder(@NonNull NewsTrangChuAdapter.ViewHolder h, int position) {\r\n        NewsTrangChu OOP = newsTrangChuList.get(position);\r\n        if(OOP == null){\r\n            return;\r\n        }\r\n        h.tvTitle.setText(OOP.getTitle());\r\n        String free = String.valueOf(OOP.getFee());\r\n        h.tvFee.setText(free);\r\n        h.tvTime.setText(OOP.getTime());\r\n        h.tvDes.setText(OOP.getDescripsion());\r\n        String strimage = OOP.getImage();\r\n        System.out.println(strimage);\r\n        Picasso.with(context)\r\n                .load(strimage)\r\n                .into(h.imgNews);\r\n//        if(OOP.getsoluonganh() > 1){\r\n//            h.linearLayout.setVisibility(View.VISIBLE);\r\n//            h.tvSLAnh.setText(OOP.getsoluonganh());\r\n//        }else{\r\n//            h.linearLayout.setVisibility(View.INVISIBLE);\r\n//        }\r\n\r\n//        Glide.with(context).load(OOP.getImage()).into(h.imgNews);\r\n\r\n        if(OOP.isFavorite()){\r\n            h.imgFavorite.setImageResource(R.drawable.ic_item_trangchu_favorite);\r\n        }else{\r\n            h.imgFavorite.setImageResource(R.drawable.ic_item_trangchu_unfavorite);\r\n        }\r\n        h.imgFavorite.setOnClickListener(new View.OnClickListener() {\r\n            @Override\r\n            public void onClick(View view) {\r\n                if(OOP.isFavorite()){\r\n                    OOP.setFavorite(false);\r\n                }else{\r\n                    OOP.setFavorite(true);\r\n                }\r\n            }\r\n        });\r\n    }\r\n\r\n    @Override\r\n    public int getItemCount() {\r\n        if(newsTrangChuList != null){\r\n            return newsTrangChuList.size();\r\n        }\r\n\r\n        return 0;\r\n    }\r\n\r\n    public class ViewHolder extends RecyclerView.ViewHolder {\r\n        private TextView tvSLAnh,tvTitle,tvFee,tvDes,tvTime;\r\n        private ImageView imgNews,imgFavorite,imgLoaiTin;\r\n        private LinearLayout linearLayout;\r\n        public ViewHolder(@NonNull View itemView) {\r\n            super(itemView);\r\n            tvSLAnh = itemView.findViewById(R.id.tv_item_trangchu_news_SoLuongAnh);\r\n            tvDes = itemView.findViewById(R.id.tv_item_trangchu_descripsion);\r\n            tvFee = itemView.findViewById(R.id.tv_item_trangchu_fee);\r\n            tvTime = itemView.findViewById(R.id.tv_item_trangchu_news_Time);\r\n            tvTitle = itemView.findViewById(R.id.tv_item_trangchu_title);\r\n\r\n            imgFavorite = itemView.findViewById(R.id.img_item_trangchu_news_favorite);\r\n            imgNews = itemView.findViewById(R.id.img_item_trangchu_news_Pic);\r\n            imgLoaiTin = itemView.findViewById(R.id.img_item_trangchu_news_LoaiTin);\r\n\r\n            linearLayout = itemView.findViewById(R.id.layout_item_trangchu_news_SLA);\r\n        }\r\n    }\r\n}\r\n\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/duan1/Adapter/NewsTrangChuAdapter.java b/app/src/main/java/com/example/duan1/Adapter/NewsTrangChuAdapter.java
+--- a/app/src/main/java/com/example/duan1/Adapter/NewsTrangChuAdapter.java	(revision 8b530af99d85d04b50d11e1e6b9cac2474dd3bc2)
++++ b/app/src/main/java/com/example/duan1/Adapter/NewsTrangChuAdapter.java	(date 1670772222611)
+@@ -51,10 +51,16 @@
+         h.tvTime.setText(OOP.getTime());
+         h.tvDes.setText(OOP.getDescripsion());
+         String strimage = OOP.getImage();
+-        System.out.println(strimage);
+-        Picasso.with(context)
+-                .load(strimage)
+-                .into(h.imgNews);
++        try {
++            Picasso.with(context)
++                    .load(strimage)
++                    .into(h.imgNews);
++        }catch (Exception e) {
++            System.err.println("Lỗi Load ảnh trong newsAdapter : "+ e);
++        }
++
++
++
+ //        if(OOP.getsoluonganh() > 1){
+ //            h.linearLayout.setVisibility(View.VISIBLE);
+ //            h.tvSLAnh.setText(OOP.getsoluonganh());
+Index: app/src/main/res/layout/fragment_trang_chu.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<LinearLayout xmlns:android=\"http://schemas.android.com/apk/res/android\"\r\n    xmlns:tools=\"http://schemas.android.com/tools\"\r\n    android:layout_width=\"match_parent\"\r\n    android:layout_height=\"match_parent\"\r\n    tools:context=\".Fragment.FragmentTrangChu\"\r\n    android:orientation=\"vertical\"\r\n    android:background=\"@color/white\"\r\n    >\r\n\r\n    <ScrollView\r\n        android:layout_width=\"match_parent\"\r\n        android:layout_height=\"match_parent\">\r\n        <LinearLayout\r\n            android:layout_width=\"match_parent\"\r\n            android:layout_height=\"match_parent\"\r\n            android:background=\"@color/white\"\r\n            android:orientation=\"vertical\">\r\n            <androidx.viewpager.widget.ViewPager\r\n                android:id=\"@+id/viewPager_slide\"\r\n                android:layout_width=\"match_parent\"\r\n                android:layout_height=\"220dp\"/>\r\n            <me.relex.circleindicator.CircleIndicator\r\n                android:id=\"@+id/circle_indicator\"\r\n                android:layout_width=\"100dp\"\r\n                android:layout_height=\"30dp\"\r\n                android:layout_gravity=\"center_horizontal\"\r\n                android:layout_marginTop=\"5dp\"\r\n\r\n                tools:ignore=\"MissingClass\" />\r\n            <HorizontalScrollView\r\n                android:id=\"@+id/scrollView\"\r\n                android:layout_width=\"match_parent\"\r\n                android:scrollbars=\"none\"\r\n                android:layout_height=\"wrap_content\"\r\n                >\r\n                <LinearLayout\r\n                    android:layout_width=\"match_parent\"\r\n                    android:layout_height=\"wrap_content\"\r\n                    android:orientation=\"horizontal\">\r\n                    <LinearLayout\r\n                        android:layout_width=\"120dp\"\r\n                        android:layout_height=\"120dp\"\r\n                        android:orientation=\"vertical\"\r\n                        android:gravity=\"center_horizontal\"\r\n                        >\r\n                        <ImageView\r\n                            android:layout_width=\"45dp\"\r\n                            android:layout_height=\"45dp\"\r\n                            android:src=\"@drawable/transport\"/>\r\n                        <TextView\r\n                            android:layout_width=\"120dp\"\r\n                            android:layout_height=\"wrap_content\"\r\n                            android:layout_marginTop=\"5dp\"\r\n                            android:gravity=\"center\"\r\n                            android:textColor=\"#020202\"\r\n                            android:text=\"Miễn phí vận chuyển\"\r\n                            android:textSize=\"16dp\"/>\r\n\r\n\r\n                    </LinearLayout>\r\n                    <!-- 2-->\r\n                    <LinearLayout\r\n                        android:layout_width=\"120dp\"\r\n                        android:layout_height=\"120dp\"\r\n                        android:orientation=\"vertical\"\r\n                        android:gravity=\"center_horizontal\"\r\n                        >\r\n                        <ImageView\r\n                            android:layout_width=\"45dp\"\r\n                            android:layout_height=\"45dp\"\r\n                            android:src=\"@drawable/tin_da_luu\"/>\r\n                        <TextView\r\n                            android:layout_width=\"100dp\"\r\n                            android:layout_height=\"wrap_content\"\r\n                            android:layout_marginTop=\"5dp\"\r\n                            android:gravity=\"center\"\r\n                            android:textColor=\"#020202\"\r\n                            android:text=\"Tin đăng đã lưu\"\r\n                            android:textSize=\"16dp\"/>\r\n                    </LinearLayout>\r\n                    <!--        3-->\r\n                    <LinearLayout\r\n                        android:layout_width=\"100dp\"\r\n                        android:layout_height=\"120dp\"\r\n                        android:orientation=\"vertical\"\r\n                        android:gravity=\"center_horizontal\"\r\n                        >\r\n                        <ImageView\r\n                            android:layout_width=\"45dp\"\r\n                            android:layout_height=\"45dp\"\r\n                            android:src=\"@drawable/danh_gia\"/>\r\n                        <TextView\r\n                            android:layout_width=\"90dp\"\r\n                            android:layout_height=\"wrap_content\"\r\n                            android:layout_marginTop=\"5dp\"\r\n                            android:gravity=\"center\"\r\n                            android:textColor=\"#020202\"\r\n                            android:text=\"Đánh giá từ tôi\"\r\n                            android:textSize=\"16dp\"/>\r\n                    </LinearLayout>\r\n                    <!--        4-->\r\n                    <!--        5-->\r\n                    <LinearLayout\r\n                        android:layout_width=\"120dp\"\r\n                        android:layout_height=\"120dp\"\r\n                        android:orientation=\"vertical\"\r\n                        android:gravity=\"center_horizontal\"\r\n                        >\r\n                        <ImageView\r\n                            android:layout_width=\"45dp\"\r\n                            android:layout_height=\"45dp\"\r\n                            android:src=\"@drawable/history_search\"/>\r\n                        <TextView\r\n                            android:layout_width=\"90dp\"\r\n                            android:layout_height=\"wrap_content\"\r\n                            android:layout_marginTop=\"5dp\"\r\n                            android:gravity=\"center\"\r\n                            android:textColor=\"#020202\"\r\n                            android:text=\"Chia sẻ\"\r\n                            android:textSize=\"16dp\"/>\r\n                    </LinearLayout>\r\n                    <!--        6-->\r\n                    <LinearLayout\r\n                        android:layout_width=\"120dp\"\r\n                        android:layout_height=\"120dp\"\r\n                        android:orientation=\"vertical\"\r\n                        android:gravity=\"center_horizontal\"\r\n                        >\r\n                        <ImageView\r\n                            android:layout_width=\"45dp\"\r\n                            android:layout_height=\"45dp\"\r\n                            android:src=\"@drawable/img_vong_quay\"/>\r\n                        <TextView\r\n                            android:layout_width=\"90dp\"\r\n                            android:layout_height=\"wrap_content\"\r\n                            android:layout_marginTop=\"5dp\"\r\n                            android:gravity=\"center\"\r\n                            android:textColor=\"#020202\"\r\n                            android:text=\"Vòng quay may mắn\"\r\n                            android:textSize=\"16dp\"/>\r\n                    </LinearLayout>\r\n                    <!-- 2-->\r\n                    <LinearLayout\r\n                        android:layout_width=\"120dp\"\r\n                        android:layout_height=\"120dp\"\r\n                        android:orientation=\"vertical\"\r\n                        android:gravity=\"center_horizontal\"\r\n                        >\r\n                        <ImageView\r\n                            android:layout_width=\"45dp\"\r\n                            android:layout_height=\"45dp\"\r\n                            android:src=\"@drawable/tin_da_luu\"/>\r\n                        <TextView\r\n                            android:layout_width=\"100dp\"\r\n                            android:layout_height=\"wrap_content\"\r\n                            android:layout_marginTop=\"5dp\"\r\n                            android:gravity=\"center\"\r\n                            android:textColor=\"#020202\"\r\n                            android:text=\"Tin đăng đã lưu\"\r\n                            android:textSize=\"16dp\"/>\r\n                    </LinearLayout>\r\n                </LinearLayout>\r\n            </HorizontalScrollView>\r\n            <androidx.recyclerview.widget.RecyclerView\r\n                android:id=\"@+id/rcv_news_trangchu\"\r\n                android:layout_width=\"match_parent\"\r\n                android:layout_height=\"match_parent\"\r\n                android:nestedScrollingEnabled=\"true\"\r\n                android:layout_marginBottom=\"60dp\"\r\n                />\r\n        </LinearLayout>\r\n\r\n    </ScrollView>\r\n\r\n</LinearLayout>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/layout/fragment_trang_chu.xml b/app/src/main/res/layout/fragment_trang_chu.xml
+--- a/app/src/main/res/layout/fragment_trang_chu.xml	(revision 8b530af99d85d04b50d11e1e6b9cac2474dd3bc2)
++++ b/app/src/main/res/layout/fragment_trang_chu.xml	(date 1670768716586)
+@@ -3,15 +3,34 @@
+     xmlns:tools="http://schemas.android.com/tools"
+     android:layout_width="match_parent"
+     android:layout_height="match_parent"
++    xmlns:app="http://schemas.android.com/apk/res-auto"
+     tools:context=".Fragment.FragmentTrangChu"
+     android:orientation="vertical"
+-    android:background="@color/white"
+-    >
++    android:background="@color/white">
++    <androidx.appcompat.widget.SearchView
++        android:id="@+id/searchView"
++        android:layout_width="match_parent"
++        app:queryHint="Nhập tiêu đề tìm kiếm"
++        android:layout_height="wrap_content" />
++    <RelativeLayout
++        android:layout_width="match_parent"
++        android:layout_height="wrap_content" >
++
++<!--        <androidx.recyclerview.widget.RecyclerView-->
++<!--            android:id="@+id/rcvFilter"-->
++<!--            android:layout_width="match_parent"-->
++<!--            android:layout_height="wrap_content" />-->
+ 
+     <ScrollView
++        android:id="@+id/scrView"
++        android:layout_marginTop="10dp"
++        android:layout_below="@+id/rcvFilter"
++        android:layout_alignParentTop="true"
+         android:layout_width="match_parent"
+         android:layout_height="match_parent">
++
+         <LinearLayout
++            android:id="@+id/lnLayout"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent"
+             android:background="@color/white"
+@@ -35,6 +54,7 @@
+                 android:layout_height="wrap_content"
+                 >
+                 <LinearLayout
++                    android:id="@+id/ln1"
+                     android:layout_width="match_parent"
+                     android:layout_height="wrap_content"
+                     android:orientation="horizontal">
+@@ -162,6 +182,24 @@
+                     </LinearLayout>
+                 </LinearLayout>
+             </HorizontalScrollView>
++            <LinearLayout
++                android:layout_width="match_parent"
++                android:layout_height="wrap_content"
++                android:background="@drawable/bg_corner"
++                android:padding="6dp"
++                android:orientation="horizontal">
++                <TextView
++                    android:layout_width="wrap_content"
++                    android:layout_height="wrap_content"
++                    android:text="Bạn muốn xem danh mục : "
++                    android:textStyle="bold"
++                    android:textSize="18dp"/>
++                <Spinner
++                    android:id="@+id/spn_phanLoaiTin"
++                    android:layout_width="match_parent"
++                    android:layout_height="wrap_content"/>
++            </LinearLayout>
++
+             <androidx.recyclerview.widget.RecyclerView
+                 android:id="@+id/rcv_news_trangchu"
+                 android:layout_width="match_parent"
+@@ -172,5 +210,11 @@
+         </LinearLayout>
+ 
+     </ScrollView>
+-
++        <androidx.recyclerview.widget.RecyclerView
++            android:id="@+id/rcvFilter"
++            android:layout_width="match_parent"
++            android:background="#EFBF48"
++            android:layout_alignParentTop="true"
++            android:layout_height="wrap_content" />
++    </RelativeLayout>
+ </LinearLayout>
+\ No newline at end of file
+Index: app/src/main/java/com/example/duan1/Fragment/FragmentTrangChu.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.duan1.Fragment;\r\n\r\nimport android.annotation.SuppressLint;\r\nimport android.os.Bundle;\r\n\r\nimport androidx.annotation.NonNull;\r\nimport androidx.annotation.Nullable;\r\nimport androidx.fragment.app.Fragment;\r\nimport androidx.recyclerview.widget.GridLayoutManager;\r\nimport androidx.recyclerview.widget.LinearLayoutManager;\r\nimport androidx.recyclerview.widget.RecyclerView;\r\nimport androidx.viewpager.widget.ViewPager;\r\n\r\nimport android.os.Handler;\r\nimport android.os.Looper;\r\nimport android.view.LayoutInflater;\r\nimport android.view.MotionEvent;\r\nimport android.view.View;\r\nimport android.view.ViewGroup;\r\n\r\nimport com.example.duan1.Adapter.NewsTrangChuAdapter;\r\nimport com.example.duan1.Adapter.historyNewsAdapter;\r\nimport com.example.duan1.Adapter.slidersAdapter;\r\nimport com.example.duan1.MainActivity;\r\nimport com.example.duan1.R;\r\nimport com.example.duan1.model.BDSNews;\r\nimport com.example.duan1.model.NewsTrangChu;\r\nimport com.example.duan1.model.giaiTriNews;\r\nimport com.example.duan1.model.historyNews;\r\nimport com.example.duan1.model.photosSlider;\r\nimport com.example.duan1.model.thoiTrangNews;\r\nimport com.google.firebase.database.ChildEventListener;\r\nimport com.google.firebase.database.DataSnapshot;\r\nimport com.google.firebase.database.DatabaseError;\r\nimport com.google.firebase.database.DatabaseReference;\r\nimport com.google.firebase.database.FirebaseDatabase;\r\n\r\n\r\nimport java.util.ArrayList;\r\nimport java.util.List;\r\nimport java.util.Timer;\r\nimport java.util.TimerTask;\r\n\r\n\r\nimport me.relex.circleindicator.CircleIndicator;\r\n\r\n\r\npublic class FragmentTrangChu extends Fragment {\r\n    private ViewPager viewPager;\r\n    private CircleIndicator circleIndicator;\r\n    private slidersAdapter slidersAdapter;\r\n    private List<photosSlider> mListPhoto = new ArrayList<>();\r\n    private Timer mTimer;\r\n    public MainActivity mainActivity;\r\n    private RecyclerView rcvNewsTrangChu;\r\n    private List<NewsTrangChu> newsTrangChuList = new ArrayList<>();\r\n    private NewsTrangChuAdapter mNewsTrangChuAdapter;\r\n    private List<String> listChild = new ArrayList<>();\r\n    private List<String> listChild1 = new ArrayList<>();\r\n    private List<String> listChild2 = new ArrayList<>();\r\n    DatabaseReference myData = FirebaseDatabase.getInstance().getReference(\"Tin\").child(\"GiaiTri\");\r\n    DatabaseReference myData1 = FirebaseDatabase.getInstance().getReference(\"Tin\").child(\"BDS\");\r\n    DatabaseReference myData2 = FirebaseDatabase.getInstance().getReference(\"Tin\").child(\"ThoiTrang\");\r\n\r\n    @SuppressLint(\"MissingInflatedId\")\r\n    @Override\r\n    public View onCreateView(LayoutInflater inflater, ViewGroup container,\r\n                             Bundle savedInstanceState) {\r\n        View view = inflater.inflate(R.layout.fragment_trang_chu, container, false);\r\n        mainActivity = (MainActivity) getActivity();\r\n\r\n\r\n        viewPager = view.findViewById(R.id.viewPager_slide);\r\n        \r\n        circleIndicator = view.findViewById(R.id.circle_indicator);\r\n\r\n        slidersAdapter = new slidersAdapter(getContext(), getListPhoto());\r\n        viewPager.setAdapter(slidersAdapter);\r\n\r\n        circleIndicator.setViewPager(viewPager);\r\n        slidersAdapter.registerDataSetObserver(circleIndicator.getDataSetObserver());\r\n\r\n        autoSliderImg();\r\n        listChild1();\r\n        listChild2();\r\n        listChild3();\r\n        newsTrangChuList.clear();\r\n        getListNews();\r\n        rcvNewsTrangChu = view.findViewById(R.id.rcv_news_trangchu);\r\n        new Handler().postDelayed(new Runnable() {\r\n            @Override\r\n            public void run() {\r\n                mNewsTrangChuAdapter = new NewsTrangChuAdapter(getContext());\r\n                GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), 2);\r\n                rcvNewsTrangChu.setLayoutManager(gridLayoutManager);\r\n                mNewsTrangChuAdapter.setDATA(newsTrangChuList);\r\n                rcvNewsTrangChu.setAdapter(mNewsTrangChuAdapter);\r\n            }\r\n        },500);\r\n//        mNewsTrangChuAdapter = new NewsTrangChuAdapter(getContext());\r\n//        GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), 2);\r\n//        rcvNewsTrangChu.setLayoutManager(gridLayoutManager);\r\n//        mNewsTrangChuAdapter.setDATA(newsTrangChuList);\r\n//        rcvNewsTrangChu.setAdapter(mNewsTrangChuAdapter);\r\n//        rcvNewsTrangChu.addOnItemTouchListener(new RecyclerView.SimpleOnItemTouchListener() {\r\n//            @Override\r\n//            public boolean onInterceptTouchEvent(@NonNull RecyclerView rv, @NonNull MotionEvent e) {\r\n//                return rv.getScrollState() == RecyclerView.SCROLL_STATE_DRAGGING;\r\n//            }\r\n//        });\r\n        return view;\r\n    }\r\n\r\n    private void autoSliderImg() {\r\n\r\n        if (mTimer == null) {\r\n            mTimer = new Timer();\r\n        }\r\n\r\n        mTimer.schedule(new TimerTask() {\r\n            @Override\r\n            public void run() {\r\n                new Handler(Looper.getMainLooper()).post(new Runnable() {\r\n                    @Override\r\n                    public void run() {\r\n                        int currentitem = viewPager.getCurrentItem();\r\n                        int totalItem = mListPhoto.size() - 1;\r\n\r\n                        if (currentitem < totalItem) {\r\n                            currentitem++;\r\n                            viewPager.setCurrentItem(currentitem);\r\n                        } else {\r\n                            viewPager.setCurrentItem(0);\r\n                        }\r\n                    }\r\n                });\r\n            }\r\n        }, 500, 3000);\r\n    }\r\n\r\n    @Override\r\n    public void onDestroyView() {\r\n        super.onDestroyView();\r\n\r\n        if (mTimer != null) {\r\n            mTimer.cancel();\r\n            mTimer = null;\r\n        }\r\n\r\n    }\r\n\r\n\r\n    private List<photosSlider> getListPhoto() {\r\n//    List<photosSlider> list = new ArrayList<>();\r\n\r\n        mListPhoto.add(new photosSlider(R.drawable.img_slider1));\r\n        mListPhoto.add(new photosSlider(R.drawable.img_slider2));\r\n        mListPhoto.add(new photosSlider(R.drawable.img_slider3));\r\n        mListPhoto.add(new photosSlider(R.drawable.img_slider4));\r\n\r\n        return mListPhoto;\r\n    }\r\n    private void getListNews() {\r\n        for (int i = 0; i < listChild.size(); i++) {\r\n            myData.child(listChild.get(i)).addChildEventListener(new ChildEventListener() {\r\n                @Override\r\n                public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {\r\n                    giaiTriNews giaiTriNews = snapshot.getValue(giaiTriNews.class);\r\n                    newsTrangChuList.add(new NewsTrangChu(giaiTriNews.getTitle() , giaiTriNews.getDescription(),\r\n                            giaiTriNews.getDate(),giaiTriNews.getPrice(),true, \"\"));\r\n                    mNewsTrangChuAdapter.notifyDataSetChanged();\r\n                }\r\n\r\n                @Override\r\n                public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {\r\n\r\n                }\r\n\r\n                @Override\r\n                public void onChildRemoved(@NonNull DataSnapshot snapshot) {\r\n\r\n                }\r\n\r\n                @Override\r\n                public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {\r\n\r\n                }\r\n\r\n                @Override\r\n                public void onCancelled(@NonNull DatabaseError error) {\r\n\r\n                }\r\n            });\r\n\r\n        }\r\n        for (int i = 0; i < listChild1.size(); i++) {\r\n            myData2.child(listChild1.get(i)).addChildEventListener(new ChildEventListener() {\r\n                @Override\r\n                public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {\r\n                    thoiTrangNews thoiTrangNews = snapshot.getValue(com.example.duan1.model.thoiTrangNews.class);\r\n                    newsTrangChuList.add(new NewsTrangChu(thoiTrangNews.getTitlePost(), thoiTrangNews.getDescriptionPost(),\r\n                            thoiTrangNews.getDate(), thoiTrangNews.getPrice(), true , \"\"));\r\n                    mNewsTrangChuAdapter.notifyDataSetChanged();\r\n                }\r\n\r\n                @Override\r\n                public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {\r\n\r\n                }\r\n\r\n                @Override\r\n                public void onChildRemoved(@NonNull DataSnapshot snapshot) {\r\n\r\n                }\r\n\r\n                @Override\r\n                public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {\r\n\r\n                }\r\n\r\n                @Override\r\n                public void onCancelled(@NonNull DatabaseError error) {\r\n\r\n                }\r\n            });\r\n        }\r\n        for (int i = 0; i < listChild2.size(); i++) {\r\n            myData1.child(listChild2.get(i)).addChildEventListener(new ChildEventListener() {\r\n                @Override\r\n                public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {\r\n                    BDSNews bdsNews = snapshot.getValue(BDSNews.class);\r\n\r\n                    newsTrangChuList.add(new NewsTrangChu(bdsNews.getTitle() , bdsNews.getDescription() ,\r\n                            bdsNews.getDate(),bdsNews.getPrice(), true, bdsNews.getImage()));\r\n                            mNewsTrangChuAdapter.notifyDataSetChanged();\r\n                }\r\n\r\n                @Override\r\n                public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {\r\n\r\n                }\r\n\r\n                @Override\r\n                public void onChildRemoved(@NonNull DataSnapshot snapshot) {\r\n\r\n                }\r\n\r\n                @Override\r\n                public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {\r\n\r\n                }\r\n\r\n                @Override\r\n                public void onCancelled(@NonNull DatabaseError error) {\r\n\r\n                }\r\n            });\r\n\r\n        }\r\n\r\n    }\r\n    private List<String> listChild1() {\r\n        listChild.add(new String(\"Nhạc cụ\"));\r\n        listChild.add(new String(\"Sách\"));\r\n        listChild.add(new String(\"Đồ thể thao, Dã ngoại\"));\r\n        listChild.add(new String(\"Đồ sưu tầm  ,Đồ cổ\"));\r\n        listChild.add(new String(\"Thiết bị chơi game\"));\r\n        listChild.add(new String(\"Sở thích khác\"));\r\n\r\n        return listChild;\r\n    }\r\n\r\n    private List<String> listChild2() {\r\n        listChild1.add(new String(\"Quần áo\"));\r\n        listChild1.add(new String(\"Đồng hồ\"));\r\n        listChild1.add(new String(\"Giày dép\"));\r\n        listChild1.add(new String(\"Túi xách\"));\r\n        listChild1.add(new String(\"Nước hoa\"));\r\n        listChild1.add(new String(\"Phụ kiện khác\"));\r\n\r\n        return listChild1;\r\n    }\r\n\r\n    private List<String> listChild3() {\r\n        listChild2.add(new String(\"Chung cư\"));\r\n        listChild2.add(new String(\"Nhà ở\"));\r\n        listChild2.add(new String(\"Đất\"));\r\n        listChild2.add(new String(\"Văn Phòng\"));\r\n        listChild2.add(new String(\"Phòng trọ\"));\r\n\r\n        return listChild2;\r\n    }\r\n\r\n    @Override\r\n    public void onResume() {\r\n        super.onResume();\r\n        newsTrangChuList.clear();\r\n    }\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/duan1/Fragment/FragmentTrangChu.java b/app/src/main/java/com/example/duan1/Fragment/FragmentTrangChu.java
+--- a/app/src/main/java/com/example/duan1/Fragment/FragmentTrangChu.java	(revision 8b530af99d85d04b50d11e1e6b9cac2474dd3bc2)
++++ b/app/src/main/java/com/example/duan1/Fragment/FragmentTrangChu.java	(date 1670772099426)
+@@ -1,11 +1,15 @@
+ package com.example.duan1.Fragment;
+ 
+ import android.annotation.SuppressLint;
++import android.app.SearchManager;
++import android.content.Context;
+ import android.os.Bundle;
+ 
+ import androidx.annotation.NonNull;
+ import androidx.annotation.Nullable;
++import androidx.appcompat.widget.SearchView;
+ import androidx.fragment.app.Fragment;
++import androidx.recyclerview.widget.DividerItemDecoration;
+ import androidx.recyclerview.widget.GridLayoutManager;
+ import androidx.recyclerview.widget.LinearLayoutManager;
+ import androidx.recyclerview.widget.RecyclerView;
+@@ -14,9 +18,15 @@
+ import android.os.Handler;
+ import android.os.Looper;
+ import android.view.LayoutInflater;
++import android.view.Menu;
++import android.view.MenuInflater;
+ import android.view.MotionEvent;
+ import android.view.View;
+ import android.view.ViewGroup;
++import android.widget.AdapterView;
++import android.widget.ArrayAdapter;
++import android.widget.Spinner;
++import android.widget.Toast;
+ 
+ import com.example.duan1.Adapter.NewsTrangChuAdapter;
+ import com.example.duan1.Adapter.historyNewsAdapter;
+@@ -28,6 +38,8 @@
+ import com.example.duan1.model.giaiTriNews;
+ import com.example.duan1.model.historyNews;
+ import com.example.duan1.model.photosSlider;
++import com.example.duan1.model.product_type;
++import com.example.duan1.model.thoiTrang;
+ import com.example.duan1.model.thoiTrangNews;
+ import com.google.firebase.database.ChildEventListener;
+ import com.google.firebase.database.DataSnapshot;
+@@ -50,14 +62,22 @@
+     private CircleIndicator circleIndicator;
+     private slidersAdapter slidersAdapter;
+     private List<photosSlider> mListPhoto = new ArrayList<>();
++
+     private Timer mTimer;
++    private Context mContext;
++    private SearchView searchView;
++    private String LoaiTin;
++    historyNewsAdapter historyNewsAdapter;
+     public MainActivity mainActivity;
++    Spinner spn_phanLoaiTin;
+     private RecyclerView rcvNewsTrangChu;
+     private List<NewsTrangChu> newsTrangChuList = new ArrayList<>();
++    private List<historyNews> listFilter = new ArrayList<>();
+     private NewsTrangChuAdapter mNewsTrangChuAdapter;
+     private List<String> listChild = new ArrayList<>();
+     private List<String> listChild1 = new ArrayList<>();
+     private List<String> listChild2 = new ArrayList<>();
++    private RecyclerView rcvFilter;
+     DatabaseReference myData = FirebaseDatabase.getInstance().getReference("Tin").child("GiaiTri");
+     DatabaseReference myData1 = FirebaseDatabase.getInstance().getReference("Tin").child("BDS");
+     DatabaseReference myData2 = FirebaseDatabase.getInstance().getReference("Tin").child("ThoiTrang");
+@@ -68,10 +88,13 @@
+                              Bundle savedInstanceState) {
+         View view = inflater.inflate(R.layout.fragment_trang_chu, container, false);
+         mainActivity = (MainActivity) getActivity();
++        searchView = view.findViewById(R.id.searchView);
+ 
+ 
++
++        spn_phanLoaiTin = view.findViewById(R.id.spn_phanLoaiTin);
+         viewPager = view.findViewById(R.id.viewPager_slide);
+-        
++        rcvFilter = view.findViewById(R.id.rcvFilter);
+         circleIndicator = view.findViewById(R.id.circle_indicator);
+ 
+         slidersAdapter = new slidersAdapter(getContext(), getListPhoto());
+@@ -84,19 +107,28 @@
+         listChild1();
+         listChild2();
+         listChild3();
++        eventClickSPN();
++        getValuesSpinner();
++        searchNews();
++
++
+         newsTrangChuList.clear();
+         getListNews();
+         rcvNewsTrangChu = view.findViewById(R.id.rcv_news_trangchu);
++        mNewsTrangChuAdapter = new NewsTrangChuAdapter(getContext());
++
+         new Handler().postDelayed(new Runnable() {
+             @Override
+             public void run() {
+-                mNewsTrangChuAdapter = new NewsTrangChuAdapter(getContext());
++
+                 GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), 2);
+                 rcvNewsTrangChu.setLayoutManager(gridLayoutManager);
+                 mNewsTrangChuAdapter.setDATA(newsTrangChuList);
+                 rcvNewsTrangChu.setAdapter(mNewsTrangChuAdapter);
+             }
+-        },500);
++        }, 500);
++
++
+ //        mNewsTrangChuAdapter = new NewsTrangChuAdapter(getContext());
+ //        GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), 2);
+ //        rcvNewsTrangChu.setLayoutManager(gridLayoutManager);
+@@ -111,6 +143,178 @@
+         return view;
+     }
+ 
++    private void getValuesSpinner() {
++        LoaiTin = spn_phanLoaiTin.getSelectedItem().toString();
++        System.out.println("Loại Tin : " + LoaiTin);
++    }
++
++    private void eventClickSPN() {
++        product_type[] product_types = FragmentTrangChu.productType.getProductType();
++        ArrayAdapter<productType> adapter = new ArrayAdapter(getContext(), android.R.layout.simple_spinner_item, product_types);
++        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
++        spn_phanLoaiTin.setAdapter(adapter);
++        spn_phanLoaiTin.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
++            @Override
++            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
++                getValuesSpinner();
++                if (LoaiTin.equalsIgnoreCase("Bất động sản")) {
++                    showLoaiTinBDS();
++                } else if (LoaiTin.equalsIgnoreCase("Giải trí")) {
++                    showLoaiTinGiaiTri();
++                }else if(LoaiTin.equalsIgnoreCase("Thời trang")) {
++                    showLoaiTinThoiTrang();
++                }else {
++                    GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), 2);
++                    rcvNewsTrangChu.setLayoutManager(gridLayoutManager);
++                    mNewsTrangChuAdapter.setDATA(newsTrangChuList);
++                    rcvNewsTrangChu.setAdapter(mNewsTrangChuAdapter);
++                }
++            }
++
++            @Override
++            public void onNothingSelected(AdapterView<?> adapterView) {
++
++            }
++        });
++
++    }
++    private void showLoaiTinThoiTrang() {
++        List<NewsTrangChu> listFilter = new ArrayList<>();
++
++        for (int i = 0; i < newsTrangChuList.size(); i++) {
++            String tenDanhMuc = newsTrangChuList.get(i).getTenDanhMuc();
++            if (tenDanhMuc.equals("Quần áo") || tenDanhMuc.equals("Đồng hồ") || tenDanhMuc.equals("Giày dép") || tenDanhMuc.equals("Túi xách")
++                    || tenDanhMuc.equals("Nước hoa")) {
++//                listFilter.clear();
++
++                listFilter.add(new NewsTrangChu(newsTrangChuList.get(i).getTitle(), newsTrangChuList.get(i).getDescripsion()
++                        , newsTrangChuList.get(i).getTime(), newsTrangChuList.get(i).getFee(), true, newsTrangChuList.get(i).getImage()
++                        , newsTrangChuList.get(i).getTenDanhMuc()));
++            }
++        }
++        mNewsTrangChuAdapter = new NewsTrangChuAdapter(getContext());
++        GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), 2);
++        rcvNewsTrangChu.setLayoutManager(gridLayoutManager);
++        mNewsTrangChuAdapter.setDATA(listFilter);
++        rcvNewsTrangChu.setAdapter(mNewsTrangChuAdapter);
++        mNewsTrangChuAdapter.notifyDataSetChanged();
++    }
++    private void showLoaiTinGiaiTri() {
++        List<NewsTrangChu> listFilter = new ArrayList<>();
++
++        for (int i = 0; i < newsTrangChuList.size(); i++) {
++            String tenDanhMuc = newsTrangChuList.get(i).getTenDanhMuc();
++            if (tenDanhMuc.equals("Nhạc cụ") || tenDanhMuc.equalsIgnoreCase("Sách") || tenDanhMuc.equalsIgnoreCase("Đồ thể thao, Dã ngoại")
++                    || tenDanhMuc.equals("Đồ sưu tầm  ,Đồ cổ") || tenDanhMuc.equals("Thiết bị chơi game")) {
++//                listFilter.clear();
++
++                listFilter.add(new NewsTrangChu(newsTrangChuList.get(i).getTitle(), newsTrangChuList.get(i).getDescripsion()
++                        , newsTrangChuList.get(i).getTime(), newsTrangChuList.get(i).getFee(), true, newsTrangChuList.get(i).getImage()
++                        , newsTrangChuList.get(i).getTenDanhMuc()));
++            }
++        }
++        mNewsTrangChuAdapter = new NewsTrangChuAdapter(getContext());
++        GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), 2);
++        rcvNewsTrangChu.setLayoutManager(gridLayoutManager);
++        mNewsTrangChuAdapter.setDATA(listFilter);
++        rcvNewsTrangChu.setAdapter(mNewsTrangChuAdapter);
++        mNewsTrangChuAdapter.notifyDataSetChanged();
++    }
++
++    private void showLoaiTinBDS() {
++        List<NewsTrangChu> listFilter = new ArrayList<>();
++
++
++        for (int i = 0; i < newsTrangChuList.size(); i++) {
++            String tenDanhMuc = newsTrangChuList.get(i).getTenDanhMuc();
++            if (tenDanhMuc.equals("Chung cư") || tenDanhMuc.equals("Nhà ở") || tenDanhMuc.equals("Đất") ||
++                    tenDanhMuc.equalsIgnoreCase("Văn Phòng") || tenDanhMuc.equalsIgnoreCase("Phòng Trọ")) {
++
++                listFilter.add(new NewsTrangChu(newsTrangChuList.get(i).getTitle(), newsTrangChuList.get(i).getDescripsion()
++                        , newsTrangChuList.get(i).getTime(), newsTrangChuList.get(i).getFee(), true, newsTrangChuList.get(i).getImage()
++                        , newsTrangChuList.get(i).getTenDanhMuc()));
++
++            }
++        }
++        mNewsTrangChuAdapter = new NewsTrangChuAdapter(getContext());
++        GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), 2);
++        rcvNewsTrangChu.setLayoutManager(gridLayoutManager);
++        mNewsTrangChuAdapter.setDATA(listFilter);
++        rcvNewsTrangChu.setAdapter(mNewsTrangChuAdapter);
++        mNewsTrangChuAdapter.notifyDataSetChanged();
++    }
++
++
++    public static class productType {
++        public static product_type[] getProductType() {
++
++            product_type prd2 = new product_type("Bất động sản");
++            product_type prd3 = new product_type("Thời trang");
++            product_type prd4 = new product_type("Giải trí");
++            product_type prd1 = new product_type("Tất Cả");
++            return new product_type[]{prd1, prd2, prd3, prd4};
++
++
++        }
++    }
++
++    private void searchNews() {
++        searchView.clearFocus();
++        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
++            @Override
++            public boolean onQueryTextSubmit(String query) {
++
++                return false;
++            }
++
++            @Override
++            public boolean onQueryTextChange(String newText) {
++                if (newText == null || newText.trim().isEmpty()) {
++                  return false;
++
++                } else {
++                    filterList(newText);
++                }
++                return true;
++            }
++        });
++    }
++
++    private void filterList(String newText) {
++        List<historyNews> listFilter1 = new ArrayList<>();
++
++        for (int i = 0; i < listFilter.size(); i++) {
++
++            if (listFilter.get(i).getTitle_historyNews().toLowerCase().contains(newText.toLowerCase()) ||
++                    listFilter.get(i).getTenDanhMuc().toLowerCase().equalsIgnoreCase(newText.toLowerCase())) {
++                listFilter1.add(listFilter.get(i));
++            }
++        }
++        if (newText.isEmpty()) {
++            listFilter1.clear();
++            historyNewsAdapter = new historyNewsAdapter(getContext(), null);
++            rcvFilter.setLayoutManager(new LinearLayoutManager(getContext()));
++            rcvFilter.setAdapter(historyNewsAdapter);
++            RecyclerView.ItemDecoration decoration = new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL);
++            rcvFilter.addItemDecoration(decoration);
++        }
++        if (listFilter1.isEmpty()) {
++            historyNewsAdapter = new historyNewsAdapter(getContext(), listFilter);
++            rcvFilter.setLayoutManager(new LinearLayoutManager(getContext()));
++            rcvFilter.setAdapter(historyNewsAdapter);
++            RecyclerView.ItemDecoration decoration = new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL);
++            rcvFilter.addItemDecoration(decoration);
++        } else {
++            historyNewsAdapter = new historyNewsAdapter(getContext(), listFilter1);
++            rcvFilter.setLayoutManager(new LinearLayoutManager(getContext()));
++            rcvFilter.setAdapter(historyNewsAdapter);
++            RecyclerView.ItemDecoration decoration = new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL);
++            rcvFilter.addItemDecoration(decoration);
++        }
++
++    }
++
++
+     private void autoSliderImg() {
+ 
+         if (mTimer == null) {
+@@ -160,14 +364,16 @@
+ 
+         return mListPhoto;
+     }
++
+     private void getListNews() {
+         for (int i = 0; i < listChild.size(); i++) {
+             myData.child(listChild.get(i)).addChildEventListener(new ChildEventListener() {
+                 @Override
+                 public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+                     giaiTriNews giaiTriNews = snapshot.getValue(giaiTriNews.class);
+-                    newsTrangChuList.add(new NewsTrangChu(giaiTriNews.getTitle() , giaiTriNews.getDescription(),
+-                            giaiTriNews.getDate(),giaiTriNews.getPrice(),true, ""));
++                    newsTrangChuList.add(new NewsTrangChu(giaiTriNews.getTitle(), giaiTriNews.getDescription(),
++                            giaiTriNews.getDate(), giaiTriNews.getPrice(), true, "", giaiTriNews.getTenDanhMuc()));
++                    listFilter.add(new historyNews(giaiTriNews.getId(), giaiTriNews.getTitle(), null, giaiTriNews.getDate(), giaiTriNews.getTenDanhMuc(), null));
+                     mNewsTrangChuAdapter.notifyDataSetChanged();
+                 }
+ 
+@@ -199,8 +405,11 @@
+                 public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+                     thoiTrangNews thoiTrangNews = snapshot.getValue(com.example.duan1.model.thoiTrangNews.class);
+                     newsTrangChuList.add(new NewsTrangChu(thoiTrangNews.getTitlePost(), thoiTrangNews.getDescriptionPost(),
+-                            thoiTrangNews.getDate(), thoiTrangNews.getPrice(), true , ""));
++                            thoiTrangNews.getDate(), thoiTrangNews.getPrice(), true, "", thoiTrangNews.getTenDanhMuc()));
++
++                    listFilter.add(new historyNews(thoiTrangNews.getId(), thoiTrangNews.getTitlePost(), null, thoiTrangNews.getDate(), thoiTrangNews.getTenDanhMuc(), null));
+                     mNewsTrangChuAdapter.notifyDataSetChanged();
++
+                 }
+ 
+                 @Override
+@@ -230,9 +439,11 @@
+                 public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+                     BDSNews bdsNews = snapshot.getValue(BDSNews.class);
+ 
+-                    newsTrangChuList.add(new NewsTrangChu(bdsNews.getTitle() , bdsNews.getDescription() ,
+-                            bdsNews.getDate(),bdsNews.getPrice(), true, bdsNews.getImage()));
+-                            mNewsTrangChuAdapter.notifyDataSetChanged();
++                    newsTrangChuList.add(new NewsTrangChu(bdsNews.getTitle(), bdsNews.getDescription(),
++                            bdsNews.getDate(), bdsNews.getPrice(), true, bdsNews.getImage(), bdsNews.getTenDanhMuc()));
++
++                    listFilter.add(new historyNews(bdsNews.getId(), bdsNews.getTitle(), null, bdsNews.getDate(), bdsNews.getTenDanhMuc(), null));
++                    mNewsTrangChuAdapter.notifyDataSetChanged();
+                 }
+ 
+                 @Override
+@@ -258,7 +469,9 @@
+ 
+         }
+ 
++
+     }
++
+     private List<String> listChild1() {
+         listChild.add(new String("Nhạc cụ"));
+         listChild.add(new String("Sách"));
+Index: app/src/main/java/com/example/duan1/MainActivity.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.duan1;\r\n\r\nimport androidx.annotation.NonNull;\r\nimport androidx.appcompat.app.AppCompatActivity;\r\n\r\nimport android.annotation.SuppressLint;\r\nimport android.app.AlertDialog;\r\nimport android.app.Dialog;\r\nimport android.content.Context;\r\nimport android.content.Intent;\r\nimport android.graphics.drawable.ColorDrawable;\r\nimport android.os.Bundle;\r\nimport android.view.Gravity;\r\nimport android.view.MenuItem;\r\nimport android.view.View;\r\nimport android.view.Window;\r\nimport android.view.WindowManager;\r\nimport android.widget.ImageView;\r\nimport android.widget.RelativeLayout;\r\nimport android.widget.Toast;\r\n\r\nimport com.example.duan1.Fragment.FragmentDaoCho;\r\nimport com.example.duan1.Fragment.FragmentQuanLiTin;\r\nimport com.example.duan1.Fragment.FragmentThem;\r\nimport com.example.duan1.Fragment.FragmentTrangChu;\r\nimport com.example.duan1.model.Users;\r\n\r\nimport com.google.android.material.bottomnavigation.BottomNavigationView;\r\nimport com.google.android.material.floatingactionbutton.FloatingActionButton;\r\nimport com.google.android.material.navigation.NavigationBarView;\r\nimport com.google.firebase.auth.FirebaseAuth;\r\nimport com.google.firebase.auth.FirebaseUser;\r\nimport com.google.firebase.database.DataSnapshot;\r\nimport com.google.firebase.database.DatabaseError;\r\nimport com.google.firebase.database.DatabaseReference;\r\nimport com.google.firebase.database.FirebaseDatabase;\r\nimport com.google.firebase.database.ValueEventListener;\r\n\r\n\r\nimport java.util.ArrayList;\r\nimport java.util.List;\r\n\r\npublic class MainActivity extends AppCompatActivity {\r\n\r\n    BottomNavigationView bottomNavigationView;\r\n    FloatingActionButton floatingActionButton;\r\n\r\n    FragmentTrangChu fragmentTrangChu = new FragmentTrangChu();\r\n    FragmentQuanLiTin fragmentQuanLiTin = new FragmentQuanLiTin();\r\n    FragmentDaoCho fragmentDaoCho = new FragmentDaoCho();\r\n    FragmentThem fragmentThem = new FragmentThem();\r\n    private FirebaseUser currentUser;\r\n    private FirebaseAuth mAuth;\r\n    private FirebaseDatabase database;\r\n    private DatabaseReference myRef;\r\n    public static String name;\r\n    public static int id;\r\n\r\n\r\n    @SuppressLint(\"MissingInflatedId\")\r\n    @Override\r\n    protected void onCreate(Bundle savedInstanceState) {\r\n        super.onCreate(savedInstanceState);\r\n        setContentView(R.layout.activity_main);\r\n        initUi();\r\n\r\n        mAuth = FirebaseAuth.getInstance();\r\n        currentUser = mAuth.getCurrentUser();\r\n\r\n        database = FirebaseDatabase.getInstance();\r\n        myRef = database.getReference(\"Users\");\r\n        if (currentUser!= null){\r\n            getUser();\r\n        }\r\n\r\n        floatingActionButton.setOnClickListener(new View.OnClickListener() {\r\n            @Override\r\n            public void onClick(View view) {\r\n//        currentUser = mAuth.getCurrentUser();\r\n\r\n                if (currentUser != null) {\r\n\r\n                    showDialogChooseListProduct();\r\n\r\n                } else {\r\n                    MainActivity.showDiaLogWarning(MainActivity.this, \"Vui lòng đăng nhập để có thể đăng bán sản phẩm\");\r\n                }\r\n            }\r\n        });\r\n\r\n        bottomNavigationView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {\r\n            @Override\r\n            public boolean onNavigationItemSelected(@NonNull MenuItem item) {\r\n                switch (item.getItemId()) {\r\n                    case R.id.home:\r\n                        getSupportFragmentManager().beginTransaction().replace(R.id.container, fragmentTrangChu).commit();\r\n                        return true;\r\n\r\n                    case R.id.believe:\r\n                        getSupportFragmentManager().beginTransaction().replace(R.id.container, fragmentQuanLiTin).commit();\r\n                        return true;\r\n\r\n                    case R.id.fab:\r\n                        return true;\r\n\r\n                    case R.id.market:\r\n                        getSupportFragmentManager().beginTransaction().replace(R.id.container, fragmentDaoCho).commit();\r\n                        return true;\r\n\r\n                    case R.id.more:\r\n                        getSupportFragmentManager().beginTransaction().replace(R.id.container, fragmentThem).commit();\r\n                        return true;\r\n                }\r\n\r\n                return false;\r\n            }\r\n        });\r\n\r\n    }\r\n\r\n    private void getUser() {\r\n        List<Users> mListUser = new ArrayList<>();\r\n\r\n        String email = currentUser.getEmail();\r\n        myRef.addValueEventListener(new ValueEventListener() {\r\n            @Override\r\n            public void onDataChange(@NonNull DataSnapshot snapshot) {\r\n                mListUser.clear();\r\n                for (DataSnapshot snapshot1 : snapshot.getChildren()) {\r\n                    Users user = snapshot1.getValue(Users.class);\r\n                    mListUser.add(user);\r\n                }\r\n\r\n                for (int i = 0; i < mListUser.size(); i++) {\r\n                    if (mListUser.get(i).getEmail().equals(email)) {\r\n                        name = (mListUser.get(i).getName());\r\n                        id = mListUser.get(i).getId();\r\n                    }\r\n                }\r\n            }\r\n\r\n            @Override\r\n            public void onCancelled(@NonNull DatabaseError error) {\r\n                Toast.makeText(MainActivity.this, \"Error get Id and Name from Firebase\", Toast.LENGTH_SHORT).show();\r\n            }\r\n        });\r\n    }\r\n\r\n    private void showDialogChooseListProduct() {\r\n\r\n\r\n        final Dialog dialog = new Dialog(this);\r\n        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);\r\n        dialog.setContentView(R.layout.layout_dialog_chon_danh_muc);\r\n        getUser();\r\n        Window window = dialog.getWindow();\r\n        if (window == null) {\r\n            return;\r\n        }\r\n        window.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT);\r\n        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));\r\n        WindowManager.LayoutParams windowAttributes = window.getAttributes();\r\n        windowAttributes.gravity = Gravity.BOTTOM;\r\n        window.setAttributes(windowAttributes);\r\n\r\n        RelativeLayout layout_batDongSan = dialog.findViewById(R.id.layout_batDongSan);\r\n        RelativeLayout layout_XeCo = dialog.findViewById(R.id.layout_XeCo);\r\n        RelativeLayout layout_thoiTrang = dialog.findViewById(R.id.layout_thoiTrang);\r\n        RelativeLayout layout_dienTu = dialog.findViewById(R.id.layout_dienTu);\r\n        RelativeLayout layout_giaiTri = dialog.findViewById(R.id.layout_giaiTri);\r\n        RelativeLayout layout_dienGiaDung = dialog.findViewById(R.id.layout_dienGiaDung);\r\n        ImageView icon_close = dialog.findViewById(R.id.icon_close);\r\n\r\n        icon_close.setOnClickListener(new View.OnClickListener() {\r\n            @Override\r\n            public void onClick(View view) {\r\n                dialog.dismiss();\r\n            }\r\n        });\r\n        layout_giaiTri.setOnClickListener(new View.OnClickListener() {\r\n            @Override\r\n            public void onClick(View view) {\r\n                Intent intent = new Intent(getApplicationContext(), chonDanhMucGiaiTriActivity.class);\r\n                Bundle bundle = new Bundle();\r\n                bundle.putString(\"Name\", name);\r\n                bundle.putInt(\"Id\", id);\r\n                intent.putExtras(bundle);\r\n                startActivity(intent);\r\n            }\r\n        });\r\n        layout_dienGiaDung.setOnClickListener(new View.OnClickListener() {\r\n            @Override\r\n            public void onClick(View view) {\r\n                Toast.makeText(MainActivity.this, \"Id : \" + id + \" NAme : \" + name, Toast.LENGTH_SHORT).show();\r\n                Intent intent = new Intent(getApplicationContext(), chonDanhMucDienMayActivity.class);\r\n                Bundle bundle = new Bundle();\r\n                bundle.putString(\"Name\", name);\r\n                bundle.putInt(\"Id\", id);\r\n                intent.putExtras(bundle);\r\n                startActivity(intent);\r\n            }\r\n        });\r\n        layout_batDongSan.setOnClickListener(new View.OnClickListener() {\r\n            @Override\r\n            public void onClick(View view) {\r\n                Toast.makeText(MainActivity.this, \"Id : \" + id + \" NAme : \" + name, Toast.LENGTH_SHORT).show();\r\n\r\n                Intent intent = new Intent(getApplicationContext(), chonDanhMucBDSActivity.class);\r\n                Bundle bundle = new Bundle();\r\n                bundle.putString(\"Name\", name);\r\n                bundle.putInt(\"Id\", id);\r\n                intent.putExtras(bundle);\r\n                startActivity(intent);\r\n            }\r\n        });\r\n        layout_XeCo.setOnClickListener(new View.OnClickListener() {\r\n            @Override\r\n            public void onClick(View view) {\r\n                Toast.makeText(MainActivity.this, \"Id : \" + id + \" NAme : \" + name, Toast.LENGTH_SHORT).show();\r\n\r\n                Intent intent = new Intent(getApplicationContext(), chonDanhMucXeCoActivity.class);\r\n                Bundle bundle = new Bundle();\r\n                bundle.putString(\"Name\", name);\r\n                bundle.putInt(\"Id\", id);\r\n                intent.putExtras(bundle);\r\n                startActivity(intent);\r\n            }\r\n        });\r\n        layout_thoiTrang.setOnClickListener(new View.OnClickListener() {\r\n            @Override\r\n            public void onClick(View view) {\r\n\r\n                Intent intent = new Intent(getApplicationContext(), chonDanhMucThoiTrangAcrivity.class);\r\n                Bundle bundle = new Bundle();\r\n                bundle.putString(\"Name\", name);\r\n                bundle.putInt(\"Id\", id);\r\n                intent.putExtras(bundle);\r\n                startActivity(intent);\r\n            }\r\n        });\r\n        layout_dienTu.setOnClickListener(new View.OnClickListener() {\r\n            @Override\r\n            public void onClick(View view) {\r\n                Toast.makeText(MainActivity.this, \"Id : \" + id + \" NAme : \" + name, Toast.LENGTH_SHORT).show();\r\n\r\n                Intent intent = new Intent(getApplicationContext(), chonDanhMucDoDienTuActivity.class);\r\n                Bundle bundle = new Bundle();\r\n                bundle.putString(\"Name\", name);\r\n                bundle.putInt(\"Id\", id);\r\n                intent.putExtras(bundle);\r\n                startActivity(intent);\r\n            }\r\n        });\r\n        dialog.show();\r\n    }\r\n\r\n    private void initUi() {\r\n        bottomNavigationView = findViewById(R.id.bottomNavigationView);\r\n        floatingActionButton = findViewById(R.id.fab);\r\n\r\n        getSupportFragmentManager().beginTransaction().replace(R.id.container, fragmentTrangChu).commit();\r\n    }\r\n\r\n    public static void showDiaLogWarning(Context context, String text) {\r\n        final AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);\r\n        alertDialog.setMessage(text).setTitle(\"Warning\").setIcon(R.drawable.ic_warning)\r\n                .setNegativeButton(\"Ok\", null);\r\n        alertDialog.show();\r\n    }\r\n\r\n\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/duan1/MainActivity.java b/app/src/main/java/com/example/duan1/MainActivity.java
+--- a/app/src/main/java/com/example/duan1/MainActivity.java	(revision 8b530af99d85d04b50d11e1e6b9cac2474dd3bc2)
++++ b/app/src/main/java/com/example/duan1/MainActivity.java	(date 1670732853350)
+@@ -2,15 +2,18 @@
+ 
+ import androidx.annotation.NonNull;
+ import androidx.appcompat.app.AppCompatActivity;
++import androidx.appcompat.widget.SearchView;
+ 
+ import android.annotation.SuppressLint;
+ import android.app.AlertDialog;
+ import android.app.Dialog;
++import android.app.SearchManager;
+ import android.content.Context;
+ import android.content.Intent;
+ import android.graphics.drawable.ColorDrawable;
+ import android.os.Bundle;
+ import android.view.Gravity;
++import android.view.Menu;
+ import android.view.MenuItem;
+ import android.view.View;
+ import android.view.Window;
+@@ -44,7 +47,7 @@
+ 
+     BottomNavigationView bottomNavigationView;
+     FloatingActionButton floatingActionButton;
+-
++    SearchView searchView;
+     FragmentTrangChu fragmentTrangChu = new FragmentTrangChu();
+     FragmentQuanLiTin fragmentQuanLiTin = new FragmentQuanLiTin();
+     FragmentDaoCho fragmentDaoCho = new FragmentDaoCho();
+@@ -57,19 +60,21 @@
+     public static int id;
+ 
+ 
++
++
+     @SuppressLint("MissingInflatedId")
+     @Override
+     protected void onCreate(Bundle savedInstanceState) {
+         super.onCreate(savedInstanceState);
+         setContentView(R.layout.activity_main);
+         initUi();
+-
++        searchView = findViewById(R.id.searchView);
+         mAuth = FirebaseAuth.getInstance();
+         currentUser = mAuth.getCurrentUser();
+ 
+         database = FirebaseDatabase.getInstance();
+         myRef = database.getReference("Users");
+-        if (currentUser!= null){
++        if (currentUser != null) {
+             getUser();
+         }
+ 
+@@ -88,6 +93,7 @@
+             }
+         });
+ 
++
+         bottomNavigationView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
+             @Override
+             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+Index: app/src/main/res/layout/activity_main.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android=\"http://schemas.android.com/apk/res/android\"\r\n    xmlns:tools=\"http://schemas.android.com/tools\"\r\n    android:layout_width=\"match_parent\"\r\n    android:layout_height=\"match_parent\"\r\n    xmlns:app=\"http://schemas.android.com/apk/res-auto\"\r\n    tools:context=\".MainActivity\">\r\n\r\n    <androidx.appcompat.widget.Toolbar\r\n        android:layout_width=\"match_parent\"\r\n        android:layout_height=\"50dp\"\r\n        android:background=\"@color/Orenge\"\r\n        >\r\n\r\n        <androidx.appcompat.widget.SearchView\r\n            android:id=\"@+id/searchView\"\r\n            android:layout_width=\"200dp\"\r\n            android:layout_height=\"30dp\"\r\n            android:background=\"@drawable/bg_seachview\"\r\n            app:queryHint=\"Tìm kiếm...\"\r\n            app:iconifiedByDefault=\"false\"\r\n\r\n            />\r\n\r\n    </androidx.appcompat.widget.Toolbar>\r\n\r\n    <FrameLayout\r\n        android:id=\"@+id/container\"\r\n        android:layout_width=\"match_parent\"\r\n        android:layout_height=\"match_parent\"\r\n        android:layout_marginTop=\"50dp\"\r\n        />\r\n\r\n    <com.google.android.material.bottomappbar.BottomAppBar\r\n        android:id=\"@+id/bottomAppBar\"\r\n        android:layout_width=\"match_parent\"\r\n        android:layout_height=\"60dp\"\r\n        android:layout_gravity=\"bottom\"\r\n        app:fabCradleMargin=\"10dp\"\r\n        app:fabCradleRoundedCornerRadius=\"10dp\"\r\n        app:fabCradleVerticalOffset=\"10dp\"\r\n\r\n        >\r\n\r\n        <com.google.android.material.bottomnavigation.BottomNavigationView\r\n            android:layout_width=\"match_parent\"\r\n            android:layout_height=\"wrap_content\"\r\n            android:id=\"@+id/bottomNavigationView\"\r\n            android:layout_marginRight=\"16dp\"\r\n            app:menu=\"@menu/bottom_nav_menu\"\r\n            android:background=\"@drawable/transparent_background\"\r\n            app:itemRippleColor=\"@null\"\r\n            />\r\n\r\n    </com.google.android.material.bottomappbar.BottomAppBar>\r\n\r\n    <com.google.android.material.floatingactionbutton.FloatingActionButton\r\n        android:layout_width=\"wrap_content\"\r\n        android:layout_height=\"wrap_content\"\r\n        android:id=\"@+id/fab\"\r\n        app:layout_anchor=\"@id/bottomAppBar\"\r\n        android:src=\"@drawable/ic_baseline_add_24\"\r\n        app:elevation=\"3dp\"\r\n        />\r\n\r\n</androidx.coordinatorlayout.widget.CoordinatorLayout>\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/layout/activity_main.xml b/app/src/main/res/layout/activity_main.xml
+--- a/app/src/main/res/layout/activity_main.xml	(revision 8b530af99d85d04b50d11e1e6b9cac2474dd3bc2)
++++ b/app/src/main/res/layout/activity_main.xml	(date 1670733205277)
+@@ -6,29 +6,29 @@
+     xmlns:app="http://schemas.android.com/apk/res-auto"
+     tools:context=".MainActivity">
+ 
+-    <androidx.appcompat.widget.Toolbar
+-        android:layout_width="match_parent"
+-        android:layout_height="50dp"
+-        android:background="@color/Orenge"
+-        >
++<!--    <androidx.appcompat.widget.Toolbar-->
++<!--        android:layout_width="match_parent"-->
++<!--        android:layout_height="50dp"-->
++<!--        android:background="@color/Orenge"-->
++<!--        >-->
+ 
+-        <androidx.appcompat.widget.SearchView
+-            android:id="@+id/searchView"
+-            android:layout_width="200dp"
+-            android:layout_height="30dp"
+-            android:background="@drawable/bg_seachview"
+-            app:queryHint="Tìm kiếm..."
+-            app:iconifiedByDefault="false"
++<!--        <androidx.appcompat.widget.SearchView-->
++<!--            android:id="@+id/searchView"-->
++<!--            android:layout_width="200dp"-->
++<!--            android:layout_height="30dp"-->
++<!--            android:background="@drawable/bg_seachview"-->
++<!--            app:queryHint="Tìm kiếm..."-->
++<!--            app:iconifiedByDefault="false"-->
+ 
+-            />
++<!--            />-->
+ 
+-    </androidx.appcompat.widget.Toolbar>
++<!--    </androidx.appcompat.widget.Toolbar>-->
+ 
+     <FrameLayout
+         android:id="@+id/container"
+         android:layout_width="match_parent"
+         android:layout_height="match_parent"
+-        android:layout_marginTop="50dp"
++
+         />
+ 
+     <com.google.android.material.bottomappbar.BottomAppBar
+Index: app/src/main/java/com/example/duan1/model/BDSNews.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.duan1.model;\r\n\r\npublic class BDSNews {\r\n    private int id;\r\n    private String title;\r\n    private String description;\r\n    private double price;\r\n    private String dienTich ;\r\n    private String adress;\r\n    private String tenPhanKhu;\r\n    private String loaiDat;\r\n    private String direction;\r\n    private String soPhongNgu;\r\n    private String soPhongWc;\r\n    private int idUser;\r\n    private String nameUser;\r\n    private String tenDanhMuc;\r\n    private String date;\r\n    private String image;\r\n\r\n    public BDSNews(int maxID, String strTitlePost, String strDescription, double dbPrice, String strDienTich, String strAddress, String strTenKhu, String strLoaiHinhDat, String strSoPhongNgu, String strSoPhongWc, int idUser, String nameUser, String tenDanhMuc, String date, String s) {\r\n    }\r\n\r\n    public BDSNews() {\r\n    }\r\n\r\n    public BDSNews(int id, String title, String description, double price, String dienTich, String adress, String tenPhanKhu, String loaiDat, String direction, String soPhongNgu, String soPhongWc, int idUser, String nameUser, String tenDanhMuc, String date, String image) {\r\n        this.id = id;\r\n        this.title = title;\r\n        this.description = description;\r\n        this.price = price;\r\n        this.dienTich = dienTich;\r\n        this.adress = adress;\r\n        this.tenPhanKhu = tenPhanKhu;\r\n        this.loaiDat = loaiDat;\r\n        this.direction = direction;\r\n        this.soPhongNgu = soPhongNgu;\r\n        this.soPhongWc = soPhongWc;\r\n        this.idUser = idUser;\r\n        this.nameUser = nameUser;\r\n        this.tenDanhMuc = tenDanhMuc;\r\n        this.date = date;\r\n        this.image = image;\r\n    }\r\n\r\n        public BDSNews(int maxID, String strTitlePost, String strDescription, double dbPrice, String strDienTich,\r\n                   String strAddress, String strTenKhu, String strLoaiHinhDat,\r\n                   String strSoPhongNgu, String strSoPhongWc, int idUser, String nameUser , String tenDanhMuc, String date) {\r\n        this.id = maxID;\r\n        this.title = strTitlePost;\r\n        this.description = strDescription;\r\n        this.price = dbPrice;\r\n        this.dienTich = strDienTich;\r\n        this.adress = strAddress;\r\n        this.tenPhanKhu = strTenKhu;\r\n        this.loaiDat = strLoaiHinhDat;\r\n        this.soPhongNgu = strSoPhongNgu;\r\n        this.soPhongWc = strSoPhongWc;\r\n        this.idUser = idUser;\r\n        this.nameUser = nameUser;\r\n        this.tenDanhMuc = tenDanhMuc;\r\n        this.date = date;\r\n    }\r\n\r\n\r\n    public BDSNews(int id, String title, String description, double price,\r\n                   String dienTich, String adress\r\n                  , int idUser, String nameUser , String tenDanhMuc, String date\r\n    ) {\r\n        this.id = id;\r\n        this.title = title;\r\n        this.description = description;\r\n        this.price = price;\r\n        this.dienTich = dienTich;\r\n        this.adress = adress;\r\n        this.idUser = idUser;\r\n        this.nameUser = nameUser;\r\n        this.tenDanhMuc = tenDanhMuc;\r\n        this.date = date;\r\n    }\r\n\r\n    public BDSNews(int id, String title, String description, double price,\r\n                   String dienTich, String adress, String tenPhanKhu, String loaiDat, String direction\r\n            , int idUser, String nameUser,String tenDanhMuc, String date ) {\r\n        this.id = id;\r\n        this.title = title;\r\n        this.description = description;\r\n        this.price = price;\r\n        this.dienTich = dienTich;\r\n        this.adress = adress;\r\n        this.tenPhanKhu = tenPhanKhu;\r\n        this.loaiDat = loaiDat;\r\n        this.direction = direction;\r\n        this.idUser = idUser;\r\n        this.nameUser = nameUser;\r\n        this.tenDanhMuc = tenDanhMuc;\r\n        this.date = date;\r\n    }\r\n\r\n    public String getDate() {\r\n        return date;\r\n    }\r\n\r\n    public void setDate(String date) {\r\n        this.date = date;\r\n    }\r\n\r\n    public String getTenDanhMuc() {\r\n        return tenDanhMuc;\r\n    }\r\n\r\n    public void setTenDanhMuc(String tenDanhMuc) {\r\n        this.tenDanhMuc = tenDanhMuc;\r\n    }\r\n\r\n    public int getIdUser() {\r\n        return idUser;\r\n    }\r\n\r\n    public void setIdUser(int idUser) {\r\n        this.idUser = idUser;\r\n    }\r\n\r\n    public String getNameUser() {\r\n        return nameUser;\r\n    }\r\n\r\n    public void setNameUser(String nameUser) {\r\n        this.nameUser = nameUser;\r\n    }\r\n\r\n    public String getSoPhongNgu() {\r\n        return soPhongNgu;\r\n    }\r\n\r\n    public void setSoPhongNgu(String soPhongNgu) {\r\n        this.soPhongNgu = soPhongNgu;\r\n    }\r\n\r\n    public String getSoPhongWc() {\r\n        return soPhongWc;\r\n    }\r\n\r\n    public void setSoPhongWc(String soPhongWc) {\r\n        this.soPhongWc = soPhongWc;\r\n    }\r\n\r\n    public String getTenPhanKhu() {\r\n        return tenPhanKhu;\r\n    }\r\n\r\n    public void setTenPhanKhu(String tenPhanKhu) {\r\n        this.tenPhanKhu = tenPhanKhu;\r\n    }\r\n\r\n    public String getLoaiDat() {\r\n        return loaiDat;\r\n    }\r\n\r\n    public void setLoaiDat(String loaiDat) {\r\n        this.loaiDat = loaiDat;\r\n    }\r\n\r\n    public String getDirection() {\r\n        return direction;\r\n    }\r\n\r\n    public void setDirection(String direction) {\r\n        this.direction = direction;\r\n    }\r\n\r\n    public int getId() {\r\n        return id;\r\n    }\r\n\r\n    public void setId(int id) {\r\n        this.id = id;\r\n    }\r\n\r\n    public String getTitle() {\r\n        return title;\r\n    }\r\n\r\n    public void setTitle(String title) {\r\n        this.title = title;\r\n    }\r\n\r\n    public String getDescription() {\r\n        return description;\r\n    }\r\n\r\n    public void setDescription(String description) {\r\n        this.description = description;\r\n    }\r\n\r\n    public double getPrice() {\r\n        return price;\r\n    }\r\n\r\n    public void setPrice(double price) {\r\n        this.price = price;\r\n    }\r\n\r\n    public String getDienTich() {\r\n        return dienTich;\r\n    }\r\n\r\n    public void setDienTich(String dienTich) {\r\n        this.dienTich = dienTich;\r\n    }\r\n\r\n    public String getAdress() {\r\n        return adress;\r\n    }\r\n\r\n    public void setAdress(String adress) {\r\n        this.adress = adress;\r\n    }\r\n\r\n    public String getImage() {\r\n        return image;\r\n    }\r\n\r\n    public void setImage(String image) {\r\n        this.image = image;\r\n    }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/duan1/model/BDSNews.java b/app/src/main/java/com/example/duan1/model/BDSNews.java
+--- a/app/src/main/java/com/example/duan1/model/BDSNews.java	(revision 8b530af99d85d04b50d11e1e6b9cac2474dd3bc2)
++++ b/app/src/main/java/com/example/duan1/model/BDSNews.java	(date 1670682170684)
+@@ -18,7 +18,9 @@
+     private String date;
+     private String image;
+ 
+-    public BDSNews(int maxID, String strTitlePost, String strDescription, double dbPrice, String strDienTich, String strAddress, String strTenKhu, String strLoaiHinhDat, String strSoPhongNgu, String strSoPhongWc, int idUser, String nameUser, String tenDanhMuc, String date, String s) {
++    public BDSNews(int maxID, String strTitlePost, String strDescription, double dbPrice, String strDienTich,
++                   String strAddress, String strTenKhu, String strLoaiHinhDat, String strSoPhongNgu,
++                   String strSoPhongWc, int idUser, String nameUser, String tenDanhMuc, String date, String s) {
+     }
+ 
+     public BDSNews() {
+@@ -45,7 +47,7 @@
+ 
+         public BDSNews(int maxID, String strTitlePost, String strDescription, double dbPrice, String strDienTich,
+                    String strAddress, String strTenKhu, String strLoaiHinhDat,
+-                   String strSoPhongNgu, String strSoPhongWc, int idUser, String nameUser , String tenDanhMuc, String date) {
++                   String strSoPhongNgu, String strSoPhongWc, int idUser, String nameUser , String tenDanhMuc, String date ) {
+         this.id = maxID;
+         this.title = strTitlePost;
+         this.description = strDescription;
+@@ -60,6 +62,8 @@
+         this.nameUser = nameUser;
+         this.tenDanhMuc = tenDanhMuc;
+         this.date = date;
++
++
+     }
+ 
+ 
+Index: app/src/main/java/com/example/duan1/model/NewsTrangChu.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.duan1.model;\r\n\r\npublic class NewsTrangChu {\r\n    private String title,descripsion, time;\r\n    private double fee;\r\n    private boolean favorite;\r\n    private String image;\r\n\r\n//    public int getsoluonganh(){\r\n//        return getArrURL().size();\r\n//    }\r\n\r\n    public NewsTrangChu() {\r\n    }\r\n\r\n\r\n    public NewsTrangChu(String title, String descripsion, String time, double fee, boolean favorite, String image) {\r\n        this.title = title;\r\n        this.descripsion = descripsion;\r\n        this.time = time;\r\n        this.fee = fee;\r\n        this.favorite = favorite;\r\n        this.image = image;\r\n    }\r\n\r\n    public String getTitle() {\r\n        return title;\r\n    }\r\n\r\n    public void setTitle(String title) {\r\n        this.title = title;\r\n    }\r\n\r\n    public String getDescripsion() {\r\n        return descripsion;\r\n    }\r\n\r\n    public void setDescripsion(String descripsion) {\r\n        this.descripsion = descripsion;\r\n    }\r\n\r\n    public Double getFee() {\r\n        return fee;\r\n    }\r\n\r\n    public void setFee(Double fee) {\r\n        this.fee = fee;\r\n    }\r\n\r\n    public String getTime() {\r\n        return time;\r\n    }\r\n\r\n    public void setTime(String time) {\r\n        this.time = time;\r\n    }\r\n\r\n    public boolean isFavorite() {\r\n        return favorite;\r\n    }\r\n\r\n    public void setFavorite(boolean favorite) {\r\n        this.favorite = favorite;\r\n    }\r\n\r\n    public void setFee(double fee) {\r\n        this.fee = fee;\r\n    }\r\n\r\n    public String getImage() {\r\n        return image;\r\n    }\r\n\r\n    public void setImage(String image) {\r\n        this.image = image;\r\n    }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/duan1/model/NewsTrangChu.java b/app/src/main/java/com/example/duan1/model/NewsTrangChu.java
+--- a/app/src/main/java/com/example/duan1/model/NewsTrangChu.java	(revision 8b530af99d85d04b50d11e1e6b9cac2474dd3bc2)
++++ b/app/src/main/java/com/example/duan1/model/NewsTrangChu.java	(date 1670764968639)
+@@ -1,10 +1,11 @@
+ package com.example.duan1.model;
+ 
+ public class NewsTrangChu {
+-    private String title,descripsion, time;
++    private String title,descripsion, time ;
+     private double fee;
+     private boolean favorite;
+     private String image;
++    private String tenDanhMuc;
+ 
+ //    public int getsoluonganh(){
+ //        return getArrURL().size();
+@@ -14,13 +15,23 @@
+     }
+ 
+ 
+-    public NewsTrangChu(String title, String descripsion, String time, double fee, boolean favorite, String image) {
++    public NewsTrangChu(String title, String descripsion, String time, double fee, boolean favorite,
++                        String image, String tenDanhMuc) {
+         this.title = title;
+         this.descripsion = descripsion;
+         this.time = time;
+         this.fee = fee;
+         this.favorite = favorite;
+         this.image = image;
++        this.tenDanhMuc = tenDanhMuc;
++    }
++
++    public String getTenDanhMuc() {
++        return tenDanhMuc;
++    }
++
++    public void setTenDanhMuc(String tenDanhMuc) {
++        this.tenDanhMuc = tenDanhMuc;
+     }
+ 
+     public String getTitle() {
+Index: .idea/misc.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<project version=\"4\">\r\n  <component name=\"DesignSurface\">\r\n    <option name=\"filePathToZoomLevelMap\">\r\n      <map>\r\n        <entry key=\"..\\:/FPT_HoangQuocHuy/Du_An_1(LTMT)/QLDA_android1/app/src/main/res/drawable-v24/ic_launcher_foreground.xml\" value=\"0.1285\" />\r\n        <entry key=\"..\\:/FPT_HoangQuocHuy/Du_An_1(LTMT)/QLDA_android1/app/src/main/res/drawable/background_title.xml\" value=\"0.1285\" />\r\n        <entry key=\"..\\:/FPT_HoangQuocHuy/Du_An_1(LTMT)/QLDA_android1/app/src/main/res/drawable/bg_button_login.xml\" value=\"0.142\" />\r\n        <entry key=\"..\\:/FPT_HoangQuocHuy/Du_An_1(LTMT)/QLDA_android1/app/src/main/res/drawable/bg_button_register.xml\" value=\"0.1\" />\r\n        <entry key=\"..\\:/FPT_HoangQuocHuy/Du_An_1(LTMT)/QLDA_android1/app/src/main/res/drawable/bg_corner.xml\" value=\"0.1285\" />\r\n        <entry key=\"..\\:/FPT_HoangQuocHuy/Du_An_1(LTMT)/QLDA_android1/app/src/main/res/drawable/bg_input.xml\" value=\"0.1285\" />\r\n        <entry key=\"..\\:/FPT_HoangQuocHuy/Du_An_1(LTMT)/QLDA_android1/app/src/main/res/drawable/bg_overlay.xml\" value=\"0.128\" />\r\n        <entry key=\"..\\:/FPT_HoangQuocHuy/Du_An_1(LTMT)/QLDA_android1/app/src/main/res/drawable/duongvien_goctron.xml\" value=\"0.1285\" />\r\n        <entry key=\"..\\:/FPT_HoangQuocHuy/Du_An_1(LTMT)/QLDA_android1/app/src/main/res/drawable/ic_baseline_add_24.xml\" value=\"0.128\" />\r\n        <entry key=\"..\\:/FPT_HoangQuocHuy/Du_An_1(LTMT)/QLDA_android1/app/src/main/res/drawable/ic_baseline_home_24.xml\" value=\"0.128\" />\r\n        <entry key=\"..\\:/FPT_HoangQuocHuy/Du_An_1(LTMT)/QLDA_android1/app/src/main/res/drawable/ic_baseline_more_horiz_24.xml\" value=\"0.128\" />\r\n        <entry key=\"..\\:/FPT_HoangQuocHuy/Du_An_1(LTMT)/QLDA_android1/app/src/main/res/drawable/ic_baseline_newspaper_24.xml\" value=\"0.128\" />\r\n        <entry key=\"..\\:/FPT_HoangQuocHuy/Du_An_1(LTMT)/QLDA_android1/app/src/main/res/drawable/ic_baseline_shopping_basket_24.xml\" value=\"0.128\" />\r\n        <entry key=\"..\\:/FPT_HoangQuocHuy/Du_An_1(LTMT)/QLDA_android1/app/src/main/res/drawable/transparent_background.xml\" value=\"0.128\" />\r\n        <entry key=\"..\\:/FPT_HoangQuocHuy/Du_An_1(LTMT)/QLDA_android1/app/src/main/res/layout/activity_chon_danh_muc_bdsactivity.xml\" value=\"0.1721014492753623\" />\r\n        <entry key=\"..\\:/FPT_HoangQuocHuy/Du_An_1(LTMT)/QLDA_android1/app/src/main/res/layout/activity_chon_danh_muc_dien_may.xml\" value=\"0.1721014492753623\" />\r\n        <entry key=\"..\\:/FPT_HoangQuocHuy/Du_An_1(LTMT)/QLDA_android1/app/src/main/res/layout/activity_chon_danh_muc_do_dien_tu.xml\" value=\"0.1721014492753623\" />\r\n        <entry key=\"..\\:/FPT_HoangQuocHuy/Du_An_1(LTMT)/QLDA_android1/app/src/main/res/layout/activity_chon_danh_muc_giai_tri.xml\" value=\"0.1721014492753623\" />\r\n        <entry key=\"..\\:/FPT_HoangQuocHuy/Du_An_1(LTMT)/QLDA_android1/app/src/main/res/layout/activity_chon_danh_muc_thoi_trang.xml\" value=\"0.1721014492753623\" />\r\n        <entry key=\"..\\:/FPT_HoangQuocHuy/Du_An_1(LTMT)/QLDA_android1/app/src/main/res/layout/activity_chon_danh_muc_thoi_trang_acrivity.xml\" value=\"0.1721014492753623\" />\r\n        <entry key=\"..\\:/FPT_HoangQuocHuy/Du_An_1(LTMT)/QLDA_android1/app/src/main/res/layout/activity_chon_danh_muc_xe_co.xml\" value=\"0.1721014492753623\" />\r\n        <entry key=\"..\\:/FPT_HoangQuocHuy/Du_An_1(LTMT)/QLDA_android1/app/src/main/res/layout/activity_dag_tin_giai_tri.xml\" value=\"0.12978142076502733\" />\r\n        <entry key=\"..\\:/FPT_HoangQuocHuy/Du_An_1(LTMT)/QLDA_android1/app/src/main/res/layout/activity_dang_tin.xml\" value=\"0.17028985507246377\" />\r\n        <entry key=\"..\\:/FPT_HoangQuocHuy/Du_An_1(LTMT)/QLDA_android1/app/src/main/res/layout/activity_dang_tin_bdsactivity.xml\" value=\"0.1721014492753623\" />\r\n        <entry key=\"..\\:/FPT_HoangQuocHuy/Du_An_1(LTMT)/QLDA_android1/app/src/main/res/layout/activity_dang_tin_bdsdat.xml\" value=\"0.21\" />\r\n        <entry key=\"..\\:/FPT_HoangQuocHuy/Du_An_1(LTMT)/QLDA_android1/app/src/main/res/layout/activity_dang_tin_bdsphong_tro.xml\" value=\"0.1721014492753623\" />\r\n        <entry key=\"..\\:/FPT_HoangQuocHuy/Du_An_1(LTMT)/QLDA_android1/app/src/main/res/layout/activity_dang_tin_thoi_trang.xml\" value=\"0.1721014492753623\" />\r\n        <entry key=\"..\\:/FPT_HoangQuocHuy/Du_An_1(LTMT)/QLDA_android1/app/src/main/res/layout/activity_edit_account.xml\" value=\"0.25\" />\r\n        <entry key=\"..\\:/FPT_HoangQuocHuy/Du_An_1(LTMT)/QLDA_android1/app/src/main/res/layout/activity_login.xml\" value=\"0.25\" />\r\n        <entry key=\"..\\:/FPT_HoangQuocHuy/Du_An_1(LTMT)/QLDA_android1/app/src/main/res/layout/activity_main.xml\" value=\"0.17028985507246377\" />\r\n        <entry key=\"..\\:/FPT_HoangQuocHuy/Du_An_1(LTMT)/QLDA_android1/app/src/main/res/layout/activity_register.xml\" value=\"0.25\" />\r\n        <entry key=\"..\\:/FPT_HoangQuocHuy/Du_An_1(LTMT)/QLDA_android1/app/src/main/res/layout/activity_splash_screen.xml\" value=\"0.17028985507246377\" />\r\n        <entry key=\"..\\:/FPT_HoangQuocHuy/Du_An_1(LTMT)/QLDA_android1/app/src/main/res/layout/activity_sua_tin_bdsactivity.xml\" value=\"0.18206521739130435\" />\r\n        <entry key=\"..\\:/FPT_HoangQuocHuy/Du_An_1(LTMT)/QLDA_android1/app/src/main/res/layout/activity_sua_tin_bdsdat.xml\" value=\"0.18206521739130435\" />\r\n        <entry key=\"..\\:/FPT_HoangQuocHuy/Du_An_1(LTMT)/QLDA_android1/app/src/main/res/layout/activity_sua_tin_phong_tro.xml\" value=\"0.18206521739130435\" />\r\n        <entry key=\"..\\:/FPT_HoangQuocHuy/Du_An_1(LTMT)/QLDA_android1/app/src/main/res/layout/activity_sua_tin_thoi_trang.xml\" value=\"0.18206521739130435\" />\r\n        <entry key=\"..\\:/FPT_HoangQuocHuy/Du_An_1(LTMT)/QLDA_android1/app/src/main/res/layout/dialog_item_bat_dong_san.xml\" value=\"0.1721014492753623\" />\r\n        <entry key=\"..\\:/FPT_HoangQuocHuy/Du_An_1(LTMT)/QLDA_android1/app/src/main/res/layout/fragment_quan_li_tin.xml\" value=\"0.19\" />\r\n        <entry key=\"..\\:/FPT_HoangQuocHuy/Du_An_1(LTMT)/QLDA_android1/app/src/main/res/layout/fragment_them.xml\" value=\"0.1721014492753623\" />\r\n        <entry key=\"..\\:/FPT_HoangQuocHuy/Du_An_1(LTMT)/QLDA_android1/app/src/main/res/layout/fragment_trang_chu.xml\" value=\"0.13541666666666666\" />\r\n        <entry key=\"..\\:/FPT_HoangQuocHuy/Du_An_1(LTMT)/QLDA_android1/app/src/main/res/layout/item_danh_muc_bds.xml\" value=\"0.1721014492753623\" />\r\n        <entry key=\"..\\:/FPT_HoangQuocHuy/Du_An_1(LTMT)/QLDA_android1/app/src/main/res/layout/item_danh_muc_dien_may.xml\" value=\"0.1721014492753623\" />\r\n        <entry key=\"..\\:/FPT_HoangQuocHuy/Du_An_1(LTMT)/QLDA_android1/app/src/main/res/layout/item_danh_muc_the_thao.xml\" value=\"0.1721014492753623\" />\r\n        <entry key=\"..\\:/FPT_HoangQuocHuy/Du_An_1(LTMT)/QLDA_android1/app/src/main/res/layout/item_danh_muc_thoi_trang.xml\" value=\"0.1721014492753623\" />\r\n        <entry key=\"..\\:/FPT_HoangQuocHuy/Du_An_1(LTMT)/QLDA_android1/app/src/main/res/layout/item_direction.xml\" value=\"0.1721014492753623\" />\r\n        <entry key=\"..\\:/FPT_HoangQuocHuy/Du_An_1(LTMT)/QLDA_android1/app/src/main/res/layout/item_dmuc_dien_tu.xml\" value=\"0.1721014492753623\" />\r\n        <entry key=\"..\\:/FPT_HoangQuocHuy/Du_An_1(LTMT)/QLDA_android1/app/src/main/res/layout/item_dmuc_xe_co.xml\" value=\"0.1721014492753623\" />\r\n        <entry key=\"..\\:/FPT_HoangQuocHuy/Du_An_1(LTMT)/QLDA_android1/app/src/main/res/layout/item_image_add_news.xml\" value=\"0.1721014492753623\" />\r\n        <entry key=\"..\\:/FPT_HoangQuocHuy/Du_An_1(LTMT)/QLDA_android1/app/src/main/res/layout/item_quan_ly_tin_dang.xml\" value=\"0.18206521739130435\" />\r\n        <entry key=\"..\\:/FPT_HoangQuocHuy/Du_An_1(LTMT)/QLDA_android1/app/src/main/res/layout/item_slider.xml\" value=\"0.2\" />\r\n        <entry key=\"..\\:/FPT_HoangQuocHuy/Du_An_1(LTMT)/QLDA_android1/app/src/main/res/layout/layout_dialog_chon_danh_muc.xml\" value=\"0.1721014492753623\" />\r\n        <entry key=\"..\\:/FPT_HoangQuocHuy/Du_An_1(LTMT)/QLDA_android1/app/src/main/res/layout/slider_item_layout.xml\" value=\"0.17028985507246377\" />\r\n        <entry key=\"..\\:/FPT_HoangQuocHuy/Du_An_1(LTMT)/QLDA_android1/app/src/main/res/menu/bottom_nav_menu.xml\" value=\"0.225\" />\r\n        <entry key=\"..\\:/FPT_HoangQuocHuy/Du_An_1(LTMT)/QLDA_android1/app/src/main/res/menu/menu_them.xml\" value=\"0.225\" />\r\n        <entry key=\"..\\:/FPT_HoangQuocHuy/Du_An_1(LTMT)/QLDA_android1/app/src/main/res/menu/popup_menu.xml\" value=\"0.225\" />\r\n      </map>\r\n    </option>\r\n  </component>\r\n  <component name=\"ProjectRootManager\" version=\"2\" languageLevel=\"JDK_11\" default=\"true\" project-jdk-name=\"Android Studio default JDK\" project-jdk-type=\"JavaSDK\">\r\n    <output url=\"file://$PROJECT_DIR$/build/classes\" />\r\n  </component>\r\n  <component name=\"ProjectType\">\r\n    <option name=\"id\" value=\"Android\" />\r\n  </component>\r\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/misc.xml b/.idea/misc.xml
+--- a/.idea/misc.xml	(revision 8b530af99d85d04b50d11e1e6b9cac2474dd3bc2)
++++ b/.idea/misc.xml	(date 1670729840522)
+@@ -16,6 +16,7 @@
+         <entry key="..\:/FPT_HoangQuocHuy/Du_An_1(LTMT)/QLDA_android1/app/src/main/res/drawable/ic_baseline_more_horiz_24.xml" value="0.128" />
+         <entry key="..\:/FPT_HoangQuocHuy/Du_An_1(LTMT)/QLDA_android1/app/src/main/res/drawable/ic_baseline_newspaper_24.xml" value="0.128" />
+         <entry key="..\:/FPT_HoangQuocHuy/Du_An_1(LTMT)/QLDA_android1/app/src/main/res/drawable/ic_baseline_shopping_basket_24.xml" value="0.128" />
++        <entry key="..\:/FPT_HoangQuocHuy/Du_An_1(LTMT)/QLDA_android1/app/src/main/res/drawable/ic_search.xml" value="0.1345" />
+         <entry key="..\:/FPT_HoangQuocHuy/Du_An_1(LTMT)/QLDA_android1/app/src/main/res/drawable/transparent_background.xml" value="0.128" />
+         <entry key="..\:/FPT_HoangQuocHuy/Du_An_1(LTMT)/QLDA_android1/app/src/main/res/layout/activity_chon_danh_muc_bdsactivity.xml" value="0.1721014492753623" />
+         <entry key="..\:/FPT_HoangQuocHuy/Du_An_1(LTMT)/QLDA_android1/app/src/main/res/layout/activity_chon_danh_muc_dien_may.xml" value="0.1721014492753623" />
+@@ -56,6 +57,7 @@
+         <entry key="..\:/FPT_HoangQuocHuy/Du_An_1(LTMT)/QLDA_android1/app/src/main/res/layout/layout_dialog_chon_danh_muc.xml" value="0.1721014492753623" />
+         <entry key="..\:/FPT_HoangQuocHuy/Du_An_1(LTMT)/QLDA_android1/app/src/main/res/layout/slider_item_layout.xml" value="0.17028985507246377" />
+         <entry key="..\:/FPT_HoangQuocHuy/Du_An_1(LTMT)/QLDA_android1/app/src/main/res/menu/bottom_nav_menu.xml" value="0.225" />
++        <entry key="..\:/FPT_HoangQuocHuy/Du_An_1(LTMT)/QLDA_android1/app/src/main/res/menu/item_search_menu.xml" value="0.225" />
+         <entry key="..\:/FPT_HoangQuocHuy/Du_An_1(LTMT)/QLDA_android1/app/src/main/res/menu/menu_them.xml" value="0.225" />
+         <entry key="..\:/FPT_HoangQuocHuy/Du_An_1(LTMT)/QLDA_android1/app/src/main/res/menu/popup_menu.xml" value="0.225" />
+       </map>
+Index: app/src/main/java/com/example/duan1/dangTinBDSDatActivity.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.duan1;\r\n\r\nimport androidx.annotation.NonNull;\r\nimport androidx.annotation.Nullable;\r\nimport androidx.appcompat.app.AppCompatActivity;\r\nimport androidx.core.app.ActivityCompat;\r\nimport androidx.core.content.ContextCompat;\r\nimport androidx.recyclerview.widget.GridLayoutManager;\r\nimport androidx.recyclerview.widget.RecyclerView;\r\n\r\nimport android.Manifest;\r\nimport android.app.AlertDialog;\r\nimport android.app.ProgressDialog;\r\nimport android.content.Intent;\r\nimport android.content.pm.PackageManager;\r\nimport android.net.Uri;\r\nimport android.os.Build;\r\nimport android.os.Bundle;\r\nimport android.view.View;\r\nimport android.widget.AdapterView;\r\nimport android.widget.ArrayAdapter;\r\nimport android.widget.Button;\r\nimport android.widget.EditText;\r\nimport android.widget.ImageView;\r\nimport android.widget.LinearLayout;\r\nimport android.widget.Spinner;\r\nimport android.widget.TextView;\r\nimport android.widget.Toast;\r\n\r\nimport com.example.duan1.Adapter.photoAdapter;\r\nimport com.example.duan1.model.BDSNews;\r\nimport com.example.duan1.model.direction;\r\nimport com.example.duan1.model.thoiTrangNews;\r\nimport com.google.android.gms.tasks.OnSuccessListener;\r\nimport com.google.firebase.database.ChildEventListener;\r\nimport com.google.firebase.database.DataSnapshot;\r\nimport com.google.firebase.database.DatabaseError;\r\nimport com.google.firebase.database.DatabaseReference;\r\nimport com.google.firebase.database.FirebaseDatabase;\r\nimport com.google.firebase.database.ValueEventListener;\r\nimport com.google.firebase.storage.FirebaseStorage;\r\nimport com.google.firebase.storage.StorageReference;\r\nimport com.google.firebase.storage.UploadTask;\r\n\r\nimport java.text.SimpleDateFormat;\r\nimport java.util.ArrayList;\r\nimport java.util.Calendar;\r\nimport java.util.HashMap;\r\nimport java.util.List;\r\n\r\npublic class dangTinBDSDatActivity extends AppCompatActivity implements com.example.duan1.Adapter.photoAdapter.CountOfImageWhenRemove {\r\n    private TextView tvTenDanhMuc;\r\n    private ImageView imgBackPage;\r\n\r\n    private EditText edtTitlePost, edtDescription, edtTenPhanKhu, edtLoaiHinhDat, edtAddress, edtDienTich, edtPrice;\r\n    private LinearLayout addImageProduct;\r\n    private Button btnDangTin ,btnSuaTin;\r\n    private Spinner spn_Direction;\r\n    private String strTitlePost, strDescription, strTenPhanKhu, strAddress, strLoaiHinhDat, strDienTich,\r\n            strPrice, strDirection, nameUser, tenDanhMuc ,date;\r\n    private double dbPrice;\r\n    private String title_Post = null;\r\n    private chonDanhMucThoiTrangAcrivity chonDanhMucThoiTrangAcrivity;\r\n\r\n\r\n    private com.example.duan1.Adapter.photoAdapter photoAdapter;\r\n    private RecyclerView rcvView_select_img_Dat;\r\n    private ArrayList<Uri> imageUri;\r\n    private int REQUEST_PERMISSION_CODE = 35;\r\n    private int PICK_IMAGE = 1;\r\n    private int update_count = 0, maxID, idUser , idEdit;\r\n    private ProgressDialog progressDialog;\r\n    DatabaseReference myData;\r\n    StorageReference imageFolder;\r\n    private List<BDSNews> listBDS;\r\n    MainActivity mainActivity;\r\n    BDSNews bdsNewsId;\r\n\r\n\r\n    @Override\r\n    protected void onCreate(Bundle savedInstanceState) {\r\n        super.onCreate(savedInstanceState);\r\n        setContentView(R.layout.activity_dang_tin_bdsdat);\r\n\r\n        imageFolder = FirebaseStorage.getInstance().getReference().child(\"Image.jpg\");\r\n        myData = FirebaseDatabase.getInstance().getReference(\"Tin\").child(\"BDS\");\r\n        imageUri = new ArrayList<>();\r\n\r\n        nameUser = mainActivity.name;\r\n        idUser = mainActivity.id;\r\n\r\n        initUi();\r\n        clickBackPage();\r\n        eventClickSpinner();\r\n        getListBds();\r\n        clickAddImageFashion();\r\n        clickDangTin();\r\n        getCurrentDate();\r\n        if(title_Post == null || title_Post.equals(\"\")){\r\n            btnDangTin.setVisibility(View.VISIBLE);\r\n            btnSuaTin.setVisibility(View.INVISIBLE);\r\n        }else {\r\n            btnSuaTin.setVisibility(View.VISIBLE);\r\n            btnDangTin.setVisibility(View.INVISIBLE);\r\n            setTextInput();\r\n            editNews();\r\n        }\r\n    }\r\n    private void getCurrentDate() {\r\n\r\n        SimpleDateFormat sdf = new SimpleDateFormat(\"dd/MM/yyyy\");\r\n        Calendar c = Calendar.getInstance();\r\n        date = sdf.format(c.getTime());\r\n        System.out.println(\"Date : \" + date);\r\n    }\r\n    private void editNews() {\r\n        btnSuaTin.setOnClickListener(new View.OnClickListener() {\r\n            @Override\r\n            public void onClick(View view) {\r\n                progressDialog = new ProgressDialog(dangTinBDSDatActivity.this);\r\n                progressDialog.setMessage(\"Please wait for save\");\r\n\r\n                strTitlePost = edtTitlePost.getText().toString().trim();\r\n                strDescription = edtDescription.getText().toString();\r\n                strTenPhanKhu = edtTenPhanKhu.getText().toString().trim();\r\n                strLoaiHinhDat = edtLoaiHinhDat.getText().toString().trim();\r\n                strAddress = edtAddress.getText().toString().trim();\r\n                strPrice = edtPrice.getText().toString();\r\n                strDienTich = edtDienTich.getText().toString();\r\n                try {\r\n                    dbPrice = Double.parseDouble(strPrice);\r\n\r\n                } catch (Exception e) {\r\n                    System.err.println(\"Lỗi Parse kiểu dữ liệu\");\r\n                }\r\n\r\n                strDirection = spn_Direction.getSelectedItem().toString();\r\n\r\n\r\n                if (strTitlePost.isEmpty() || strDescription.isEmpty() || strPrice.isEmpty()\r\n                        || strAddress.isEmpty() || strTenPhanKhu.isEmpty() || strLoaiHinhDat.isEmpty()\r\n                        || strDienTich.isEmpty()) {\r\n                    MainActivity.showDiaLogWarning(dangTinBDSDatActivity.this, \"vui lòng nhập đầy đủ thông tin\");\r\n\r\n                } else {\r\n                    progressDialog.show();\r\n                    for (update_count = 0; update_count < imageUri.size(); update_count++) {\r\n                        Uri indexImage = imageUri.get(update_count);\r\n                        StorageReference imageName = imageFolder.child(\"Image \" + indexImage.getLastPathSegment());\r\n                        imageName.child(strTitlePost).putFile(indexImage).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {\r\n                            @Override\r\n                            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {\r\n                                imageName.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {\r\n                                    @Override\r\n                                    public void onSuccess(Uri uri) {\r\n                                        String Url = String.valueOf(uri);\r\n                                        StoreLick(Url);\r\n\r\n                                    }\r\n                                });\r\n                            }\r\n                        });\r\n                    }\r\n\r\n                    String strId = String.valueOf(idEdit);\r\n                    myData.child(tenDanhMuc).child(strId).setValue(new BDSNews(idEdit, strTitlePost, strDescription, dbPrice\r\n                                    , strDienTich, strAddress, strTenPhanKhu, strLoaiHinhDat,\r\n                                    strDirection, idUser, nameUser,tenDanhMuc, date))\r\n                            .addOnSuccessListener(new OnSuccessListener<Void>() {\r\n                                @Override\r\n                                public void onSuccess(Void unused) {\r\n                                    Toast.makeText(dangTinBDSDatActivity.this, \"Sửa tin thành công\", Toast.LENGTH_SHORT).show();\r\n                                    progressDialog.dismiss();\r\n                                }\r\n                            });\r\n\r\n                }\r\n            }\r\n        });\r\n    }\r\n\r\n    private void setTextInput() {\r\n        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();\r\n        DatabaseReference databaseReference = firebaseDatabase.getReference(\"Tin\").child(\"BDS\");\r\n        databaseReference.child(tenDanhMuc).addChildEventListener(new ChildEventListener() {\r\n            @Override\r\n            public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {\r\n                BDSNews bdsNews = snapshot.getValue(BDSNews.class);\r\n                listBDS.clear();\r\n                listBDS.add(bdsNews);\r\n                if (bdsNews.getTitle().equals(title_Post)){\r\n                    edtTitlePost.setText(bdsNews.getTitle());\r\n                    edtDescription.setText(bdsNews.getDescription());\r\n                    String price = String.valueOf(bdsNews.getPrice());\r\n                    edtPrice.setText(price);\r\n                    edtAddress.setText(bdsNews.getAdress());\r\n                    edtDienTich.setText(bdsNews.getDienTich());\r\n                    edtLoaiHinhDat.setText(bdsNews.getLoaiDat());\r\n                    edtTenPhanKhu.setText(bdsNews.getTenPhanKhu());\r\n                    idEdit = bdsNews.getId();\r\n\r\n                }\r\n            }\r\n\r\n            @Override\r\n            public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {\r\n\r\n            }\r\n\r\n            @Override\r\n            public void onChildRemoved(@NonNull DataSnapshot snapshot) {\r\n\r\n            }\r\n\r\n            @Override\r\n            public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {\r\n\r\n            }\r\n\r\n            @Override\r\n            public void onCancelled(@NonNull DatabaseError error) {\r\n\r\n            }\r\n        });\r\n    }\r\n\r\n    private void clickBackPage() {\r\n        imgBackPage.setOnClickListener(new View.OnClickListener() {\r\n            @Override\r\n            public void onClick(View view) {\r\n                finish();\r\n            }\r\n        });\r\n    }\r\n\r\n    private void eventClickSpinner() {\r\n        direction[] directions = dangTinBDSActivity.EmployeeDataUtils.getEmployees();\r\n        ArrayAdapter<direction> adapter = new ArrayAdapter<direction>(this, android.R.layout.simple_spinner_item, directions);\r\n        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);\r\n        spn_Direction.setAdapter(adapter);\r\n\r\n        spn_Direction.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {\r\n            @Override\r\n            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {\r\n                Toast.makeText(dangTinBDSDatActivity.this, \"Hướng \" + i, Toast.LENGTH_SHORT).show();\r\n            }\r\n\r\n            @Override\r\n            public void onNothingSelected(AdapterView<?> adapterView) {\r\n\r\n            }\r\n        });\r\n    }\r\n\r\n    private void clickAddImageFashion() {\r\n        photoAdapter = new photoAdapter(imageUri, this, this);\r\n        rcvView_select_img_Dat.setLayoutManager(new GridLayoutManager(dangTinBDSDatActivity.this, 6));\r\n        rcvView_select_img_Dat.setAdapter(photoAdapter);\r\n\r\n        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)\r\n                != PackageManager.PERMISSION_GRANTED) {\r\n            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},\r\n                    REQUEST_PERMISSION_CODE);\r\n            return;\r\n        }\r\n\r\n        addImageProduct.setOnClickListener(new View.OnClickListener() {\r\n            @Override\r\n            public void onClick(View view) {\r\n                Intent intent = new Intent(Intent.ACTION_GET_CONTENT);\r\n                intent.setType(\"image/*\");\r\n                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {\r\n                    intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);\r\n                }\r\n                startActivityForResult(Intent.createChooser(intent, \"select Picture\"), PICK_IMAGE);\r\n            }\r\n        });\r\n    }\r\n\r\n    @Override\r\n    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {\r\n        super.onActivityResult(requestCode, resultCode, data);\r\n        if (requestCode == PICK_IMAGE && resultCode == RESULT_OK && data != null) {\r\n            if (data.getClipData() != null) {\r\n                int count = data.getClipData().getItemCount();\r\n\r\n                for (int i = 0; i < count; i++) {\r\n                    if (imageUri.size() < 9) {\r\n                        Uri imgUri = (data.getClipData().getItemAt(i).getUri());\r\n                        imageUri.add(imgUri);\r\n                    } else {\r\n\r\n                        Toast.makeText(this, \"Chỉ đăng tối đa 9 hình ảnh\", Toast.LENGTH_SHORT).show();\r\n                    }\r\n\r\n                }\r\n                photoAdapter.notifyDataSetChanged();\r\n            } else {\r\n                if (imageUri.size() < 9) {\r\n                    Uri imgUri = data.getData();\r\n                    imageUri.add(imgUri);\r\n                } else {\r\n                    Toast.makeText(this, \"Chỉ đăng tối đa 9 hình ảnh\", Toast.LENGTH_SHORT).show();\r\n                }\r\n\r\n\r\n            }\r\n            photoAdapter.notifyDataSetChanged();\r\n        } else {\r\n            Toast.makeText(this, \"you haven't pick any Image\", Toast.LENGTH_SHORT).show();\r\n        }\r\n    }\r\n\r\n\r\n    private void clickDangTin() {\r\n\r\n\r\n        btnDangTin.setOnClickListener(new View.OnClickListener() {\r\n            @Override\r\n            public void onClick(View view) {\r\n                progressDialog = new ProgressDialog(dangTinBDSDatActivity.this);\r\n                progressDialog.setMessage(\"Please wait for save\");\r\n\r\n                strTitlePost = edtTitlePost.getText().toString().trim();\r\n                strDescription = edtDescription.getText().toString();\r\n                strTenPhanKhu = edtTenPhanKhu.getText().toString().trim();\r\n                strLoaiHinhDat = edtLoaiHinhDat.getText().toString().trim();\r\n                strAddress = edtAddress.getText().toString().trim();\r\n                strPrice = edtPrice.getText().toString();\r\n                strDienTich = edtDienTich.getText().toString();\r\n                try {\r\n                    dbPrice = Double.parseDouble(strPrice);\r\n\r\n                } catch (Exception e) {\r\n                    System.err.println(\"Lỗi Parse kiểu dữ liệu\");\r\n                }\r\n\r\n                strDirection = spn_Direction.getSelectedItem().toString();\r\n\r\n\r\n                if (strTitlePost.isEmpty() || strDescription.isEmpty() || strPrice.isEmpty()\r\n                        || strAddress.isEmpty() || strTenPhanKhu.isEmpty() || strLoaiHinhDat.isEmpty()) {\r\n                    MainActivity.showDiaLogWarning(dangTinBDSDatActivity.this, \"vui lòng nhập đầy đủ thông tin\");\r\n\r\n                } else {\r\n                    progressDialog.show();\r\n                    for (update_count = 0; update_count < imageUri.size(); update_count++) {\r\n                        Uri indexImage = imageUri.get(update_count);\r\n                        StorageReference imageName = imageFolder.child(\"Image \" + indexImage.getLastPathSegment());\r\n                        imageName.child(strTitlePost).putFile(indexImage).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {\r\n                            @Override\r\n                            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {\r\n                                imageName.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {\r\n                                    @Override\r\n                                    public void onSuccess(Uri uri) {\r\n                                        String Url = String.valueOf(uri);\r\n                                        StoreLick(Url);\r\n\r\n                                    }\r\n                                });\r\n                            }\r\n                        });\r\n                    }\r\n                    maxID = bdsNewsId.getId() + 1;\r\n                    String strId = String.valueOf(maxID);\r\n                    myData.child(tenDanhMuc).child(strId).setValue(new BDSNews(maxID, strTitlePost, strDescription, dbPrice\r\n                                    , strDienTich, strAddress, strTenPhanKhu, strLoaiHinhDat,\r\n                                    strDirection, idUser, nameUser, tenDanhMuc ,date))\r\n                            .addOnSuccessListener(new OnSuccessListener<Void>() {\r\n                                @Override\r\n                                public void onSuccess(Void unused) {\r\n                                    Toast.makeText(dangTinBDSDatActivity.this, \"Đăng tin thành công\", Toast.LENGTH_SHORT).show();\r\n                                    progressDialog.dismiss();\r\n                                }\r\n                            });\r\n\r\n                }\r\n            }\r\n        });\r\n\r\n    }\r\n\r\n\r\n    private List<BDSNews> getListBds() {\r\n        listBDS = new ArrayList<>();\r\n        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();\r\n        DatabaseReference databaseReference = firebaseDatabase.getReference(\"Tin\").child(\"BDS\");\r\n        databaseReference.child(tenDanhMuc).addValueEventListener(new ValueEventListener() {\r\n            @Override\r\n            public void onDataChange(@NonNull DataSnapshot snapshot) {\r\n                listBDS.clear();\r\n                for (DataSnapshot snapshot1 : snapshot.getChildren()) {\r\n                    BDSNews bdsNews = snapshot1.getValue(BDSNews.class);\r\n                    listBDS.add(bdsNews);\r\n                    bdsNewsId = bdsNews;\r\n                }\r\n            }\r\n\r\n            @Override\r\n            public void onCancelled(@NonNull DatabaseError error) {\r\n                Toast.makeText(dangTinBDSDatActivity.this, \"Load data Error\", Toast.LENGTH_SHORT).show();\r\n            }\r\n        });\r\n\r\n        return listBDS;\r\n\r\n    }\r\n\r\n    private void StoreLick(String url) {\r\n        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child(\"List Image\");\r\n        HashMap<String, String> hashMap = new HashMap<>();\r\n        hashMap.put(\"Imglink\", url);\r\n        databaseReference.push().setValue(hashMap);\r\n\r\n    }\r\n\r\n    private void initUi() {\r\n        tvTenDanhMuc = findViewById(R.id.tvTenDanhMuc);\r\n        Intent intent = getIntent();\r\n        title_Post = intent.getStringExtra(\"title\");\r\n        tvTenDanhMuc.setText(\"Danh Mục - \" + intent.getStringExtra(\"tenDanhMuc\"));\r\n        imgBackPage = findViewById(R.id.icon_back);\r\n        spn_Direction = findViewById(R.id.spn_Direction);\r\n        edtTitlePost = findViewById(R.id.edtTitle_postDat);\r\n        edtDescription = findViewById(R.id.edtDesc);\r\n        edtTenPhanKhu = findViewById(R.id.edtTenPhanKhu);\r\n        edtAddress = findViewById(R.id.edtAddressDat);\r\n        addImageProduct = findViewById(R.id.addImageProduct);\r\n        edtLoaiHinhDat = findViewById(R.id.loaiHinhDat);\r\n        edtDienTich = findViewById(R.id.dienTichDat);\r\n        edtPrice = findViewById(R.id.price);\r\n        btnDangTin = findViewById(R.id.btnDangTin);\r\n        btnSuaTin = findViewById(R.id.btnSuaTin);\r\n        rcvView_select_img_Dat = findViewById(R.id.rcvView_select_img_Dat);\r\n        Intent intent1 = getIntent();\r\n        tenDanhMuc = intent1.getStringExtra(\"tenDanhMuc\");\r\n\r\n    }\r\n\r\n    @Override\r\n    public void clicked(int getSize) {\r\n\r\n    }\r\n\r\n    public static class EmployeeDataUtils {\r\n        public static direction[] getEmployees() {\r\n            direction drt1 = new direction(\"Nam\");\r\n            direction drt2 = new direction(\"Bắc\");\r\n            direction drt3 = new direction(\"Đông\");\r\n            direction drt4 = new direction(\"Tây\");\r\n            direction drt5 = new direction(\"Đông-Nam\");\r\n            direction drt6 = new direction(\"Tây-Băc\");\r\n            direction drt7 = new direction(\"Đông-Bắc\");\r\n            direction drt8 = new direction(\"Tây-Nam\");\r\n            return new direction[]{drt1, drt2, drt3, drt4, drt5, drt6, drt7, drt8};\r\n        }\r\n    }\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/duan1/dangTinBDSDatActivity.java b/app/src/main/java/com/example/duan1/dangTinBDSDatActivity.java
+--- a/app/src/main/java/com/example/duan1/dangTinBDSDatActivity.java	(revision 8b530af99d85d04b50d11e1e6b9cac2474dd3bc2)
++++ b/app/src/main/java/com/example/duan1/dangTinBDSDatActivity.java	(date 1670681714900)
+@@ -13,9 +13,11 @@
+ import android.app.ProgressDialog;
+ import android.content.Intent;
+ import android.content.pm.PackageManager;
++import android.graphics.Bitmap;
+ import android.net.Uri;
+ import android.os.Build;
+ import android.os.Bundle;
++import android.provider.MediaStore;
+ import android.view.View;
+ import android.widget.AdapterView;
+ import android.widget.ArrayAdapter;
+@@ -31,6 +33,7 @@
+ import com.example.duan1.model.BDSNews;
+ import com.example.duan1.model.direction;
+ import com.example.duan1.model.thoiTrangNews;
++import com.google.android.gms.tasks.OnFailureListener;
+ import com.google.android.gms.tasks.OnSuccessListener;
+ import com.google.firebase.database.ChildEventListener;
+ import com.google.firebase.database.DataSnapshot;
+@@ -42,6 +45,8 @@
+ import com.google.firebase.storage.StorageReference;
+ import com.google.firebase.storage.UploadTask;
+ 
++import java.io.ByteArrayOutputStream;
++import java.io.IOException;
+ import java.text.SimpleDateFormat;
+ import java.util.ArrayList;
+ import java.util.Calendar;
+@@ -61,7 +66,8 @@
+     private double dbPrice;
+     private String title_Post = null;
+     private chonDanhMucThoiTrangAcrivity chonDanhMucThoiTrangAcrivity;
+-
++    private Bitmap bitmapselect;
++    private Calendar calendar = Calendar.getInstance();
+ 
+     private com.example.duan1.Adapter.photoAdapter photoAdapter;
+     private RecyclerView rcvView_select_img_Dat;
+@@ -344,24 +350,31 @@
+ 
+                 } else {
+                     progressDialog.show();
+-                    for (update_count = 0; update_count < imageUri.size(); update_count++) {
+-                        Uri indexImage = imageUri.get(update_count);
+-                        StorageReference imageName = imageFolder.child("Image " + indexImage.getLastPathSegment());
+-                        imageName.child(strTitlePost).putFile(indexImage).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+-                            @Override
+-                            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+-                                imageName.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+-                                    @Override
+-                                    public void onSuccess(Uri uri) {
+-                                        String Url = String.valueOf(uri);
+-                                        StoreLick(Url);
+-
+-                                    }
+-                                });
+-                            }
+-                        });
+-                    }
+-                    maxID = bdsNewsId.getId() + 1;
++                    if(bdsNewsId == null){
++                        maxID = 0;
++                    }else {
++                        maxID = bdsNewsId.getId() + 1;
++                    }
++                    upImage(maxID);
++
++//                    for (update_count = 0; update_count < imageUri.size(); update_count++) {
++//                        Uri indexImage = imageUri.get(update_count);
++//                        StorageReference imageName = imageFolder.child("Image " + indexImage.getLastPathSegment());
++//                        imageName.child(strTitlePost).putFile(indexImage).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
++//                            @Override
++//                            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
++//                                imageName.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
++//                                    @Override
++//                                    public void onSuccess(Uri uri) {
++//                                        String Url = String.valueOf(uri);
++//                                        StoreLick(Url);
++//
++//                                    }
++//                                });
++//                            }
++//                        });
++//                    }
++
+                     String strId = String.valueOf(maxID);
+                     myData.child(tenDanhMuc).child(strId).setValue(new BDSNews(maxID, strTitlePost, strDescription, dbPrice
+                                     , strDienTich, strAddress, strTenPhanKhu, strLoaiHinhDat,
+@@ -380,6 +393,63 @@
+ 
+     }
+ 
++    private void upImage(int id) {
++        if (imageUri.size() == 0){
++            return;
++        }
++        Uri uri = imageUri.get(0);
++        try {
++            bitmapselect = MediaStore.Images.Media.getBitmap(getContentResolver(),uri);
++            FirebaseStorage storage = FirebaseStorage.getInstance();
++            StorageReference storageRef = storage.getReference();
++            StorageReference mountainsRef = storageRef.child(tenDanhMuc+"/image"+calendar.getTimeInMillis());
++            ByteArrayOutputStream baos = new ByteArrayOutputStream();
++            bitmapselect.compress(Bitmap.CompressFormat.JPEG, 100, baos);
++            byte[] dataImage = baos.toByteArray();
++
++            UploadTask uploadTask = mountainsRef.putBytes(dataImage);
++            uploadTask.addOnFailureListener(new OnFailureListener() {
++                @Override
++                public void onFailure(@NonNull Exception exception) {
++                    // Handle unsuccessful uploads
++                    progressDialog.dismiss();
++                    Toast.makeText(dangTinBDSDatActivity.this, "Lỗi cập nhật hình ảnh!", Toast.LENGTH_SHORT).show();
++                }
++            }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
++                @Override
++                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
++                    // taskSnapshot.getMetadata() contains file metadata such as size, content-type, etc.
++
++                    mountainsRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
++                        @Override
++                        public void onSuccess(Uri uri) {
++                            String strImage = String.valueOf(uri);
++                            UpdateImageUrl(strImage, id);
++                            progressDialog.dismiss();
++                        }
++                    }).addOnFailureListener(new OnFailureListener() {
++                        @Override
++                        public void onFailure(@NonNull Exception exception) {
++                            // Handle any errors
++                            progressDialog.dismiss();
++                            Toast.makeText(dangTinBDSDatActivity.this, "Lỗi tải URL hình ảnh!", Toast.LENGTH_SHORT).show();
++                        }
++                    });
++                }
++            });
++        } catch (IOException e) {
++            Toast.makeText(mainActivity, "Lỗi try-catch", Toast.LENGTH_SHORT).show();
++        }
++
++    }
++
++    private void UpdateImageUrl(String strImage, int id) {
++            DatabaseReference databaseReference = FirebaseDatabase.getInstance()
++                    .getReference()
++                    .child("Tin/BDS/Đất/"+id+"/image");
++            databaseReference.setValue(strImage);
++
++    }
+ 
+     private List<BDSNews> getListBds() {
+         listBDS = new ArrayList<>();
+Index: app/src/main/java/com/example/duan1/Fragment/FragmentQuanLiTin.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.duan1.Fragment;\r\n\r\n\r\nimport android.os.Bundle;\r\n\r\nimport androidx.annotation.NonNull;\r\nimport androidx.annotation.Nullable;\r\nimport androidx.fragment.app.Fragment;\r\nimport androidx.recyclerview.widget.LinearLayoutManager;\r\nimport androidx.recyclerview.widget.RecyclerView;\r\n\r\nimport android.os.Handler;\r\nimport android.view.LayoutInflater;\r\nimport android.view.View;\r\nimport android.view.ViewGroup;\r\nimport android.widget.Toast;\r\n\r\nimport com.example.duan1.Adapter.historyNewsAdapter;\r\nimport com.example.duan1.MainActivity;\r\nimport com.example.duan1.R;\r\nimport com.example.duan1.model.BDSNews;\r\nimport com.example.duan1.model.giaiTriNews;\r\nimport com.example.duan1.model.historyNews;\r\nimport com.example.duan1.model.thoiTrangNews;\r\nimport com.google.firebase.database.ChildEventListener;\r\nimport com.google.firebase.database.DataSnapshot;\r\nimport com.google.firebase.database.DatabaseError;\r\nimport com.google.firebase.database.DatabaseReference;\r\nimport com.google.firebase.database.FirebaseDatabase;\r\n\r\nimport com.google.firebase.database.ValueEventListener;\r\nimport com.google.firebase.storage.FirebaseStorage;\r\nimport com.google.firebase.storage.StorageReference;\r\n\r\nimport java.util.ArrayList;\r\nimport java.util.List;\r\n\r\npublic class FragmentQuanLiTin extends Fragment {\r\n    private RecyclerView rcvQuanLyTinDang;\r\n    private historyNewsAdapter historyNewsAdapter;\r\n    private List<historyNews> listHistoryNews;\r\n\r\n    private String nameUser;\r\n    private int idUser;\r\n    private List<String> listChild = new ArrayList<>();\r\n    private List<String> listChild1 = new ArrayList<>();\r\n    private List<String> listChild2 = new ArrayList<>();\r\n\r\n    int id = 0;\r\n\r\n    DatabaseReference myData = FirebaseDatabase.getInstance().getReference(\"Tin\").child(\"GiaiTri\");\r\n    DatabaseReference myData1 = FirebaseDatabase.getInstance().getReference(\"Tin\").child(\"BDS\");\r\n    DatabaseReference myData2 = FirebaseDatabase.getInstance().getReference(\"Tin\").child(\"ThoiTrang\");\r\n    MainActivity mainActivity;\r\n    @Override\r\n    public View onCreateView(LayoutInflater inflater, ViewGroup container,\r\n                             Bundle savedInstanceState) {\r\n        View view = inflater.inflate(R.layout.fragment_quan_li_tin, container, false);\r\n        rcvQuanLyTinDang = view.findViewById(R.id.rcvQuanLyTin);\r\n        mainActivity = (MainActivity) getActivity();\r\n        listHistoryNews = new ArrayList<>();\r\n        idUser = mainActivity.id;\r\n        nameUser = mainActivity.name;\r\n        listChild1();\r\n        listChild2();\r\n        listChild3();\r\n        getListHistoryNews();\r\n        new Handler().postDelayed(new Runnable() {\r\n            @Override\r\n            public void run() {\r\n                historyNewsAdapter = new historyNewsAdapter(getContext(), listHistoryNews);\r\n                rcvQuanLyTinDang.setLayoutManager(new LinearLayoutManager(getContext()));\r\n                rcvQuanLyTinDang.setAdapter(historyNewsAdapter);\r\n            }\r\n        }, 500);\r\n\r\n        return view;\r\n    }\r\n\r\n    public void getListHistoryNews() {\r\n        for (int i = 0; i < listChild.size(); i++) {\r\n            myData.child(listChild.get(i)).addChildEventListener(new ChildEventListener() {\r\n                @Override\r\n                public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {\r\n                    giaiTriNews giaiTriNews = snapshot.getValue(giaiTriNews.class);\r\n\r\n                    if (giaiTriNews.getIdUser() == idUser) {\r\n\r\n                        listHistoryNews.add(new historyNews(id, giaiTriNews.getTitle(), giaiTriNews.getDescription() , giaiTriNews.getDate(), giaiTriNews.getTenDanhMuc()));\r\n                        id++;\r\n                    }\r\n                }\r\n\r\n                @Override\r\n                public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {\r\n\r\n                }\r\n\r\n                @Override\r\n                public void onChildRemoved(@NonNull DataSnapshot snapshot) {\r\n\r\n                }\r\n\r\n                @Override\r\n                public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {\r\n\r\n                }\r\n\r\n                @Override\r\n                public void onCancelled(@NonNull DatabaseError error) {\r\n\r\n                }\r\n            });\r\n        }\r\n        for (int i = 0; i < listChild1.size(); i++) {\r\n            myData2.child(listChild1.get(i)).addChildEventListener(new ChildEventListener() {\r\n                @Override\r\n                public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {\r\n                    thoiTrangNews thoiTrangNews = snapshot.getValue(com.example.duan1.model.thoiTrangNews.class);\r\n                    if (thoiTrangNews.getIdUser() == idUser) {\r\n\r\n                        listHistoryNews.add(new historyNews(id, thoiTrangNews.getTitlePost(), thoiTrangNews.getDescriptionPost(), thoiTrangNews.getDate(),thoiTrangNews.getTenDanhMuc()));\r\n                        id++;\r\n                    }\r\n\r\n                }\r\n\r\n                @Override\r\n                public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {\r\n\r\n                }\r\n\r\n                @Override\r\n                public void onChildRemoved(@NonNull DataSnapshot snapshot) {\r\n\r\n                }\r\n\r\n                @Override\r\n                public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {\r\n\r\n                }\r\n\r\n                @Override\r\n                public void onCancelled(@NonNull DatabaseError error) {\r\n\r\n                }\r\n            });\r\n        }\r\n        for (int i = 0; i < listChild2.size(); i++) {\r\n            myData1.child(listChild2.get(i)).addValueEventListener(new ValueEventListener() {\r\n                @Override\r\n                public void onDataChange(@NonNull DataSnapshot snapshot) {\r\n                    for (DataSnapshot snapshot1: snapshot.getChildren()){\r\n                        BDSNews bdsNews = snapshot1.getValue(BDSNews.class);\r\n                        if (bdsNews.getIdUser() == idUser) {\r\n                            listHistoryNews.add(new historyNews(id, bdsNews.getTitle(), bdsNews.getDescription() , bdsNews.getDate(), bdsNews.getTenDanhMuc(), bdsNews.getImage()));\r\n                            id++;\r\n                        }\r\n                    }\r\n                }\r\n\r\n                @Override\r\n                public void onCancelled(@NonNull DatabaseError error) {\r\n\r\n                }\r\n            });\r\n\r\n        }\r\n\r\n    }\r\n\r\n    private List<String> listChild1() {\r\n        listChild.add(new String(\"Nhạc cụ\"));\r\n        listChild.add(new String(\"Sách\"));\r\n        listChild.add(new String(\"Đồ thể thao, Dã ngoại\"));\r\n        listChild.add(new String(\"Đồ sưu tầm  ,Đồ cổ\"));\r\n        listChild.add(new String(\"Thiết bị chơi game\"));\r\n        listChild.add(new String(\"Sở thích khác\"));\r\n\r\n        return listChild;\r\n    }\r\n\r\n    private List<String> listChild2() {\r\n        listChild1.add(new String(\"Quần áo\"));\r\n        listChild1.add(new String(\"Đồng hồ\"));\r\n        listChild1.add(new String(\"Giày dép\"));\r\n        listChild1.add(new String(\"Túi xách\"));\r\n        listChild1.add(new String(\"Nước hoa\"));\r\n        listChild1.add(new String(\"Phụ kiện khác\"));\r\n\r\n        return listChild1;\r\n    }\r\n\r\n    private List<String> listChild3() {\r\n        listChild2.add(new String(\"Chung cư\"));\r\n        listChild2.add(new String(\"Nhà ở\"));\r\n        listChild2.add(new String(\"Đất\"));\r\n        listChild2.add(new String(\"Văn Phòng\"));\r\n        listChild2.add(new String(\"Phòng trọ\"));\r\n\r\n        return listChild2;\r\n    }\r\n\r\n\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/duan1/Fragment/FragmentQuanLiTin.java b/app/src/main/java/com/example/duan1/Fragment/FragmentQuanLiTin.java
+--- a/app/src/main/java/com/example/duan1/Fragment/FragmentQuanLiTin.java	(revision 8b530af99d85d04b50d11e1e6b9cac2474dd3bc2)
++++ b/app/src/main/java/com/example/duan1/Fragment/FragmentQuanLiTin.java	(date 1670728671933)
+@@ -1,11 +1,13 @@
+ package com.example.duan1.Fragment;
+ 
+ 
++import android.content.Context;
+ import android.os.Bundle;
+ 
+ import androidx.annotation.NonNull;
+ import androidx.annotation.Nullable;
+ import androidx.fragment.app.Fragment;
++import androidx.recyclerview.widget.DividerItemDecoration;
+ import androidx.recyclerview.widget.LinearLayoutManager;
+ import androidx.recyclerview.widget.RecyclerView;
+ 
+@@ -39,6 +41,7 @@
+     private RecyclerView rcvQuanLyTinDang;
+     private historyNewsAdapter historyNewsAdapter;
+     private List<historyNews> listHistoryNews;
++    private Context mContext;
+ 
+     private String nameUser;
+     private int idUser;
+@@ -71,6 +74,8 @@
+                 historyNewsAdapter = new historyNewsAdapter(getContext(), listHistoryNews);
+                 rcvQuanLyTinDang.setLayoutManager(new LinearLayoutManager(getContext()));
+                 rcvQuanLyTinDang.setAdapter(historyNewsAdapter);
++                RecyclerView.ItemDecoration decoration = new DividerItemDecoration(getContext() , DividerItemDecoration.VERTICAL);
++                rcvQuanLyTinDang.addItemDecoration(decoration);
+             }
+         }, 500);
+ 
+Index: app/src/main/java/com/example/duan1/Adapter/historyNewsAdapter.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.duan1.Adapter;\r\n\r\nimport android.content.Context;\r\nimport android.content.Intent;\r\nimport android.view.LayoutInflater;\r\nimport android.view.View;\r\nimport android.view.ViewGroup;\r\nimport android.widget.ImageView;\r\nimport android.widget.RelativeLayout;\r\nimport android.widget.TextView;\r\nimport android.widget.Toast;\r\n\r\nimport androidx.annotation.NonNull;\r\nimport androidx.annotation.Nullable;\r\nimport androidx.recyclerview.widget.RecyclerView;\r\n\r\nimport com.example.duan1.R;\r\nimport com.example.duan1.dagTinGiaiTriActivity;\r\nimport com.example.duan1.dangTinBDSActivity;\r\nimport com.example.duan1.dangTinBDSDatActivity;\r\nimport com.example.duan1.dangTinBDSPhongTroActivity;\r\nimport com.example.duan1.dangTinThoiTrangActivity;\r\nimport com.example.duan1.model.BDSNews;\r\nimport com.example.duan1.model.giaiTriNews;\r\nimport com.example.duan1.model.historyNews;\r\nimport com.example.duan1.model.thoiTrangNews;\r\nimport com.google.firebase.database.ChildEventListener;\r\nimport com.google.firebase.database.DataSnapshot;\r\nimport com.google.firebase.database.DatabaseError;\r\nimport com.google.firebase.database.DatabaseReference;\r\nimport com.google.firebase.database.FirebaseDatabase;\r\nimport com.squareup.picasso.Picasso;\r\n\r\nimport java.util.ArrayList;\r\nimport java.util.List;\r\n\r\npublic class historyNewsAdapter extends RecyclerView.Adapter<historyNewsAdapter.HolderView>  {\r\n    private Context mContext;\r\n    private List<historyNews> listHistory;\r\n    private List<String> listChild = new ArrayList<>();\r\n    private List<String> listChild1 = new ArrayList<>();\r\n    private List<String> listChild2 = new ArrayList<>();\r\n    private String title_News;\r\n    private int id;\r\n\r\n    DatabaseReference myData = FirebaseDatabase.getInstance().getReference(\"Tin\").child(\"GiaiTri\");\r\n    DatabaseReference myData1 = FirebaseDatabase.getInstance().getReference(\"Tin\").child(\"BDS\");\r\n    DatabaseReference myData2 = FirebaseDatabase.getInstance().getReference(\"Tin\").child(\"ThoiTrang\");\r\n\r\n    public historyNewsAdapter(Context mContext, List<historyNews> listHistory) {\r\n        this.mContext = mContext;\r\n        this.listHistory =listHistory;\r\n    }\r\n\r\n    @NonNull\r\n    @Override\r\n    public HolderView onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {\r\n        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_quan_ly_tin_dang, parent, false);\r\n\r\n        return new HolderView(view);\r\n    }\r\n\r\n\r\n    @Override\r\n    public void onBindViewHolder(@NonNull HolderView holder,final int position) {\r\n        historyNews giaiTriNews =  listHistory.get(position);\r\n        String tenDanhMuc = giaiTriNews.getTenDanhMuc();\r\n        String Title_Post = giaiTriNews.getTitle_historyNews();\r\n\r\n        listChild1();\r\n        listChild2();\r\n        listChild3();\r\n        holder.title_historyNews.setText(giaiTriNews.getTitle_historyNews());\r\n        holder.desc_historyNews.setText(giaiTriNews.getDesc_historyNews());\r\n        holder.time_historyNews.setText(giaiTriNews.getTime_historyNews());\r\n        String strImage = giaiTriNews.getImage();\r\n        Picasso.with(mContext)\r\n                .load(strImage)\r\n                .placeholder(R.drawable.ic_message)\r\n                .error(R.drawable.ic_message)\r\n                .into(holder.imgSP);\r\n        holder.icon_option.setOnClickListener(new View.OnClickListener() {\r\n            @Override\r\n            public void onClick(View view) {\r\n                XoaTin(giaiTriNews.getTitle_historyNews());\r\n//                System.out.println(giaiTriNews.getTitle_historyNews());\r\n            }\r\n        });\r\n        int id = giaiTriNews.getId();\r\n        holder.layout_item.setOnClickListener(new View.OnClickListener() {\r\n            @Override\r\n            public void onClick(View view) {\r\n\r\n                if(tenDanhMuc.equals(\"Quần áo\") || tenDanhMuc.equals(\"Đồng hồ\") || tenDanhMuc.equals(\"Giày dép\") ||tenDanhMuc.equals(\"Túi xách\")\r\n                || tenDanhMuc.equals(\"Nước hoa\") ){\r\n                    Intent intent = new Intent(mContext , dangTinThoiTrangActivity.class);\r\n                    intent.putExtra(\"title1\" , Title_Post);\r\n                    intent.putExtra(\"tenDanhMuc\" , tenDanhMuc);\r\n\r\n                    mContext.startActivity(intent);\r\n                }else if(tenDanhMuc.equals(\"Phòng trọ\")) {\r\n                    Intent intent = new Intent(mContext , dangTinBDSPhongTroActivity.class);\r\n                    intent.putExtra(\"title1\" , Title_Post);\r\n                    intent.putExtra(\"tenDanhMuc\" , tenDanhMuc);\r\n                    mContext.startActivity(intent);\r\n                }else if(tenDanhMuc.equals(\"Đất\")) {\r\n                    Intent intent = new Intent(mContext , dangTinBDSDatActivity.class);\r\n                    intent.putExtra(\"title\" , Title_Post);\r\n                    intent.putExtra(\"tenDanhMuc\" , tenDanhMuc);\r\n                    intent.putExtra(\"id\", id);\r\n                    mContext.startActivity(intent);\r\n                }else if(tenDanhMuc.equals(\"Văn Phòng\")\r\n                        || tenDanhMuc.equalsIgnoreCase(\"Nhà ở\")\r\n                        || tenDanhMuc.equalsIgnoreCase(\"Chung cư\")){\r\n                    Intent intent = new Intent(mContext , dangTinBDSActivity.class);\r\n                    intent.putExtra(\"title\" , Title_Post);\r\n                    intent.putExtra(\"tenDanhMuc\" , tenDanhMuc);\r\n                    mContext.startActivity(intent);\r\n                }else {\r\n                    Intent intent = new Intent(mContext , dagTinGiaiTriActivity.class);\r\n                    intent.putExtra(\"title\" , Title_Post);\r\n                    intent.putExtra(\"tenDanhMuc\" , tenDanhMuc);\r\n                    mContext.startActivity(intent);\r\n                }\r\n            }\r\n        });\r\n    }\r\n    @Override\r\n    public int getItemCount() {\r\n        if (listHistory != null) {\r\n            return listHistory.size();\r\n        } else {\r\n            return 0;\r\n        }\r\n    }\r\nprivate void XoaTin(String title){\r\n    for(int i = 0 ; i < listChild.size() ;i++) {\r\n        myData.child(listChild.get(i)).addChildEventListener(new ChildEventListener() {\r\n\r\n            @Override\r\n            public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {\r\n                giaiTriNews giaiTriNew = snapshot.getValue(giaiTriNews.class);\r\n                if(giaiTriNew.getTitle().equals(title)){\r\n                    String id = String.valueOf(giaiTriNew.getId());\r\n                    String tenDanhMuc = String.valueOf(giaiTriNew.getTenDanhMuc());\r\n                        myData.child(tenDanhMuc).child(id).removeValue();\r\n                        notifyDataSetChanged();\r\n                        Toast.makeText(mContext.getApplicationContext(), \"Đã xóa Tin\", Toast.LENGTH_SHORT).show();\r\n                }\r\n            }\r\n\r\n            @Override\r\n            public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {\r\n\r\n            }\r\n\r\n            @Override\r\n            public void onChildRemoved(@NonNull DataSnapshot snapshot) {\r\n\r\n            }\r\n\r\n            @Override\r\n            public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {\r\n\r\n            }\r\n\r\n            @Override\r\n            public void onCancelled(@NonNull DatabaseError error) {\r\n\r\n            }\r\n        });\r\n    }\r\n\r\n    for (int i = 0; i< listChild2.size() ;i++) {\r\n        myData1.child(listChild2.get(i)).addChildEventListener(new ChildEventListener() {\r\n            @Override\r\n            public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {\r\n                BDSNews bdsNews = snapshot.getValue(BDSNews.class);\r\n                if(bdsNews.getTitle().equals(title)){\r\n                    String id = String.valueOf(bdsNews.getId());\r\n                    String tenDanhMuc = String.valueOf(bdsNews.getTenDanhMuc());\r\n                    System.out.println(tenDanhMuc);\r\n                    myData1.child(tenDanhMuc).child(id).removeValue();\r\n                    notifyDataSetChanged();\r\n                    Toast.makeText(mContext.getApplicationContext(), \"Đã xóa Tin\", Toast.LENGTH_SHORT).show();\r\n                }\r\n            }\r\n\r\n            @Override\r\n            public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {\r\n\r\n            }\r\n\r\n            @Override\r\n            public void onChildRemoved(@NonNull DataSnapshot snapshot) {\r\n\r\n            }\r\n\r\n            @Override\r\n            public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {\r\n\r\n            }\r\n\r\n            @Override\r\n            public void onCancelled(@NonNull DatabaseError error) {\r\n\r\n            }\r\n        });\r\n    }\r\n\r\n    for(int i = 0; i < listChild1.size();i++){\r\n        myData2.child(listChild1.get(i)).addChildEventListener(new ChildEventListener() {\r\n            @Override\r\n            public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {\r\n                thoiTrangNews thoiTrangNews = snapshot.getValue(com.example.duan1.model.thoiTrangNews.class);\r\n                if(thoiTrangNews.getTitlePost().equals(title)){\r\n                    String id = String.valueOf(thoiTrangNews.getId());\r\n                    String tenDanhMuc = String.valueOf(thoiTrangNews.getTenDanhMuc());\r\n                    \r\n                    myData2.child(tenDanhMuc).child(id).removeValue();\r\n                    notifyDataSetChanged();\r\n                    Toast.makeText(mContext, \"Xóa Thành công\", Toast.LENGTH_SHORT).show();\r\n                }\r\n            }\r\n\r\n            @Override\r\n            public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {\r\n\r\n            }\r\n\r\n            @Override\r\n            public void onChildRemoved(@NonNull DataSnapshot snapshot) {\r\n\r\n            }\r\n\r\n            @Override\r\n            public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {\r\n\r\n            }\r\n\r\n            @Override\r\n            public void onCancelled(@NonNull DatabaseError error) {\r\n\r\n            }\r\n        });\r\n    }\r\n\r\n}\r\n\r\n    public class HolderView extends RecyclerView.ViewHolder {\r\n        private TextView title_historyNews, desc_historyNews, time_historyNews;\r\n        private ImageView icon_option, imgSP;\r\n    private RelativeLayout layout_item;\r\n        public HolderView(@NonNull View itemView) {\r\n            super(itemView);\r\n            title_historyNews = itemView.findViewById(R.id.title_historyNews);\r\n            desc_historyNews = itemView.findViewById(R.id.desc_historyNews);\r\n            time_historyNews = itemView.findViewById(R.id.time_historyNews);\r\n            icon_option = itemView.findViewById(R.id.icon_option);\r\n            layout_item = itemView.findViewById(R.id.layout_item);\r\n            imgSP = itemView.findViewById(R.id.imgTinDang);\r\n\r\n        }\r\n\r\n\r\n\r\n\r\n    }\r\n\r\n    private void suaTin() {\r\n    }\r\n\r\n    private List<String> listChild1() {\r\n        listChild.add(new String(\"Nhạc cụ\"));\r\n        listChild.add(new String(\"Sách\"));\r\n        listChild.add(new String(\"Đồ thể thao, Dã ngoại\"));\r\n        listChild.add(new String(\"Đồ sưu tầm  ,Đồ cổ\"));\r\n        listChild.add(new String(\"Thiết bị chơi game\"));\r\n        listChild.add(new String(\"Sở thích khác\"));\r\n\r\n        return listChild;\r\n    }\r\n\r\n    private List<String> listChild2() {\r\n        listChild1.add(new String(\"Quần áo\"));\r\n        listChild1.add(new String(\"Đồng hồ\"));\r\n        listChild1.add(new String(\"Giày dép\"));\r\n        listChild1.add(new String(\"Túi xách\"));\r\n        listChild1.add(new String(\"Nước hoa\"));\r\n        listChild1.add(new String(\"Phụ kiện khác\"));\r\n\r\n        return listChild1;\r\n    }\r\n\r\n    private List<String> listChild3() {\r\n        listChild2.add(new String(\"Chung cư\"));\r\n        listChild2.add(new String(\"Nhà ở\"));\r\n        listChild2.add(new String(\"Đất\"));\r\n        listChild2.add(new String(\"Văn Phòng\"));\r\n        listChild2.add(new String(\"Phòng trọ\"));\r\n\r\n        return listChild2;\r\n    }\r\n\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/duan1/Adapter/historyNewsAdapter.java b/app/src/main/java/com/example/duan1/Adapter/historyNewsAdapter.java
+--- a/app/src/main/java/com/example/duan1/Adapter/historyNewsAdapter.java	(revision 8b530af99d85d04b50d11e1e6b9cac2474dd3bc2)
++++ b/app/src/main/java/com/example/duan1/Adapter/historyNewsAdapter.java	(date 1670735230476)
+@@ -51,6 +51,10 @@
+         this.mContext = mContext;
+         this.listHistory =listHistory;
+     }
++public void setFilter(List<historyNews> listFilter){
++        this.listHistory = listFilter;
++        notifyDataSetChanged();
++}
+ 
+     @NonNull
+     @Override
+Index: app/src/main/res/drawable/ic_search_main.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/drawable/ic_search_main.xml b/app/src/main/res/drawable/ic_search_main.xml
+new file mode 100644
+--- /dev/null	(date 1670731191787)
++++ b/app/src/main/res/drawable/ic_search_main.xml	(date 1670731191787)
+@@ -0,0 +1,5 @@
++<vector android:alpha="0.9" android:height="24dp" android:tint="#020202"
++    android:viewportHeight="24" android:viewportWidth="24"
++    android:width="24dp" xmlns:android="http://schemas.android.com/apk/res/android">
++    <path android:fillColor="@android:color/white" android:pathData="M15.5,14h-0.79l-0.28,-0.27C15.41,12.59 16,11.11 16,9.5 16,5.91 13.09,3 9.5,3S3,5.91 3,9.5 5.91,16 9.5,16c1.61,0 3.09,-0.59 4.23,-1.57l0.27,0.28v0.79l5,4.99L20.49,19l-4.99,-5zM9.5,14C7.01,14 5,11.99 5,9.5S7.01,5 9.5,5 14,7.01 14,9.5 11.99,14 9.5,14z"/>
++</vector>
+Index: app/src/main/java/com/example/duan1/dangTinThoiTrangActivity.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.duan1;\r\n\r\n\r\nimport androidx.annotation.NonNull;\r\nimport androidx.annotation.Nullable;\r\nimport androidx.appcompat.app.AppCompatActivity;\r\nimport androidx.core.app.ActivityCompat;\r\nimport androidx.core.content.ContextCompat;\r\nimport androidx.recyclerview.widget.GridLayoutManager;\r\nimport androidx.recyclerview.widget.RecyclerView;\r\n\r\n\r\nimport android.Manifest;\r\nimport android.app.ProgressDialog;\r\nimport android.content.Intent;\r\nimport android.content.pm.PackageManager;\r\nimport android.net.Uri;\r\nimport android.os.Build;\r\nimport android.os.Bundle;\r\nimport android.view.View;\r\nimport android.widget.AdapterView;\r\nimport android.widget.ArrayAdapter;\r\nimport android.widget.Button;\r\nimport android.widget.EditText;\r\nimport android.widget.ImageView;\r\nimport android.widget.Spinner;\r\nimport android.widget.TextView;\r\nimport android.widget.Toast;\r\n\r\nimport com.example.duan1.Adapter.photoAdapter;\r\nimport com.example.duan1.model.product_type;\r\nimport com.example.duan1.model.thoiTrangNews;\r\nimport com.google.android.gms.tasks.OnSuccessListener;\r\nimport com.google.firebase.FirebaseApp;\r\nimport com.google.firebase.appcheck.FirebaseAppCheck;\r\nimport com.google.firebase.appcheck.playintegrity.PlayIntegrityAppCheckProviderFactory;\r\nimport com.google.firebase.database.ChildEventListener;\r\nimport com.google.firebase.database.DataSnapshot;\r\nimport com.google.firebase.database.DatabaseError;\r\nimport com.google.firebase.database.DatabaseReference;\r\nimport com.google.firebase.database.FirebaseDatabase;\r\nimport com.google.firebase.database.ValueEventListener;\r\nimport com.google.firebase.storage.FirebaseStorage;\r\nimport com.google.firebase.storage.StorageReference;\r\nimport com.google.firebase.storage.UploadTask;\r\n\r\nimport java.text.SimpleDateFormat;\r\nimport java.util.ArrayList;\r\nimport java.util.Calendar;\r\nimport java.util.HashMap;\r\nimport java.util.List;\r\n\r\n\r\npublic class dangTinThoiTrangActivity extends AppCompatActivity implements photoAdapter.CountOfImageWhenRemove {\r\n    private TextView tvTenDanhMuc;\r\n    private ImageView imgBackPage, addImageProduct;\r\n    private Spinner spn_product_type;\r\n    private EditText edtTitlePost, edtDescription, edtPrice, edtAddress;\r\n    private Button btnDangTin ,btnSuaTin ;\r\n    private com.example.duan1.Adapter.photoAdapter photoAdapter;\r\n    private RecyclerView rcvView_select_img_fashion;\r\n    StorageReference imageFolder;\r\n\r\n    private String strTitlePost, strDescription, strPrice, strLoaiSanPham, strAddress, nameUser\r\n            , tenDanhMuc , title_Post , date , title_Post1;\r\n    private int idUser;\r\n    private double dbPrice;\r\n    private List<thoiTrangNews> listFashion;\r\n    thoiTrangNews newsFashion;\r\n    FirebaseApp firebaseApp;\r\n    FirebaseAppCheck firebaseAppCheck;\r\n\r\n    private int REQUEST_PERMISSION_CODE = 35;\r\n    private int PICK_IMAGE = 1;\r\n    private int update_count = 0, maxID;\r\n    private ArrayList<Uri> imageUri = new ArrayList<>();\r\n    private ProgressDialog progressDialog;\r\n    DatabaseReference myData;\r\n    MainActivity mainActivity;\r\n\r\n    @Override\r\n    protected void onCreate(Bundle savedInstanceState) {\r\n        super.onCreate(savedInstanceState);\r\n        setContentView(R.layout.activity_dang_tin_thoi_trang);\r\n        imageFolder = FirebaseStorage.getInstance().getReference().child(\"Image\").child(\"images\" + System.currentTimeMillis() +\"jpg\");\r\n        myData = FirebaseDatabase.getInstance().getReference(\"Tin\").child(\"ThoiTrang\");\r\n\r\n        nameUser = mainActivity.name;\r\n        idUser = mainActivity.id;\r\n\r\n\r\n\r\n        initUi();\r\n        clickBAckPage();\r\n        eventClickSPN();\r\n        clickAddImageFashion();\r\n        getListFashion();\r\n        clickDangTin();\r\n        getCurrentDate();\r\n        if(title_Post1 == null || title_Post1.equals(\"\")){\r\n            btnDangTin.setVisibility(View.VISIBLE);\r\n            btnSuaTin.setVisibility(View.INVISIBLE);\r\n        }else {\r\n            btnSuaTin.setVisibility(View.VISIBLE);\r\n            btnDangTin.setVisibility(View.INVISIBLE);\r\n            setTextInput();\r\n            suaTin();\r\n        }\r\n\r\n    }\r\n\r\n    private void suaTin() {\r\n        btnSuaTin.setOnClickListener(new View.OnClickListener() {\r\n            @Override\r\n            public void onClick(View view) {\r\n                firebaseApp.initializeApp(dangTinThoiTrangActivity.this);\r\n                firebaseAppCheck = FirebaseAppCheck.getInstance();\r\n                firebaseAppCheck.installAppCheckProviderFactory(PlayIntegrityAppCheckProviderFactory.getInstance());\r\n\r\n                progressDialog = new ProgressDialog(dangTinThoiTrangActivity.this);\r\n                progressDialog.setMessage(\"Please wait for save\");\r\n                strTitlePost = edtTitlePost.getText().toString().trim();\r\n                strDescription = edtDescription.getText().toString();\r\n                strPrice = edtPrice.getText().toString();\r\n                try {\r\n                    dbPrice = Double.parseDouble(strPrice);\r\n                } catch (Exception e) {\r\n                    System.err.println(\"Lỗi Parse kiểu dữ liệu\");\r\n                }\r\n\r\n                strLoaiSanPham = spn_product_type.getSelectedItem().toString();\r\n                strAddress = edtAddress.getText().toString();\r\n\r\n                if (strTitlePost.isEmpty() || strDescription.isEmpty() || strPrice.isEmpty()\r\n                        || strAddress.isEmpty()) {\r\n                    MainActivity.showDiaLogWarning(dangTinThoiTrangActivity.this, \"vui lòng nhập đầy đủ thông tin\");\r\n\r\n                } else {\r\n                    progressDialog.show();\r\n                    for (update_count = 0; update_count < imageUri.size(); update_count++) {\r\n                        Uri indexImage = imageUri.get(update_count);\r\n                        StorageReference imageName = imageFolder.child(\"Image \" + indexImage.getLastPathSegment());\r\n                        imageName.child(strTitlePost).putFile(indexImage).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {\r\n                            @Override\r\n                            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {\r\n                                imageName.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {\r\n                                    @Override\r\n                                    public void onSuccess(Uri uri) {\r\n                                        String Url = String.valueOf(uri);\r\n                                        StoreLick(Url);\r\n\r\n                                    }\r\n                                });\r\n                            }\r\n                        });\r\n                    }\r\n                }\r\n                maxID = newsFashion.getId();\r\n                String strId = String.valueOf(maxID);\r\n                myData.child(tenDanhMuc).child(strId ).setValue(new thoiTrangNews(maxID ,\r\n                        strTitlePost,\r\n                        strDescription,\r\n                        strLoaiSanPham,\r\n                        dbPrice,\r\n                        strAddress ,\r\n                        idUser,\r\n                        nameUser,tenDanhMuc,date)) .addOnSuccessListener(new OnSuccessListener<Void>() {\r\n                    @Override\r\n                    public void onSuccess(Void unused) {\r\n                        Toast.makeText(dangTinThoiTrangActivity.this, \"Sửa tin thành công\", Toast.LENGTH_SHORT).show();\r\n                        progressDialog.dismiss();\r\n                    }\r\n                });\r\n            }\r\n        });\r\n    }\r\n\r\n    private void setTextInput() {\r\n        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();\r\n        DatabaseReference databaseReference1 = firebaseDatabase.getReference(\"Tin\").child(\"ThoiTrang\");\r\n        databaseReference1.child(tenDanhMuc).addChildEventListener(new ChildEventListener() {\r\n            @Override\r\n            public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {\r\n                thoiTrangNews thoiTrangNews = snapshot.getValue(com.example.duan1.model.thoiTrangNews.class);\r\n                listFashion.add(thoiTrangNews);\r\n                if(thoiTrangNews.getTitlePost().equals(title_Post1)) {\r\n                    edtTitlePost.setText(thoiTrangNews.getTitlePost());\r\n                    edtAddress.setText(thoiTrangNews.getAddress());\r\n                    edtDescription.setText(thoiTrangNews.getDescriptionPost());\r\n                    String price = String.valueOf(thoiTrangNews.getPrice());\r\n                    edtPrice.setText(price);\r\n                    newsFashion = thoiTrangNews;\r\n\r\n                }\r\n\r\n            }\r\n\r\n            @Override\r\n            public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {\r\n\r\n            }\r\n\r\n            @Override\r\n            public void onChildRemoved(@NonNull DataSnapshot snapshot) {\r\n\r\n            }\r\n\r\n            @Override\r\n            public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {\r\n\r\n            }\r\n\r\n            @Override\r\n            public void onCancelled(@NonNull DatabaseError error) {\r\n\r\n            }\r\n        });\r\n    }\r\n\r\n    private void getCurrentDate() {\r\n\r\n        SimpleDateFormat sdf = new SimpleDateFormat(\"dd/MM/yyyy\");\r\n        Calendar c = Calendar.getInstance();\r\n         date = sdf.format(c.getTime());\r\n        System.out.println(\"Date : \" + date);\r\n    }\r\n\r\n\r\n    private void clickDangTin() {\r\n\r\n        btnDangTin.setOnClickListener(new View.OnClickListener() {\r\n            @Override\r\n            public void onClick(View view) {\r\n                firebaseApp.initializeApp(dangTinThoiTrangActivity.this);\r\n                firebaseAppCheck = FirebaseAppCheck.getInstance();\r\n                firebaseAppCheck.installAppCheckProviderFactory(PlayIntegrityAppCheckProviderFactory.getInstance());\r\n\r\n                progressDialog = new ProgressDialog(dangTinThoiTrangActivity.this);\r\n                progressDialog.setMessage(\"Please wait for save\");\r\n                strTitlePost = edtTitlePost.getText().toString().trim();\r\n                strDescription = edtDescription.getText().toString();\r\n                strPrice = edtPrice.getText().toString();\r\n                try {\r\n                    dbPrice = Double.parseDouble(strPrice);\r\n                } catch (Exception e) {\r\n                    System.err.println(\"Lỗi Parse kiểu dữ liệu\");\r\n                }\r\n\r\n                strLoaiSanPham = spn_product_type.getSelectedItem().toString();\r\n                strAddress = edtAddress.getText().toString();\r\n\r\n                if (strTitlePost.isEmpty() || strDescription.isEmpty() || strPrice.isEmpty()\r\n                        || strAddress.isEmpty()) {\r\n                    MainActivity.showDiaLogWarning(dangTinThoiTrangActivity.this, \"vui lòng nhập đầy đủ thông tin\");\r\n\r\n                } else {\r\n                    progressDialog.show();\r\n                for (update_count = 0; update_count < imageUri.size(); update_count++) {\r\n                    Uri indexImage = imageUri.get(update_count);\r\n                    StorageReference imageName = imageFolder.child(\"Image \" + indexImage.getLastPathSegment());\r\n                    imageName.child(strTitlePost).putFile(indexImage).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {\r\n                        @Override\r\n                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {\r\n                            imageName.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {\r\n                                @Override\r\n                                public void onSuccess(Uri uri) {\r\n                                    String Url = String.valueOf(uri);\r\n                                    StoreLick(Url);\r\n\r\n                                }\r\n                            });\r\n                        }\r\n                    });\r\n                }\r\n                    }\r\n                    maxID = newsFashion.getId() + 1;\r\n                    String strId = String.valueOf(maxID);\r\n                    myData.child(tenDanhMuc).child(strId ).setValue(new thoiTrangNews(maxID ,\r\n                                    strTitlePost,\r\n                                    strDescription,\r\n                                    strLoaiSanPham,\r\n                                    dbPrice,\r\n                                    strAddress ,\r\n                                    idUser,\r\n                                    nameUser,tenDanhMuc, date)) .addOnSuccessListener(new OnSuccessListener<Void>() {\r\n                                @Override\r\n                                public void onSuccess(Void unused) {\r\n                                    Toast.makeText(dangTinThoiTrangActivity.this, \"Đăng tin thành công\", Toast.LENGTH_SHORT).show();\r\n                                    progressDialog.dismiss();\r\n                                }\r\n                            });\r\n            }\r\n        });\r\n\r\n    }\r\n\r\n    private void StoreLick(String url) {\r\n        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child(\"List Image\");\r\n        HashMap<String, String> hashMap = new HashMap<>();\r\n        hashMap.put(\"Imglink\", url);\r\n        databaseReference.push().setValue(hashMap);\r\n    }\r\n\r\n    private List<thoiTrangNews> getListFashion() {\r\n         listFashion = new ArrayList<>();\r\n        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();\r\n        DatabaseReference databaseReference = firebaseDatabase.getReference(\"Tin\").child(\"ThoiTrang\");\r\n\r\n        databaseReference.child(tenDanhMuc).addValueEventListener(new ValueEventListener() {\r\n            @Override\r\n            public void onDataChange(@NonNull DataSnapshot snapshot) {\r\n                listFashion.clear();\r\n                for (DataSnapshot snapshot1 : snapshot.getChildren() ){\r\n                    thoiTrangNews thoiTrangNews = snapshot1.getValue(thoiTrangNews.class);\r\n                    listFashion.add(thoiTrangNews);\r\n                    newsFashion = thoiTrangNews;\r\n                }\r\n            }\r\n\r\n            @Override\r\n            public void onCancelled(@NonNull DatabaseError error) {\r\n                Toast.makeText(dangTinThoiTrangActivity.this, \"Load data Error\", Toast.LENGTH_SHORT).show();\r\n            }\r\n        });\r\n\r\n        return listFashion;\r\n\r\n    }\r\n\r\n\r\n//      @Override\r\n//      public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {\r\n//       Task<Uri> urlTask = taskSnapshot.getStorage().getDownloadUrl();\r\n//      while (!urlTask.isSuccessful());\r\n//      Uri downloadUrl = urlTask.getResult();\r\n//       FriendlyMessage friendlyMessage = new FriendlyMessage(null, mUsername, downloadUrl.toString());\r\n//      mDatabaseReference.push().setValue(friendlyMessage); }\r\n\r\n    private void clickAddImageFashion() {\r\n        photoAdapter = new photoAdapter(imageUri, this, this);\r\n        rcvView_select_img_fashion.setLayoutManager(new GridLayoutManager(dangTinThoiTrangActivity.this, 6));\r\n        rcvView_select_img_fashion.setAdapter(photoAdapter);\r\n\r\n        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)\r\n                != PackageManager.PERMISSION_GRANTED) {\r\n            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},\r\n                    REQUEST_PERMISSION_CODE);\r\n            return;\r\n        }\r\n\r\n        addImageProduct.setOnClickListener(new View.OnClickListener() {\r\n            @Override\r\n            public void onClick(View view) {\r\n                Intent intent = new Intent(Intent.ACTION_GET_CONTENT);\r\n                intent.setType(\"image/*\");\r\n                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {\r\n                    intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);\r\n                }\r\n                startActivityForResult(Intent.createChooser(intent, \"select Picture\"), PICK_IMAGE);\r\n            }\r\n        });\r\n    }\r\n\r\n    @Override\r\n    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {\r\n        super.onActivityResult(requestCode, resultCode, data);\r\n        if (requestCode == PICK_IMAGE && resultCode == RESULT_OK && data != null) {\r\n            if (data.getClipData() != null) {\r\n                int count = data.getClipData().getItemCount();\r\n\r\n                for (int i = 0; i < count; i++) {\r\n                    if (imageUri.size() < 9) {\r\n                        Uri imgUri = (data.getClipData().getItemAt(i).getUri());\r\n                        imageUri.add(imgUri);\r\n                    } else {\r\n                        Toast.makeText(this, \"Chỉ đăng tối đa 9 hình ảnh\", Toast.LENGTH_SHORT).show();\r\n                    }\r\n\r\n                }\r\n                photoAdapter.notifyDataSetChanged();\r\n            } else {\r\n                if (imageUri.size() < 9) {\r\n                    Uri imgUri = data.getData();\r\n                    imageUri.add(imgUri);\r\n                } else {\r\n                    Toast.makeText(this, \"Chỉ đăng tối đa 9 hình ảnh\", Toast.LENGTH_SHORT).show();\r\n                }\r\n\r\n\r\n            }\r\n            photoAdapter.notifyDataSetChanged();\r\n        } else {\r\n            Toast.makeText(this, \"you haven't pick any Image\", Toast.LENGTH_SHORT).show();\r\n        }\r\n    }\r\n\r\n    private void eventClickSPN() {\r\n        product_type[] product_type = dangTinThoiTrangActivity.productType.getProductType();\r\n        ArrayAdapter<product_type> adapter = new ArrayAdapter<product_type>(this, android.R.layout.simple_spinner_item, product_type);\r\n        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);\r\n        spn_product_type.setAdapter(adapter);\r\n\r\n        spn_product_type.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {\r\n            @Override\r\n            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {\r\n                Toast.makeText(dangTinThoiTrangActivity.this, \"Loại sản phẩm \" + i, Toast.LENGTH_SHORT).show();\r\n            }\r\n\r\n            @Override\r\n            public void onNothingSelected(AdapterView<?> adapterView) {\r\n\r\n            }\r\n        });\r\n    }\r\n\r\n    private void clickBAckPage() {\r\n        imgBackPage.setOnClickListener(new View.OnClickListener() {\r\n            @Override\r\n            public void onClick(View view) {\r\n                finish();\r\n            }\r\n        });\r\n    }\r\n\r\n    private void initUi() {\r\n        tvTenDanhMuc = findViewById(R.id.tvTenDanhMucTT);\r\n        Intent intent = getIntent();\r\n        title_Post1 = intent.getStringExtra(\"title1\");\r\n        tvTenDanhMuc.setText(\"Danh Mục - \" + intent.getStringExtra(\"tenDanhMuc\"));\r\n        imgBackPage = findViewById(R.id.icon_backTT);\r\n        spn_product_type = findViewById(R.id.spn_product_type);\r\n        edtTitlePost = findViewById(R.id.title_postTT);\r\n        edtDescription = findViewById(R.id.description_postTT);\r\n        edtPrice = findViewById(R.id.priceTT);\r\n        edtAddress = findViewById(R.id.addressTT);\r\n        btnDangTin = findViewById(R.id.btnDangTinTT);\r\n        rcvView_select_img_fashion = findViewById(R.id.rcvView_select_img_fashion);\r\n        addImageProduct = findViewById(R.id.addImageProductTT);\r\n        btnSuaTin = findViewById(R.id.btnSuaTin);\r\n\r\n        imageUri = new ArrayList<>();\r\n        Intent intent1 = getIntent();\r\n        tenDanhMuc = intent1.getStringExtra(\"tenDanhMuc\");\r\n        title_Post = intent1.getStringExtra(\"title\");\r\n\r\n\r\n    }\r\n\r\n    @Override\r\n    public void clicked(int getSize) {\r\n\r\n    }\r\n\r\n    public static class productType {\r\n        public static product_type[] getProductType() {\r\n            product_type prd1 = new product_type(\"Nam\");\r\n            product_type prd2 = new product_type(\"Nữ\");\r\n            product_type prd3 = new product_type(\"Cả hai\");\r\n            return new product_type[]{prd1, prd2, prd3};\r\n\r\n\r\n        }\r\n    }\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/duan1/dangTinThoiTrangActivity.java b/app/src/main/java/com/example/duan1/dangTinThoiTrangActivity.java
+--- a/app/src/main/java/com/example/duan1/dangTinThoiTrangActivity.java	(revision 8b530af99d85d04b50d11e1e6b9cac2474dd3bc2)
++++ b/app/src/main/java/com/example/duan1/dangTinThoiTrangActivity.java	(date 1670765782311)
+@@ -273,7 +273,12 @@
+                     });
+                 }
+                     }
++                if(newsFashion == null) {
++                    maxID = 0;
++                }else {
+                     maxID = newsFashion.getId() + 1;
++
++                }
+                     String strId = String.valueOf(maxID);
+                     myData.child(tenDanhMuc).child(strId ).setValue(new thoiTrangNews(maxID ,
+                                     strTitlePost,
+Index: app/src/main/res/menu/item_search_menu.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/menu/item_search_menu.xml b/app/src/main/res/menu/item_search_menu.xml
+new file mode 100644
+--- /dev/null	(date 1670732316421)
++++ b/app/src/main/res/menu/item_search_menu.xml	(date 1670732316421)
+@@ -0,0 +1,10 @@
++<?xml version="1.0" encoding="utf-8"?>
++<menu xmlns:android="http://schemas.android.com/apk/res/android"
++    xmlns:app="http://schemas.android.com/apk/res-auto">
++    <item
++        android:id="@+id/search_main"
++        android:title="Tìm kiếm"
++        android:icon="@drawable/ic_search_main"
++        app:showAsAction="always"
++        app:actionViewClass="androidx.appcompat.widget.SearchView"/>
++</menu>
+\ No newline at end of file
+Index: app/src/main/res/drawable/ic_search.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/drawable/ic_search.xml b/app/src/main/res/drawable/ic_search.xml
+new file mode 100644
+--- /dev/null	(date 1670729814247)
++++ b/app/src/main/res/drawable/ic_search.xml	(date 1670729814247)
+@@ -0,0 +1,5 @@
++<vector android:alpha="0.9" android:height="24dp" android:tint="#322F2F"
++    android:viewportHeight="24" android:viewportWidth="24"
++    android:width="24dp" xmlns:android="http://schemas.android.com/apk/res/android">
++    <path android:fillColor="@android:color/white" android:pathData="M15.5,14h-0.79l-0.28,-0.27C15.41,12.59 16,11.11 16,9.5 16,5.91 13.09,3 9.5,3S3,5.91 3,9.5 5.91,16 9.5,16c1.61,0 3.09,-0.59 4.23,-1.57l0.27,0.28v0.79l5,4.99L20.49,19l-4.99,-5zM9.5,14C7.01,14 5,11.99 5,9.5S7.01,5 9.5,5 14,7.01 14,9.5 11.99,14 9.5,14z"/>
++</vector>

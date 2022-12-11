@@ -323,9 +323,9 @@ public class dagTinGiaiTriActivity extends AppCompatActivity implements com.exam
                     progressDialog.show();
 
                     if(giaiTriNewsId == null) {
-                        maxID = 1;
+                        maxID = 0;
                     }else {
-                        maxID = listGiaiTri.size() +1;
+                        maxID = giaiTriNewsId.getId() +1;
                     }
 
                     upImage(maxID);

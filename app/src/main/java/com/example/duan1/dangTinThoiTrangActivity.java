@@ -74,6 +74,7 @@ public class dangTinThoiTrangActivity extends AppCompatActivity implements photo
     thoiTrangNews newsFashion;
     FirebaseApp firebaseApp;
     FirebaseAppCheck firebaseAppCheck;
+    private Bitmap bitmapselect;
 
     private int REQUEST_PERMISSION_CODE = 35;
     private int PICK_IMAGE = 1;
@@ -82,8 +83,6 @@ public class dangTinThoiTrangActivity extends AppCompatActivity implements photo
     private ProgressDialog progressDialog;
     DatabaseReference myData;
     MainActivity mainActivity;
-    private thoiTrangNews thoiTrangNews;
-    private Bitmap bitmapselect;
     private Calendar calendar = Calendar.getInstance();
 
     @Override
@@ -92,8 +91,12 @@ public class dangTinThoiTrangActivity extends AppCompatActivity implements photo
         setContentView(R.layout.activity_dang_tin_thoi_trang);
         imageFolder = FirebaseStorage.getInstance().getReference().child("Image").child("images" + System.currentTimeMillis() +"jpg");
         myData = FirebaseDatabase.getInstance().getReference("Tin").child("ThoiTrang");
+
         nameUser = mainActivity.name;
         idUser = mainActivity.id;
+
+
+
         initUi();
         clickBAckPage();
         eventClickSPN();
@@ -141,25 +144,26 @@ public class dangTinThoiTrangActivity extends AppCompatActivity implements photo
 
                 } else {
                     progressDialog.show();
-                    maxID = newsFashion.getId();
-                    upImage(maxID);
-                    String strId = String.valueOf(maxID);
-                    myData.child(tenDanhMuc).child(strId ).setValue(new thoiTrangNews(maxID ,
-                            strTitlePost,
-                            strDescription,
-                            strLoaiSanPham,
-                            dbPrice,
-                            strAddress ,
-                            idUser,
-                            nameUser,tenDanhMuc,date)) .addOnSuccessListener(new OnSuccessListener<Void>() {
-                        @Override
-                        public void onSuccess(Void unused) {
-                            Toast.makeText(dangTinThoiTrangActivity.this, "Sửa tin thành công", Toast.LENGTH_SHORT).show();
-                            progressDialog.dismiss();
-                        }
-                    });
-                }
 
+
+                maxID = newsFashion.getId();
+                    upImage(maxID);
+                String strId = String.valueOf(maxID);
+                myData.child(tenDanhMuc).child(strId ).setValue(new thoiTrangNews(maxID ,
+                        strTitlePost,
+                        strDescription,
+                        strLoaiSanPham,
+                        dbPrice,
+                        strAddress ,
+                        idUser,
+                        nameUser,tenDanhMuc,date)) .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void unused) {
+                        Toast.makeText(dangTinThoiTrangActivity.this, "Sửa tin thành công", Toast.LENGTH_SHORT).show();
+                        progressDialog.dismiss();
+                    }
+                });
+                }
             }
         });
     }
@@ -245,40 +249,91 @@ public class dangTinThoiTrangActivity extends AppCompatActivity implements photo
                 } else {
                     progressDialog.show();
 
-                    if (newsFashion == null) {
-                        maxID = 0;
-                    } else {
-                        maxID = newsFashion.getId() + 1;
                     }
-                    upImage(maxID);
+                if(newsFashion == null) {
+                    maxID = 0;
+                }else {
+                    maxID = newsFashion.getId() + 1;
+
+                }
+                upImage(maxID);
                     String strId = String.valueOf(maxID);
                     myData.child(tenDanhMuc).child(strId ).setValue(new thoiTrangNews(maxID ,
-                            strTitlePost,
-                            strDescription,
-                            strLoaiSanPham,
-                            dbPrice,
-                            strAddress ,
-                            idUser,
-                            nameUser,tenDanhMuc, date)) .addOnSuccessListener(new OnSuccessListener<Void>() {
-                        @Override
-                        public void onSuccess(Void unused) {
-                            Toast.makeText(dangTinThoiTrangActivity.this, "Đăng tin thành công", Toast.LENGTH_SHORT).show();
-                            progressDialog.dismiss();
-                        }
-                    });
-                    }
-
+                                    strTitlePost,
+                                    strDescription,
+                                    strLoaiSanPham,
+                                    dbPrice,
+                                    strAddress ,
+                                    idUser,
+                                    nameUser,tenDanhMuc, date)) .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void unused) {
+                                    Toast.makeText(dangTinThoiTrangActivity.this, "Đăng tin thành công", Toast.LENGTH_SHORT).show();
+                                    progressDialog.dismiss();
+                                }
+                            });
             }
         });
 
     }
+    private void upImage(int id) {
+        if (imageUri.size() == 0){
+            return;
+        }
+        Uri uri = imageUri.get(0);
+        try {
+            bitmapselect = MediaStore.Images.Media.getBitmap(getContentResolver(),uri);
+            FirebaseStorage storage = FirebaseStorage.getInstance();
+            StorageReference storageRef = storage.getReference();
+            StorageReference mountainsRef = storageRef.child(tenDanhMuc+"/image"+calendar.getTimeInMillis());
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            bitmapselect.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+            byte[] dataImage = baos.toByteArray();
 
-    private void StoreLick(String url) {
-        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("List Image");
-        HashMap<String, String> hashMap = new HashMap<>();
-        hashMap.put("Imglink", url);
-        databaseReference.push().setValue(hashMap);
+            UploadTask uploadTask = mountainsRef.putBytes(dataImage);
+            uploadTask.addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception exception) {
+                    // Handle unsuccessful uploads
+                    progressDialog.dismiss();
+                    Toast.makeText(dangTinThoiTrangActivity.this, "Lỗi cập nhật hình ảnh!", Toast.LENGTH_SHORT).show();
+                }
+            }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                    // taskSnapshot.getMetadata() contains file metadata such as size, content-type, etc.
+
+                    mountainsRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                        @Override
+                        public void onSuccess(Uri uri) {
+                            String strImage = String.valueOf(uri);
+                            UpdateImageUrl(strImage, id);
+                            progressDialog.dismiss();
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception exception) {
+                            // Handle any errors
+                            progressDialog.dismiss();
+                            Toast.makeText(dangTinThoiTrangActivity.this, "Lỗi tải URL hình ảnh!", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+            });
+        } catch (IOException e) {
+            Toast.makeText(mainActivity, "Lỗi try-catch", Toast.LENGTH_SHORT).show();
+        }
     }
+    private void UpdateImageUrl(String url, int id) {
+        myData.child(tenDanhMuc+"/"+id+"/image").setValue(url);
+    }
+
+//    private void StoreLick(String url) {
+//        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("List Image");
+//        HashMap<String, String> hashMap = new HashMap<>();
+//        hashMap.put("Imglink", url);
+//        databaseReference.push().setValue(hashMap);
+//    }
 
     private List<thoiTrangNews> getListFashion() {
          listFashion = new ArrayList<>();
@@ -364,6 +419,8 @@ public class dangTinThoiTrangActivity extends AppCompatActivity implements photo
                 } else {
                     Toast.makeText(this, "Chỉ đăng tối đa 9 hình ảnh", Toast.LENGTH_SHORT).show();
                 }
+
+
             }
             photoAdapter.notifyDataSetChanged();
         } else {
@@ -373,7 +430,8 @@ public class dangTinThoiTrangActivity extends AppCompatActivity implements photo
 
     private void eventClickSPN() {
         product_type[] product_type = dangTinThoiTrangActivity.productType.getProductType();
-        ArrayAdapter<product_type> adapter = new ArrayAdapter<product_type>(this, android.R.layout.simple_spinner_item, product_type);
+        ArrayAdapter<product_type> adapter = new ArrayAdapter<product_type>(this,
+                android.R.layout.simple_spinner_item, product_type);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spn_product_type.setAdapter(adapter);
 
@@ -419,6 +477,8 @@ public class dangTinThoiTrangActivity extends AppCompatActivity implements photo
         Intent intent1 = getIntent();
         tenDanhMuc = intent1.getStringExtra("tenDanhMuc");
         title_Post = intent1.getStringExtra("title");
+
+
     }
 
     @Override
@@ -436,63 +496,4 @@ public class dangTinThoiTrangActivity extends AppCompatActivity implements photo
 
         }
     }
-
-    private void upImage(int id) {
-        if (imageUri.size() == 0){
-            return;
-        }
-        Uri uri = imageUri.get(0);
-        try {
-            bitmapselect = MediaStore.Images.Media.getBitmap(getContentResolver(),uri);
-            FirebaseStorage storage = FirebaseStorage.getInstance();
-            StorageReference storageRef = storage.getReference();
-            StorageReference mountainsRef = storageRef.child(tenDanhMuc+"/image"+calendar.getTimeInMillis());
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            bitmapselect.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-            byte[] dataImage = baos.toByteArray();
-
-            UploadTask uploadTask = mountainsRef.putBytes(dataImage);
-            uploadTask.addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception exception) {
-                    // Handle unsuccessful uploads
-                    progressDialog.dismiss();
-                    Toast.makeText(dangTinThoiTrangActivity.this, "Lỗi cập nhật hình ảnh!", Toast.LENGTH_SHORT).show();
-                }
-            }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                @Override
-                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                    // taskSnapshot.getMetadata() contains file metadata such as size, content-type, etc.
-
-                    mountainsRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                        @Override
-                        public void onSuccess(Uri uri) {
-                            String strImage = String.valueOf(uri);
-                            UpdateImageUrl(strImage, id);
-                            progressDialog.dismiss();
-                        }
-                    }).addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception exception) {
-                            // Handle any errors
-                            progressDialog.dismiss();
-                            Toast.makeText(dangTinThoiTrangActivity.this, "Lỗi tải URL hình ảnh!", Toast.LENGTH_SHORT).show();
-                        }
-                    });
-                }
-            });
-        } catch (IOException e) {
-            Toast.makeText(mainActivity, "Lỗi try-catch", Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    private void UpdateImageUrl(String url, int id) {
-        myData.child(tenDanhMuc+"/"+id+"/image").setValue(url);
-    }
-
-
-
-
-
-
 }

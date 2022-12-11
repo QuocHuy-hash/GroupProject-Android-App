@@ -151,7 +151,7 @@ public class dangTinBDSActivity extends AppCompatActivity implements com.example
                     myData.child(tenDanhMuc).child(strId ).setValue(
                                     new BDSNews(idEdit ,strTitlePost , strDescription , dbPrice
                                             ,strDienTich ,strAddress ,strTenKhu ,strLoaiHinhDat ,
-                                            strSoPhongNgu,strSoPhongWc ,idUser,nameUser ,tenDanhMuc, date))
+                                            strSoPhongNgu,strSoPhongWc ,idUser,nameUser ,tenDanhMuc, date ))
                             .addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
                                 public void onSuccess(Void unused) {

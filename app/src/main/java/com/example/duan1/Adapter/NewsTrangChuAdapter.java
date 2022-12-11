@@ -50,7 +50,14 @@ public class NewsTrangChuAdapter extends RecyclerView.Adapter<NewsTrangChuAdapte
         h.tvFee.setText(free);
         h.tvTime.setText(OOP.getTime());
         h.tvDes.setText(OOP.getDescripsion());
-        Glide.with(context).load(OOP.getImage()).into(h.imgNews);
+        String strimage = OOP.getImage();
+        try {
+            Picasso.with(context)
+                    .load(strimage)
+                    .into(h.imgNews);
+        }catch (Exception e) {
+            System.out.println("Lỗi load ảnh trong newsAdapter" + e);
+        }
 
 //        if(OOP.getsoluonganh() > 1){
 //            h.linearLayout.setVisibility(View.VISIBLE);
@@ -58,6 +65,8 @@ public class NewsTrangChuAdapter extends RecyclerView.Adapter<NewsTrangChuAdapte
 //        }else{
 //            h.linearLayout.setVisibility(View.INVISIBLE);
 //        }
+
+//        Glide.with(context).load(OOP.getImage()).into(h.imgNews);
 
         if(OOP.isFavorite()){
             h.imgFavorite.setImageResource(R.drawable.ic_item_trangchu_favorite);

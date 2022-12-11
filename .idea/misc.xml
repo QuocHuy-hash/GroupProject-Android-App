@@ -16,6 +16,7 @@
         <entry key="..\:/FPT_HoangQuocHuy/Du_An_1(LTMT)/QLDA_android1/app/src/main/res/drawable/ic_baseline_more_horiz_24.xml" value="0.128" />
         <entry key="..\:/FPT_HoangQuocHuy/Du_An_1(LTMT)/QLDA_android1/app/src/main/res/drawable/ic_baseline_newspaper_24.xml" value="0.128" />
         <entry key="..\:/FPT_HoangQuocHuy/Du_An_1(LTMT)/QLDA_android1/app/src/main/res/drawable/ic_baseline_shopping_basket_24.xml" value="0.128" />
+        <entry key="..\:/FPT_HoangQuocHuy/Du_An_1(LTMT)/QLDA_android1/app/src/main/res/drawable/ic_search.xml" value="0.1345" />
         <entry key="..\:/FPT_HoangQuocHuy/Du_An_1(LTMT)/QLDA_android1/app/src/main/res/drawable/transparent_background.xml" value="0.128" />
         <entry key="..\:/FPT_HoangQuocHuy/Du_An_1(LTMT)/QLDA_android1/app/src/main/res/layout/activity_chon_danh_muc_bdsactivity.xml" value="0.1721014492753623" />
         <entry key="..\:/FPT_HoangQuocHuy/Du_An_1(LTMT)/QLDA_android1/app/src/main/res/layout/activity_chon_danh_muc_dien_may.xml" value="0.1721014492753623" />
@@ -56,6 +57,7 @@
         <entry key="..\:/FPT_HoangQuocHuy/Du_An_1(LTMT)/QLDA_android1/app/src/main/res/layout/layout_dialog_chon_danh_muc.xml" value="0.1721014492753623" />
         <entry key="..\:/FPT_HoangQuocHuy/Du_An_1(LTMT)/QLDA_android1/app/src/main/res/layout/slider_item_layout.xml" value="0.17028985507246377" />
         <entry key="..\:/FPT_HoangQuocHuy/Du_An_1(LTMT)/QLDA_android1/app/src/main/res/menu/bottom_nav_menu.xml" value="0.225" />
+        <entry key="..\:/FPT_HoangQuocHuy/Du_An_1(LTMT)/QLDA_android1/app/src/main/res/menu/item_search_menu.xml" value="0.225" />
         <entry key="..\:/FPT_HoangQuocHuy/Du_An_1(LTMT)/QLDA_android1/app/src/main/res/menu/menu_them.xml" value="0.225" />
         <entry key="..\:/FPT_HoangQuocHuy/Du_An_1(LTMT)/QLDA_android1/app/src/main/res/menu/popup_menu.xml" value="0.225" />
       </map>

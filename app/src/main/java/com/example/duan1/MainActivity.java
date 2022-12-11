@@ -2,15 +2,18 @@ package com.example.duan1;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SearchView;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.Gravity;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
@@ -44,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
 
     BottomNavigationView bottomNavigationView;
     FloatingActionButton floatingActionButton;
-
+    SearchView searchView;
     FragmentTrangChu fragmentTrangChu = new FragmentTrangChu();
     FragmentQuanLiTin fragmentQuanLiTin = new FragmentQuanLiTin();
     FragmentDaoCho fragmentDaoCho = new FragmentDaoCho();
@@ -57,19 +60,21 @@ public class MainActivity extends AppCompatActivity {
     public static int id;
 
 
+
+
     @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         initUi();
-
+        searchView = findViewById(R.id.searchView);
         mAuth = FirebaseAuth.getInstance();
         currentUser = mAuth.getCurrentUser();
 
         database = FirebaseDatabase.getInstance();
         myRef = database.getReference("Users");
-        if (currentUser!= null){
+        if (currentUser != null) {
             getUser();
         }
 
@@ -87,6 +92,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+
 
         bottomNavigationView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
             @Override
