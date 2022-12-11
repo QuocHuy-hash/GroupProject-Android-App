@@ -54,7 +54,7 @@ import java.util.List;
 public class dangTinBDSActivity extends AppCompatActivity implements com.example.duan1.Adapter.photoAdapter.CountOfImageWhenRemove {
     private Spinner spn_Direction;
     private TextView tvTenDanhMuc;
-    private Bitmap bitmapselect;
+
     private ImageView imgBackPage, iconCloser;
     private EditText edtTitlePost, edtDescription, edtTenKhuDanCu, edtAddress, edtLoaiHinh, edtSoPhongNgu,
             edtSoPhongWc, edtPrice, edtDienTich;
@@ -78,6 +78,7 @@ public class dangTinBDSActivity extends AppCompatActivity implements com.example
     private ProgressDialog progressDialog;
     DatabaseReference myData;
     StorageReference imageFolder;
+    private Bitmap bitmapselect;
     private Calendar calendar = Calendar.getInstance();
 
     @Override
@@ -145,23 +146,6 @@ public class dangTinBDSActivity extends AppCompatActivity implements com.example
                     progressDialog.show();
 
                     upImage(idEdit);
-//                    for (update_count = 0; update_count < imageUri.size(); update_count++) {
-//                        Uri indexImage = imageUri.get(0);
-//                        StorageReference imageName = imageFolder.child("ImageTin/" + indexImage + calendar);
-//                        imageName.putFile(indexImage).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-//                            @Override
-//                            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-//                                imageName.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-//                                    @Override
-//                                    public void onSuccess(Uri uri) {
-//                                        String Url = String.valueOf(uri);
-//                                        StoreLick(Url);
-//
-//                                    }
-//                                });
-//                            }
-//                        });
-//                    }
 
                     String strId = String.valueOf(idEdit);
                     myData.child(tenDanhMuc).child(strId ).setValue(
@@ -175,7 +159,6 @@ public class dangTinBDSActivity extends AppCompatActivity implements com.example
                                     progressDialog.dismiss();
                                 }
                             });
-
                 }
             }
         });
@@ -285,7 +268,6 @@ public class dangTinBDSActivity extends AppCompatActivity implements com.example
                     System.err.println("Lỗi Parse kiểu dữ liệu");
                 }
 
-
                 if (strTitlePost.isEmpty() || strDescription.isEmpty() || strPrice.isEmpty()
                         || strAddress.isEmpty() || strTenKhu.isEmpty() || strLoaiHinhDat.isEmpty() || strDienTich.isEmpty()
                         || strSoPhongWc.isEmpty() || strSoPhongNgu.isEmpty()) {
@@ -299,24 +281,8 @@ public class dangTinBDSActivity extends AppCompatActivity implements com.example
                         maxID = bdsNewsId.getId() + 1;
                     }
 
-                        upImage(maxID);
-//                    for (update_count = 0; update_count < imageUri.size(); update_count++) {
-//                        Uri indexImage = imageUri.get(update_count);
-//                        StorageReference imageName = imageFolder.child("ImageTin/" + indexImage + calendar);
-//                        imageName.child(strTitlePost).putFile(indexImage).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-//                            @Override
-//                            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-//                                imageName.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-//                                    @Override
-//                                    public void onSuccess(Uri uri) {
-//                                        String Url = String.valueOf(uri);
-//                                        UpdateImageUrl(Url);
-//
-//                                    }
-//                                });
-//                            }
-//                        });
-//                    }
+                    upImage(maxID);
+
                     String strId = String.valueOf(maxID);
                     myData.child(tenDanhMuc).child(strId).setValue(
                                     new BDSNews(maxID, strTitlePost, strDescription, dbPrice
@@ -336,14 +302,7 @@ public class dangTinBDSActivity extends AppCompatActivity implements com.example
 
     }
 
-    private void UpdateImageUrl(String url, int id) {
 
-        DatabaseReference databaseReference = FirebaseDatabase.getInstance()
-                .getReference()
-                .child("Tin/BDS/Chung cư/"+id+"/image");
-        databaseReference.setValue(url);
-
-    }
 
     private List<BDSNews> getListBds() {
         listBDS = new ArrayList<>();
@@ -523,6 +482,11 @@ public class dangTinBDSActivity extends AppCompatActivity implements com.example
         } catch (IOException e) {
             Toast.makeText(mainActivity, "Lỗi try-catch", Toast.LENGTH_SHORT).show();
         }
-
     }
+
+    private void UpdateImageUrl(String url, int id) {
+        myData.child(tenDanhMuc+"/"+id+"/image").setValue(url);
+    }
+
+
 }

@@ -96,7 +96,7 @@ public class FragmentTrangChu extends Fragment {
                 mNewsTrangChuAdapter.setDATA(newsTrangChuList);
                 rcvNewsTrangChu.setAdapter(mNewsTrangChuAdapter);
             }
-        },500);
+        },600);
 //        mNewsTrangChuAdapter = new NewsTrangChuAdapter(getContext());
 //        GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), 2);
 //        rcvNewsTrangChu.setLayoutManager(gridLayoutManager);
@@ -167,8 +167,7 @@ public class FragmentTrangChu extends Fragment {
                 public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
                     giaiTriNews giaiTriNews = snapshot.getValue(giaiTriNews.class);
                     newsTrangChuList.add(new NewsTrangChu(giaiTriNews.getTitle() , giaiTriNews.getDescription(),
-                            giaiTriNews.getDate(),giaiTriNews.getPrice(),true, ""));
-                    mNewsTrangChuAdapter.notifyDataSetChanged();
+                            giaiTriNews.getDate(),giaiTriNews.getPrice(),true, giaiTriNews.getImage()));
                 }
 
                 @Override
@@ -200,7 +199,6 @@ public class FragmentTrangChu extends Fragment {
                     thoiTrangNews thoiTrangNews = snapshot.getValue(com.example.duan1.model.thoiTrangNews.class);
                     newsTrangChuList.add(new NewsTrangChu(thoiTrangNews.getTitlePost(), thoiTrangNews.getDescriptionPost(),
                             thoiTrangNews.getDate(), thoiTrangNews.getPrice(), true , ""));
-                    mNewsTrangChuAdapter.notifyDataSetChanged();
                 }
 
                 @Override
@@ -232,7 +230,6 @@ public class FragmentTrangChu extends Fragment {
 
                     newsTrangChuList.add(new NewsTrangChu(bdsNews.getTitle() , bdsNews.getDescription() ,
                             bdsNews.getDate(),bdsNews.getPrice(), true, bdsNews.getImage()));
-                            mNewsTrangChuAdapter.notifyDataSetChanged();
                 }
 
                 @Override

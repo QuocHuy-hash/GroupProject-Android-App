@@ -193,7 +193,7 @@
                     android:padding="10dp" />
 
                 <EditText
-                    android:id="@+id/price"
+                    android:id="@+id/price_tin_phongtro"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="6dp"
@@ -213,11 +213,11 @@
         android:layout_margin="20dp"
         android:padding="6dp"
         android:text="Đăng tin" />
+
     <Button
         android:id="@+id/btnSuaTinPT"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="20dp"
         android:padding="6dp"
         android:text="Sửa tin" />
 </RelativeLayout>

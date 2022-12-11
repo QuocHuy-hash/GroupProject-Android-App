@@ -12,9 +12,11 @@ import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -26,6 +28,7 @@ import android.widget.Toast;
 import com.example.duan1.Adapter.photoAdapter;
 import com.example.duan1.model.BDSNews;
 import com.example.duan1.model.thoiTrangNews;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -37,6 +40,8 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -63,10 +68,10 @@ public class dangTinBDSPhongTroActivity extends AppCompatActivity implements com
     private List<BDSNews> listBDS;
     MainActivity mainActivity;
     BDSNews bdsNewsId;
-
-
     StorageReference imageFolder;
     DatabaseReference myData;
+    private Bitmap bitmapselect;
+    private Calendar calendar = Calendar.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -120,27 +125,11 @@ public class dangTinBDSPhongTroActivity extends AppCompatActivity implements com
 
                 } else {
                     progressDialog.show();
-                    for (update_count = 0; update_count < imageUri.size(); update_count++) {
-                        Uri indexImage = imageUri.get(update_count);
-                        StorageReference imageName = imageFolder.child("Image " + indexImage.getLastPathSegment());
-                        imageName.child(strTitle).putFile(indexImage).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                            @Override
-                            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                                imageName.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                                    @Override
-                                    public void onSuccess(Uri uri) {
-                                        String Url = String.valueOf(uri);
-                                        StoreLick(Url);
-
-                                    }
-                                });
-                            }
-                        });
-                    }
-
                     maxID = bdsNewsId.getId();
-                    String strId = String.valueOf(maxID);
 
+                    upImage(maxID);
+
+                    String strId = String.valueOf(maxID);
                     myData.child(tenDanhMuc).child(strId).setValue(
                             new BDSNews(maxID, strTitle, strDesc, dbPrice, strDienTich, strAddress,
                                     idUser, nameUser,tenDanhMuc, date
@@ -276,7 +265,6 @@ public class dangTinBDSPhongTroActivity extends AppCompatActivity implements com
 
 
     private void clickDangTin() {
-
         btnDangTin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -297,28 +285,17 @@ public class dangTinBDSPhongTroActivity extends AppCompatActivity implements com
 
                 if (strAddress.isEmpty() || strPrice.isEmpty() || strDesc.isEmpty() || strTitle.isEmpty() || strDienTich.isEmpty()) {
                     MainActivity.showDiaLogWarning(dangTinBDSPhongTroActivity.this, "vui lòng nhập đầy đủ thông tin");
-
                 } else {
                     progressDialog.show();
-                    for (update_count = 0; update_count < imageUri.size(); update_count++) {
-                        Uri indexImage = imageUri.get(update_count);
-                        StorageReference imageName = imageFolder.child("Image " + indexImage.getLastPathSegment());
-                        imageName.child(strTitle).putFile(indexImage).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                            @Override
-                            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                                imageName.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                                    @Override
-                                    public void onSuccess(Uri uri) {
-                                        String Url = String.valueOf(uri);
-                                        StoreLick(Url);
 
-                                    }
-                                });
-                            }
-                        });
+                    if (bdsNewsId == null) {
+                        maxID = 0;
+                    } else {
+                        maxID = bdsNewsId.getId() + 1;
                     }
 
-                    maxID = bdsNewsId.getId() + 1;
+                    upImage(maxID);
+
                     String strId = String.valueOf(maxID);
 
                     myData.child(tenDanhMuc).child(strId).setValue(
@@ -331,6 +308,7 @@ public class dangTinBDSPhongTroActivity extends AppCompatActivity implements com
                             progressDialog.dismiss();
                         }
                     });
+                    progressDialog.dismiss();
                 }
             }
         });
@@ -381,7 +359,7 @@ public class dangTinBDSPhongTroActivity extends AppCompatActivity implements com
         description = findViewById(R.id.description_post);
         address = findViewById(R.id.address);
         dienTich = findViewById(R.id.dienTich);
-        price = findViewById(R.id.price);
+        price = findViewById(R.id.price_tin_phongtro);
         rcvView_select_img_PhongTro = findViewById(R.id.rcvView_select_img_PhongTro);
 
         Intent intent1 = getIntent();
@@ -392,4 +370,60 @@ public class dangTinBDSPhongTroActivity extends AppCompatActivity implements com
     public void clicked(int getSize) {
 
     }
+
+    private void upImage(int id) {
+        if (imageUri.size() == 0){
+            return;
+        }
+        Uri uri = imageUri.get(0);
+        try {
+            bitmapselect = MediaStore.Images.Media.getBitmap(getContentResolver(),uri);
+            FirebaseStorage storage = FirebaseStorage.getInstance();
+            StorageReference storageRef = storage.getReference();
+            StorageReference mountainsRef = storageRef.child(tenDanhMuc+"/image"+calendar.getTimeInMillis());
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            bitmapselect.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+            byte[] dataImage = baos.toByteArray();
+
+            UploadTask uploadTask = mountainsRef.putBytes(dataImage);
+            uploadTask.addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception exception) {
+                    // Handle unsuccessful uploads
+                    progressDialog.dismiss();
+                    Toast.makeText(dangTinBDSPhongTroActivity.this, "Lỗi cập nhật hình ảnh!", Toast.LENGTH_SHORT).show();
+                }
+            }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                    // taskSnapshot.getMetadata() contains file metadata such as size, content-type, etc.
+
+                    mountainsRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                        @Override
+                        public void onSuccess(Uri uri) {
+                            String strImage = String.valueOf(uri);
+                            UpdateImageUrl(strImage, id);
+                            progressDialog.dismiss();
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception exception) {
+                            // Handle any errors
+                            progressDialog.dismiss();
+                            Toast.makeText(dangTinBDSPhongTroActivity.this, "Lỗi tải URL hình ảnh!", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+            });
+        } catch (IOException e) {
+            Toast.makeText(mainActivity, "Lỗi try-catch", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void UpdateImageUrl(String url, int id) {
+        myData.child(tenDanhMuc+"/"+id+"/image").setValue(url);
+    }
+
+
+
 }
