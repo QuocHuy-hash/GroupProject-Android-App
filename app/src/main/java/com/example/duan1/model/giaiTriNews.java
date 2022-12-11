@@ -11,12 +11,13 @@ public class giaiTriNews {
     private String nameUser;
     private String tenDanhMuc;
     private String date;
+    private String image;
 
     public giaiTriNews() {
     }
 
     public giaiTriNews(int id, String title, String description, String address, double price,
-                       String typeProduct, int idUser, String nameUser , String tenDanhMuc, String date) {
+                       String typeProduct, int idUser, String nameUser, String tenDanhMuc, String date) {
         this.id = id;
         this.title = title;
         this.description = description;
@@ -27,6 +28,22 @@ public class giaiTriNews {
         this.nameUser = nameUser;
         this.tenDanhMuc = tenDanhMuc;
         this.date = date;
+    }
+
+    public giaiTriNews(int id, String title, String description, String address, double price,
+                       String typeProduct, int idUser, String nameUser, String tenDanhMuc,
+                       String date, String image) {
+        this.id = id;
+        this.title = title;
+        this.description = description;
+        this.address = address;
+        this.price = price;
+        this.typeProduct = typeProduct;
+        this.idUser = idUser;
+        this.nameUser = nameUser;
+        this.tenDanhMuc = tenDanhMuc;
+        this.date = date;
+        this.image = image;
     }
 
     public String getDate() {
@@ -107,5 +124,13 @@ public class giaiTriNews {
 
     public void setNameUser(String nameUser) {
         this.nameUser = nameUser;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
     }
 }
