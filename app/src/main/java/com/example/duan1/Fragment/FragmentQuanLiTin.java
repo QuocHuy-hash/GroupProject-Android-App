@@ -1,11 +1,13 @@
 package com.example.duan1.Fragment;
 
 
+import android.content.Context;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -39,6 +41,7 @@ public class FragmentQuanLiTin extends Fragment {
     private RecyclerView rcvQuanLyTinDang;
     private historyNewsAdapter historyNewsAdapter;
     private List<historyNews> listHistoryNews;
+    private Context mContext;
 
     private String nameUser;
     private int idUser;
@@ -71,6 +74,8 @@ public class FragmentQuanLiTin extends Fragment {
                 historyNewsAdapter = new historyNewsAdapter(getContext(), listHistoryNews);
                 rcvQuanLyTinDang.setLayoutManager(new LinearLayoutManager(getContext()));
                 rcvQuanLyTinDang.setAdapter(historyNewsAdapter);
+                RecyclerView.ItemDecoration decoration = new DividerItemDecoration(getContext() , DividerItemDecoration.VERTICAL);
+                rcvQuanLyTinDang.addItemDecoration(decoration);
             }
         }, 500);
 

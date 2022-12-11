@@ -18,7 +18,9 @@ public class BDSNews {
     private String date;
     private String image;
 
-    public BDSNews(int maxID, String strTitlePost, String strDescription, double dbPrice, String strDienTich, String strAddress, String strTenKhu, String strLoaiHinhDat, String strSoPhongNgu, String strSoPhongWc, int idUser, String nameUser, String tenDanhMuc, String date, String s) {
+    public BDSNews(int maxID, String strTitlePost, String strDescription, double dbPrice, String strDienTich,
+                   String strAddress, String strTenKhu, String strLoaiHinhDat, String strSoPhongNgu,
+                   String strSoPhongWc, int idUser, String nameUser, String tenDanhMuc, String date, String s) {
     }
 
     public BDSNews() {
@@ -45,7 +47,7 @@ public class BDSNews {
 
         public BDSNews(int maxID, String strTitlePost, String strDescription, double dbPrice, String strDienTich,
                    String strAddress, String strTenKhu, String strLoaiHinhDat,
-                   String strSoPhongNgu, String strSoPhongWc, int idUser, String nameUser , String tenDanhMuc, String date) {
+                   String strSoPhongNgu, String strSoPhongWc, int idUser, String nameUser , String tenDanhMuc, String date ) {
         this.id = maxID;
         this.title = strTitlePost;
         this.description = strDescription;
@@ -60,6 +62,8 @@ public class BDSNews {
         this.nameUser = nameUser;
         this.tenDanhMuc = tenDanhMuc;
         this.date = date;
+
+
     }
 
 
