@@ -6,8 +6,11 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 
@@ -19,8 +22,10 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.example.duan1.Adapter.NewsTrangChuAdapter;
+import com.example.duan1.Adapter.rsSearchAdapter;
 import com.example.duan1.Adapter.slidersAdapter;
 import com.example.duan1.MainActivity;
 import com.example.duan1.R;
@@ -31,6 +36,7 @@ import com.example.duan1.model.direction;
 import com.example.duan1.model.giaiTriNews;
 import com.example.duan1.model.photosSlider;
 import com.example.duan1.model.product_type;
+import com.example.duan1.model.resultSearch;
 import com.example.duan1.model.thoiTrangNews;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -52,17 +58,20 @@ public class FragmentTrangChu extends Fragment {
     private ViewPager viewPager;
     private CircleIndicator circleIndicator;
     private slidersAdapter slidersAdapter;
+    private rsSearchAdapter rsSearchAdapter;
     private List<photosSlider> mListPhoto = new ArrayList<>();
     private Timer mTimer;
     private String loaiTin;
+    private SearchView searchView;
     private Spinner spn_phanLoaiTin;
     public MainActivity mainActivity;
-    private RecyclerView rcvNewsTrangChu;
+    private RecyclerView rcvNewsTrangChu ,rcvFilter;
     private List<NewsTrangChu> newsTrangChuList = new ArrayList<>();
     private NewsTrangChuAdapter mNewsTrangChuAdapter;
     private List<String> listChild = new ArrayList<>();
     private List<String> listChild1 = new ArrayList<>();
     private List<String> listChild2 = new ArrayList<>();
+    private List<resultSearch> listFilter;
     DatabaseReference myData = FirebaseDatabase.getInstance().getReference("Tin").child("GiaiTri");
     DatabaseReference myData1 = FirebaseDatabase.getInstance().getReference("Tin").child("BDS");
     DatabaseReference myData2 = FirebaseDatabase.getInstance().getReference("Tin").child("ThoiTrang");
@@ -76,15 +85,15 @@ public class FragmentTrangChu extends Fragment {
         rcvNewsTrangChu = view.findViewById(R.id.rcv_news_trangchu);
         spn_phanLoaiTin = view.findViewById(R.id.spn_phanLoaiTin);
         viewPager = view.findViewById(R.id.viewPager_slide);
-
+        rcvFilter = view.findViewById(R.id.rcvFilter);
         circleIndicator = view.findViewById(R.id.circle_indicator);
 
         slidersAdapter = new slidersAdapter(getContext(), getListPhoto());
         viewPager.setAdapter(slidersAdapter);
-
+        searchView = view.findViewById(R.id.searchView);
         circleIndicator.setViewPager(viewPager);
         slidersAdapter.registerDataSetObserver(circleIndicator.getDataSetObserver());
-
+        searchView.clearFocus();
         autoSliderImg();
         listChild1();
         listChild2();
@@ -93,6 +102,7 @@ public class FragmentTrangChu extends Fragment {
 //        newsTrangChuList.clear();
         getListNews();
         getValuesSpinner();
+        searchNews();
 //        new Handler().postDelayed(new Runnable() {
 //            @Override
 //            public void run() {
@@ -115,6 +125,55 @@ public class FragmentTrangChu extends Fragment {
 //            }
 //        });
         return view;
+    }
+
+    private void searchNews() {
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+
+                if(newText.isEmpty()) {
+                    rcvFilter.setVisibility(View.INVISIBLE);
+                }else {
+                    rcvFilter.setVisibility(View.VISIBLE);
+                    filterList(newText);
+                }
+
+                return false;
+            }
+        });
+
+    }
+
+    private void filterList(String newText) {
+         listFilter = new ArrayList<>();
+        for(int i = 0; i < newsTrangChuList.size(); i++) {
+            String title = newsTrangChuList.get(i).getTitle();
+            String product_type = newsTrangChuList.get(i).getTenDanhMuc();
+
+            if(title.toLowerCase().contains(newText.toLowerCase()) || product_type.toLowerCase().contains(newText.toLowerCase())){
+
+                listFilter.add(new resultSearch(newsTrangChuList.get(i).getTitle() ,newsTrangChuList.get(i).getTime()
+                , newsTrangChuList.get(i).getImage() , newsTrangChuList.get(i).getFee()));
+
+
+            }
+        }
+        if(listFilter.isEmpty()) {
+            Toast.makeText(mainActivity, "Mời bạn nhập thông tin tìm kiếm", Toast.LENGTH_SHORT).show();
+        }else {
+            rsSearchAdapter = new rsSearchAdapter(getContext() ,listFilter);
+            rcvFilter.setLayoutManager(new LinearLayoutManager(getContext()));
+            rcvFilter.setAdapter(rsSearchAdapter);
+            RecyclerView.ItemDecoration decoration = new DividerItemDecoration(getContext() ,  DividerItemDecoration.VERTICAL);
+            rcvFilter.addItemDecoration(decoration);
+        }
     }
 
     private void clickSpinerLoaiTin() {
