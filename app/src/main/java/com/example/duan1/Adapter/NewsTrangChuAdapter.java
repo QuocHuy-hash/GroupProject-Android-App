@@ -17,7 +17,9 @@ import com.example.duan1.model.BDSNews;
 import com.example.duan1.model.NewsTrangChu;
 import com.squareup.picasso.Picasso;
 
+import java.text.NumberFormat;
 import java.util.List;
+import java.util.Locale;
 
 public class NewsTrangChuAdapter extends RecyclerView.Adapter<NewsTrangChuAdapter.ViewHolder> {private Context context;
     private List<NewsTrangChu> newsTrangChuList;
@@ -45,9 +47,13 @@ public class NewsTrangChuAdapter extends RecyclerView.Adapter<NewsTrangChuAdapte
         if(OOP == null){
             return;
         }
+
+        Locale localeEN = new Locale("en", "EN");
+        NumberFormat en = NumberFormat.getInstance(localeEN);
+
         h.tvTitle.setText(OOP.getTitle());
-        String free = String.valueOf(OOP.getFee());
-        h.tvFee.setText(free);
+        String str1 = en.format(OOP.getFee());
+        h.tvFee.setText(str1);
         h.tvTime.setText(OOP.getTime());
         h.tvDes.setText(OOP.getDescripsion());
         String strimage = OOP.getImage();
