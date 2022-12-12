@@ -194,9 +194,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="15dp"
-            android:text="Mật khẩu"
+            android:text="Đổi mật khẩu"
             android:textSize="14dp"
-            android:textColor="@color/gray_1"
+            android:textColor="@color/Orenge_1"
             />
         <ImageView
             android:layout_width="match_parent"
