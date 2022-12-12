@@ -299,8 +299,7 @@ public class Login extends AppCompatActivity {
                                                             Intent intent = new Intent(Login.this, MainActivity.class);
                                                             intent.putExtra("statusLogin", 1);
                                                             setResult(RESULT_OK, intent);
-                                                            startActivity(intent);
-//                                                            finish();
+                                                            finish();
 
                                                         }
                                                     }

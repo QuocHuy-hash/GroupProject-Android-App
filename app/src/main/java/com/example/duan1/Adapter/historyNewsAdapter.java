@@ -1,5 +1,6 @@
 package com.example.duan1.Adapter;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.view.LayoutInflater;
@@ -14,6 +15,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.duan1.MainActivity;
 import com.example.duan1.R;
 import com.example.duan1.dagTinGiaiTriActivity;
 import com.example.duan1.dangTinBDSActivity;
@@ -42,14 +44,17 @@ public class historyNewsAdapter extends RecyclerView.Adapter<historyNewsAdapter.
     private List<String> listChild2 = new ArrayList<>();
     private String title_News;
     private int id;
+    private MainActivity mainActivity;
 
     DatabaseReference myData = FirebaseDatabase.getInstance().getReference("Tin").child("GiaiTri");
     DatabaseReference myData1 = FirebaseDatabase.getInstance().getReference("Tin").child("BDS");
     DatabaseReference myData2 = FirebaseDatabase.getInstance().getReference("Tin").child("ThoiTrang");
 
-    public historyNewsAdapter(Context mContext, List<historyNews> listHistory) {
+    public historyNewsAdapter(Context mContext, MainActivity mainActivity, List<historyNews> listHistory) {
         this.mContext = mContext;
         this.listHistory =listHistory;
+        this.mainActivity = mainActivity;
+        notifyDataSetChanged();
     }
 public void setFilter(List<historyNews> listFilter){
         this.listHistory = listFilter;
@@ -138,9 +143,10 @@ public void setFilter(List<historyNews> listFilter){
         }
     }
 private void XoaTin(String title){
+    ProgressDialog progressDialog = new ProgressDialog(mainActivity);
+    progressDialog.show();
     for(int i = 0 ; i < listChild.size() ;i++) {
         myData.child(listChild.get(i)).addChildEventListener(new ChildEventListener() {
-
             @Override
             public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
                 giaiTriNews giaiTriNew = snapshot.getValue(giaiTriNews.class);
@@ -148,7 +154,6 @@ private void XoaTin(String title){
                     String id = String.valueOf(giaiTriNew.getId());
                     String tenDanhMuc = String.valueOf(giaiTriNew.getTenDanhMuc());
                         myData.child(tenDanhMuc).child(id).removeValue();
-                        notifyDataSetChanged();
                         Toast.makeText(mContext.getApplicationContext(), "Đã xóa Tin", Toast.LENGTH_SHORT).show();
                 }
             }
@@ -173,6 +178,7 @@ private void XoaTin(String title){
 
             }
         });
+        progressDialog.dismiss();
     }
 
     for (int i = 0; i< listChild2.size() ;i++) {

@@ -24,6 +24,8 @@ import com.example.duan1.model.BDSNews;
 import com.example.duan1.model.giaiTriNews;
 import com.example.duan1.model.historyNews;
 import com.example.duan1.model.thoiTrangNews;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -59,25 +61,29 @@ public class FragmentQuanLiTin extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_quan_li_tin, container, false);
-        rcvQuanLyTinDang = view.findViewById(R.id.rcvQuanLyTin);
-        mainActivity = (MainActivity) getActivity();
-        listHistoryNews = new ArrayList<>();
-        idUser = mainActivity.id;
-        nameUser = mainActivity.name;
-        listChild1();
-        listChild2();
-        listChild3();
-        getListHistoryNews();
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                historyNewsAdapter = new historyNewsAdapter(getContext(), listHistoryNews);
-                rcvQuanLyTinDang.setLayoutManager(new LinearLayoutManager(getContext()));
-                rcvQuanLyTinDang.setAdapter(historyNewsAdapter);
-                RecyclerView.ItemDecoration decoration = new DividerItemDecoration(getContext() , DividerItemDecoration.VERTICAL);
-                rcvQuanLyTinDang.addItemDecoration(decoration);
-            }
-        }, 500);
+
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user != null){
+            rcvQuanLyTinDang = view.findViewById(R.id.rcvQuanLyTin);
+            mainActivity = (MainActivity) getActivity();
+            listHistoryNews = new ArrayList<>();
+            idUser = mainActivity.id;
+            nameUser = mainActivity.name;
+            listChild1();
+            listChild2();
+            listChild3();
+            getListHistoryNews();
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    historyNewsAdapter = new historyNewsAdapter(getContext(),mainActivity, listHistoryNews);
+                    rcvQuanLyTinDang.setLayoutManager(new LinearLayoutManager(getContext()));
+                    rcvQuanLyTinDang.setAdapter(historyNewsAdapter);
+                    RecyclerView.ItemDecoration decoration = new DividerItemDecoration(getContext() , DividerItemDecoration.VERTICAL);
+                    rcvQuanLyTinDang.addItemDecoration(decoration);
+                }
+            }, 500);
+        }
 
         return view;
     }
