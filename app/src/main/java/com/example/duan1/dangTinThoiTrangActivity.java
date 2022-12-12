@@ -13,8 +13,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -30,6 +32,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.duan1.Adapter.photoAdapter;
+import com.example.duan1.Broadcast.Broadcast;
 import com.example.duan1.model.product_type;
 import com.example.duan1.model.thoiTrangNews;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -65,7 +68,6 @@ public class dangTinThoiTrangActivity extends AppCompatActivity implements photo
     private com.example.duan1.Adapter.photoAdapter photoAdapter;
     private RecyclerView rcvView_select_img_fashion;
     StorageReference imageFolder;
-
     private String strTitlePost, strDescription, strPrice, strLoaiSanPham, strAddress, nameUser
             , tenDanhMuc , title_Post , date , title_Post1;
     private int idUser;
@@ -75,7 +77,6 @@ public class dangTinThoiTrangActivity extends AppCompatActivity implements photo
     FirebaseApp firebaseApp;
     FirebaseAppCheck firebaseAppCheck;
     private Bitmap bitmapselect;
-
     private int REQUEST_PERMISSION_CODE = 35;
     private int PICK_IMAGE = 1;
     private int update_count = 0, maxID;
@@ -84,6 +85,7 @@ public class dangTinThoiTrangActivity extends AppCompatActivity implements photo
     DatabaseReference myData;
     MainActivity mainActivity;
     private Calendar calendar = Calendar.getInstance();
+    private Broadcast broadcast;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,8 +96,6 @@ public class dangTinThoiTrangActivity extends AppCompatActivity implements photo
 
         nameUser = mainActivity.name;
         idUser = mainActivity.id;
-
-
 
         initUi();
         clickBAckPage();
@@ -478,6 +478,7 @@ public class dangTinThoiTrangActivity extends AppCompatActivity implements photo
         tenDanhMuc = intent1.getStringExtra("tenDanhMuc");
         title_Post = intent1.getStringExtra("title");
 
+        broadcast = new Broadcast();
 
     }
 
@@ -496,4 +497,21 @@ public class dangTinThoiTrangActivity extends AppCompatActivity implements photo
 
         }
     }
+
+    @Override
+    protected void onStart() {
+        IntentFilter intentFilter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+        registerReceiver(broadcast, intentFilter);
+        super.onStart();
+    }
+
+    @Override
+    protected void onStop() {
+        unregisterReceiver(broadcast);
+        super.onStop();
+    }
+
+
+
+
 }

@@ -11,8 +11,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -29,6 +31,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.duan1.Adapter.photoAdapter;
+import com.example.duan1.Broadcast.Broadcast;
 import com.example.duan1.model.BDSNews;
 import com.example.duan1.model.direction;
 import com.example.duan1.model.giaiTriNews;
@@ -78,6 +81,8 @@ public class dagTinGiaiTriActivity extends AppCompatActivity implements com.exam
     private StorageReference imageFolder;
     private Bitmap bitmapselect;
     private Calendar calendar = Calendar.getInstance();
+    private Broadcast broadcast;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -403,6 +408,8 @@ public class dagTinGiaiTriActivity extends AppCompatActivity implements com.exam
         Intent intent1 = getIntent();
        tenDanhMuc = intent1.getStringExtra("tenDanhMuc");
 
+       broadcast = new Broadcast();
+
     }
 
     @Override
@@ -474,8 +481,22 @@ public class dagTinGiaiTriActivity extends AppCompatActivity implements com.exam
     }
 
     private void UpdateImageUrl(String url, int id) {
-
         myData.child(tenDanhMuc+"/"+id+"/image").setValue(url);
-
     }
+
+    @Override
+    protected void onStart() {
+        IntentFilter intentFilter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+        registerReceiver(broadcast, intentFilter);
+        super.onStart();
+    }
+
+    @Override
+    protected void onStop() {
+        unregisterReceiver(broadcast);
+        super.onStop();
+    }
+
+
+
 }
