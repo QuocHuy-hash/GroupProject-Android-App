@@ -14,8 +14,10 @@ import com.example.duan1.R;
 import com.example.duan1.model.resultSearch;
 import com.squareup.picasso.Picasso;
 
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class rsSearchAdapter extends RecyclerView.Adapter<rsSearchAdapter.ViewHolder> {
     private Context context;
@@ -37,10 +39,13 @@ public class rsSearchAdapter extends RecyclerView.Adapter<rsSearchAdapter.ViewHo
     @Override
     public void onBindViewHolder(@NonNull ViewHolder h, int position) {
         resultSearch resultSearch = listRs.get(position);
+        Locale localeEN = new Locale("en", "EN");
+        NumberFormat en = NumberFormat.getInstance(localeEN);
+
         h.title.setText(resultSearch.getTitle());
         h.date.setText(resultSearch.getDate());
-        String price =String.valueOf(resultSearch.getPrice());
-        h.price.setText(price);
+        String str1 = en.format(resultSearch.getPrice());
+        h.price.setText(str1);
         String strimage = resultSearch.getImage();
         try {
             Picasso.with(context)

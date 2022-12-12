@@ -33,8 +33,10 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.squareup.picasso.Picasso;
 
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class historyNewsAdapter extends RecyclerView.Adapter<historyNewsAdapter.HolderView>  {
     private Context mContext;
@@ -75,7 +77,8 @@ public void setFilter(List<historyNews> listFilter){
         historyNews giaiTriNews =  listHistory.get(position);
         String tenDanhMuc = giaiTriNews.getTenDanhMuc();
         String Title_Post = giaiTriNews.getTitle_historyNews();
-
+        Locale localeEN = new Locale("en", "EN");
+        NumberFormat en = NumberFormat.getInstance(localeEN);
         listChild1();
         listChild2();
         listChild3();
