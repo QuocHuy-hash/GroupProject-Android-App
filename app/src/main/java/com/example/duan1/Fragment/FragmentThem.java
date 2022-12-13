@@ -4,6 +4,7 @@ import static android.app.Activity.RESULT_OK;
 
 import static com.facebook.FacebookSdk.getApplicationContext;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -35,6 +36,7 @@ import com.example.duan1.Login;
 import com.example.duan1.MainActivity;
 import com.example.duan1.R;
 import com.example.duan1.Register;
+import com.example.duan1.listUserActivity;
 import com.example.duan1.model.Users;
 import com.facebook.AccessToken;
 import com.facebook.FacebookSdk;
@@ -65,7 +67,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class FragmentThem extends Fragment implements NavigationView.OnNavigationItemSelectedListener{
+public class FragmentThem extends Fragment implements NavigationView.OnNavigationItemSelectedListener {
 
     private ImageView imgLoginRegister;
     private TextView tvEmail;
@@ -83,8 +85,8 @@ public class FragmentThem extends Fragment implements NavigationView.OnNavigatio
             new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
                 @Override
                 public void onActivityResult(ActivityResult result) {
-                    if (result.getResultCode() == RESULT_OK){
-                            Restart();
+                    if (result.getResultCode() == RESULT_OK) {
+                        Restart();
                     }
                 }
             });
@@ -100,7 +102,7 @@ public class FragmentThem extends Fragment implements NavigationView.OnNavigatio
         mGoogleSignInClient = GoogleSignIn.getClient(mainActivity, gso);
         acct = GoogleSignIn.getLastSignedInAccount(mainActivity);
 
-        if (isLoggedIn || currentUser != null || acct != null){
+        if (isLoggedIn || currentUser != null || acct != null) {
             progressDialog.setTitle("Đang tải dữ liệu");
             progressDialog.show();
             getDataUser(isLoggedIn);
@@ -110,36 +112,36 @@ public class FragmentThem extends Fragment implements NavigationView.OnNavigatio
                     initListenerClick();
                     progressDialog.dismiss();
                 }
-            },500);
+            }, 500);
             nav.setItemIconTintList(null);
-            nav.setNavigationItemSelectedListener((NavigationView.OnNavigationItemSelectedListener) this );
+            nav.setNavigationItemSelectedListener((NavigationView.OnNavigationItemSelectedListener) this);
 
-        }else{
+        } else {
             getDataUser(isLoggedIn);
             initListenerClick();
             nav.setItemIconTintList(null);
-            nav.setNavigationItemSelectedListener((NavigationView.OnNavigationItemSelectedListener) this );
+            nav.setNavigationItemSelectedListener((NavigationView.OnNavigationItemSelectedListener) this);
         }
-
 
 
         return view;
     }
 
-    private String checkname(String s){
+    private String checkname(String s) {
 
-        if (s.isEmpty()){
+        if (s.isEmpty()) {
             return null;
         }
         String name = "";
-        if (s.length() > 25){
-            for (String s1: s.split("")){
-                name+=s1;
-                if (name.length() == 25){
+        if (s.length() > 25) {
+            for (String s1 : s.split("")) {
+                name += s1;
+                if (name.length() == 25) {
                     break;
                 }
-            };
-            return name+"...";
+            }
+            ;
+            return name + "...";
         }
 
         return s;
@@ -165,9 +167,9 @@ public class FragmentThem extends Fragment implements NavigationView.OnNavigatio
                 AccessToken accessToken = AccessToken.getCurrentAccessToken();
                 boolean isLoggedIn = accessToken != null && !accessToken.isExpired();
 
-                if(currentUser != null || isLoggedIn || acct != null){
+                if (currentUser != null || isLoggedIn || acct != null) {
                     startActivity(new Intent(mainActivity, Account.class));
-                }else {
+                } else {
                     mActivityResultLauncher.launch(new Intent(mainActivity, Login.class));
                 }
 
@@ -180,7 +182,7 @@ public class FragmentThem extends Fragment implements NavigationView.OnNavigatio
 
         int id = item.getItemId();
 
-        if(id == R.id.logout){
+        if (id == R.id.logout) {
 
             progressDialog.setTitle("Đang đăng xuất...");
             progressDialog.show();
@@ -198,12 +200,23 @@ public class FragmentThem extends Fragment implements NavigationView.OnNavigatio
 
                 }
             }, 2000);
+        } else if (id == R.id.listUser) {
+            String name = tvEmail.getText().toString();
+
+            if (name.equals("Admin")) {
+                Intent intent = new Intent(getContext(), listUserActivity.class);
+                intent.putExtra("name" , name);
+                startActivity(intent);
+            }else {
+               MainActivity.showDiaLogWarning(getContext() , "Chức năng chỉ dành cho Admin");
+            }
+
         }
 
         return true;
     }
 
-    private void Restart(){
+    private void Restart() {
         FragmentManager fragmentManager;
         fragmentManager = mainActivity.getSupportFragmentManager();
         FragmentTransaction fragmentTransaction1 = fragmentManager.beginTransaction();
@@ -222,18 +235,18 @@ public class FragmentThem extends Fragment implements NavigationView.OnNavigatio
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 mListUser.clear();
-                for (DataSnapshot snapshot1 : snapshot.getChildren()){
+                for (DataSnapshot snapshot1 : snapshot.getChildren()) {
                     Users user = snapshot1.getValue(Users.class);
                     mListUser.add(user);
                 }
-                for (int i = 0; i < mListUser.size(); i++){
-                    if (mListUser.get(i).getEmail().equals(email)){
-                        if (mListUser.get(i).getName() == null){
+                for (int i = 0; i < mListUser.size(); i++) {
+                    if (mListUser.get(i).getEmail().equals(email)) {
+                        if (mListUser.get(i).getName() == null) {
 
                         }
                         tvEmail.setText(checkname(mListUser.get(i).getName()));
                         String strImage = mListUser.get(i).getImage().trim();
-                        if (strImage.isEmpty()){
+                        if (strImage.isEmpty()) {
                             return;
                         }
                         Picasso.with(mainActivity)
@@ -262,19 +275,19 @@ public class FragmentThem extends Fragment implements NavigationView.OnNavigatio
                 new GraphRequest.GraphJSONObjectCallback() {
                     @Override
                     public void onCompleted(JSONObject object, GraphResponse response) {
-                                try {
-                                    String fullName = object.getString("name");
-                                    String image = object.getJSONObject("picture").getJSONObject("data").getString("url");
-                                    tvEmail.setText(checkname(fullName));
-                                    Picasso.with(mainActivity)
-                                            .load(image)
-                                            .placeholder(R.drawable.user_icon)
-                                            .error(R.drawable.user_icon)
-                                            .into(imgLoginRegister);
+                        try {
+                            String fullName = object.getString("name");
+                            String image = object.getJSONObject("picture").getJSONObject("data").getString("url");
+                            tvEmail.setText(checkname(fullName));
+                            Picasso.with(mainActivity)
+                                    .load(image)
+                                    .placeholder(R.drawable.user_icon)
+                                    .error(R.drawable.user_icon)
+                                    .into(imgLoginRegister);
 
-                                } catch (JSONException e) {
-                                    Toast.makeText(mainActivity, "Lỗi login fb", Toast.LENGTH_SHORT).show();
-                                }
+                        } catch (JSONException e) {
+                            Toast.makeText(mainActivity, "Lỗi login fb", Toast.LENGTH_SHORT).show();
+                        }
 
                     }
                 });
@@ -289,10 +302,10 @@ public class FragmentThem extends Fragment implements NavigationView.OnNavigatio
         String personName = acct.getDisplayName();
         String personEmail = acct.getEmail();
         String personPhoto = String.valueOf(acct.getPhotoUrl());
-        if ((personName+" ("+personEmail+")").length() > 30 ){
-            tvEmail.setText(checkname(personName+" ("+personEmail+")"));
-        }else{
-            tvEmail.setText(personName+" ("+personEmail+")");
+        if ((personName + " (" + personEmail + ")").length() > 30) {
+            tvEmail.setText(checkname(personName + " (" + personEmail + ")"));
+        } else {
+            tvEmail.setText(personName + " (" + personEmail + ")");
         }
 
         Picasso.with(mainActivity)
@@ -303,14 +316,14 @@ public class FragmentThem extends Fragment implements NavigationView.OnNavigatio
 
     }
 
-    private void getDataUser(boolean isLoggedIn){
+    private void getDataUser(boolean isLoggedIn) {
         //facebook
-        if (isLoggedIn){
+        if (isLoggedIn) {
             getProfileUserFB();
         }
 
         //firebase
-        if (currentUser != null){
+        if (currentUser != null) {
             updateUI();
         }
 

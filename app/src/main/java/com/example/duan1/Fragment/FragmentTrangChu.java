@@ -113,17 +113,7 @@ public class FragmentTrangChu extends Fragment {
                 rcvNewsTrangChu.setAdapter(mNewsTrangChuAdapter);
             }
         }, 500);
-//        mNewsTrangChuAdapter = new NewsTrangChuAdapter(getContext());
-//        GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), 2);
-//        rcvNewsTrangChu.setLayoutManager(gridLayoutManager);
-//        mNewsTrangChuAdapter.setDATA(newsTrangChuList);
-//        rcvNewsTrangChu.setAdapter(mNewsTrangChuAdapter);
-//        rcvNewsTrangChu.addOnItemTouchListener(new RecyclerView.SimpleOnItemTouchListener() {
-//            @Override
-//            public boolean onInterceptTouchEvent(@NonNull RecyclerView rv, @NonNull MotionEvent e) {
-//                return rv.getScrollState() == RecyclerView.SCROLL_STATE_DRAGGING;
-//            }
-//        });
+
         return view;
     }
 
@@ -171,8 +161,8 @@ public class FragmentTrangChu extends Fragment {
             rsSearchAdapter = new rsSearchAdapter(getContext() ,listFilter);
             rcvFilter.setLayoutManager(new LinearLayoutManager(getContext()));
             rcvFilter.setAdapter(rsSearchAdapter);
-//            RecyclerView.ItemDecoration decoration = new DividerItemDecoration(getContext() ,  DividerItemDecoration.VERTICAL);
-//            rcvFilter.addItemDecoration(decoration);
+            RecyclerView.ItemDecoration decoration = new DividerItemDecoration(getContext() ,  DividerItemDecoration.VERTICAL);
+            rcvFilter.addItemDecoration(decoration);
         }
     }
 
@@ -396,51 +386,6 @@ public class FragmentTrangChu extends Fragment {
         });
     }
 
-//    private void addData(){
-//        for (int i = 0; i < newsTrangChuListBDS.size(); i++){
-//            newsTrangChuList.add(newsTrangChuListBDS.get(i));
-//        }
-//        for (int i = 0; i < newsTrangChuListGT.size(); i++){
-//            newsTrangChuList.add(newsTrangChuListGT.get(i));
-//        }
-//        for (int i = 0; i < newsTrangChuListTT.size(); i++){
-//            newsTrangChuList.add(newsTrangChuListTT.get(i));
-//        }
-
-//    }
-
-//    private List<String> listChild1() {
-//        listChild.add(new String("NhacCu"));
-//        listChild.add(new String("Sach"));
-//        listChild.add(new String("DoTheThao&DaNgoai"));
-//        listChild.add(new String("DoSuuTam&DoCo"));
-//        listChild.add(new String("ThietBiChoiGame"));
-//        listChild.add(new String("SoThichKhac"));
-//
-//        return listChild;
-//    }
-//
-//    private List<String> listChild2() {
-//        listChild1.add(new String("QuanAo"));
-//        listChild1.add(new String("DongHo"));
-//        listChild1.add(new String("GiayDep"));
-//        listChild1.add(new String("TuiXach"));
-//        listChild1.add(new String("NuocHoa"));
-//        listChild1.add(new String("PhuKienKhac"));
-//
-//        return listChild1;
-//    }
-//
-//    private List<String> listChild3() {
-//        listChild2.add(new String("ChungCu"));
-//        listChild2.add(new String("NhaO"));
-//        listChild2.add(new String("Dat"));
-//        listChild2.add(new String("VanPhong"));
-//        listChild2.add(new String("PhongTro"));
-//
-//        return listChild2;
-//
-//    }
 
     @Override
     public void onResume() {
