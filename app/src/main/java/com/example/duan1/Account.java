@@ -5,6 +5,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
@@ -14,6 +16,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.duan1.Broadcast.Broadcast;
 import com.example.duan1.model.Users;
 import com.facebook.AccessToken;
 import com.facebook.GraphRequest;
@@ -54,6 +57,7 @@ public class Account extends AppCompatActivity {
     GoogleSignInAccount acct;
     private FirebaseAuth mAuth;
     private FirebaseUser currentUser;
+    private Broadcast broadcast;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -104,6 +108,8 @@ public class Account extends AppCompatActivity {
         progressDialog = new ProgressDialog(this);
         mAuth = FirebaseAuth.getInstance();
         currentUser = mAuth.getCurrentUser();
+
+        broadcast = new Broadcast();
     }
 
     //sự kiện click
@@ -162,7 +168,6 @@ public class Account extends AppCompatActivity {
                     }
                 }
             }
-
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
 
@@ -182,7 +187,6 @@ public class Account extends AppCompatActivity {
             }
             return name+"...";
         }
-
        return s;
     }
 
@@ -205,10 +209,8 @@ public class Account extends AppCompatActivity {
                         } catch (JSONException e) {
                             Toast.makeText(Account.this, "Lỗi tải dữ liệu tk fb: "+e, Toast.LENGTH_SHORT).show();
                         }
-
                     }
                 });
-
         Bundle parameters = new Bundle();
         parameters.putString("fields", "id,name,link,picture.type(large)");
         request.setParameters(parameters);
@@ -224,6 +226,21 @@ public class Account extends AppCompatActivity {
                 .placeholder(R.drawable.user_icon)
                 .error(R.drawable.user_icon)
                 .into(imgAvatar);
-
     }
+
+    @Override
+    protected void onStart() {
+        IntentFilter intentFilter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+        registerReceiver(broadcast, intentFilter);
+        super.onStart();
+    }
+
+    @Override
+    protected void onStop() {
+        unregisterReceiver(broadcast);
+        super.onStop();
+    }
+
+
+
 }

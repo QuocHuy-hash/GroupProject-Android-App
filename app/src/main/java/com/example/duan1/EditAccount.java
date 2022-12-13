@@ -5,10 +5,12 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -33,7 +35,10 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.duan1.Broadcast.Broadcast;
 import com.example.duan1.model.Users;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -78,6 +83,7 @@ public class EditAccount extends AppCompatActivity {
     private ProgressDialog progressDialog;
     private List<Users> mListUser;
     private String oldPasswordUser = " ";
+    private Broadcast broadcast;
 
     private ActivityResultLauncher<Intent> mActivityResultLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
@@ -148,7 +154,6 @@ public class EditAccount extends AppCompatActivity {
             }
     );
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -185,6 +190,8 @@ public class EditAccount extends AppCompatActivity {
         userr = auth.getCurrentUser();
 
         progressDialog = new ProgressDialog(this);
+
+        broadcast = new Broadcast();
     }
 
     //sự kiện click
@@ -195,7 +202,6 @@ public class EditAccount extends AppCompatActivity {
                 requestPermissionsimage();
             }
         });
-
 
         imgName.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -599,4 +605,21 @@ public class EditAccount extends AppCompatActivity {
 
         dialog.show();
     }
+
+    @Override
+    protected void onStart() {
+        IntentFilter intentFilter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+        registerReceiver(broadcast, intentFilter);
+        super.onStart();
+    }
+
+    @Override
+    protected void onStop() {
+        unregisterReceiver(broadcast);
+        super.onStop();
+    }
+
+
+
+
 }

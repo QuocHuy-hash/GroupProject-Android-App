@@ -11,8 +11,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -29,6 +31,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.duan1.Adapter.photoAdapter;
+import com.example.duan1.Broadcast.Broadcast;
 import com.example.duan1.model.BDSNews;
 import com.example.duan1.model.direction;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -54,13 +57,11 @@ import java.util.List;
 public class dangTinBDSActivity extends AppCompatActivity implements com.example.duan1.Adapter.photoAdapter.CountOfImageWhenRemove {
     private Spinner spn_Direction;
     private TextView tvTenDanhMuc;
-
     private ImageView imgBackPage, iconCloser;
     private EditText edtTitlePost, edtDescription, edtTenKhuDanCu, edtAddress, edtLoaiHinh, edtSoPhongNgu,
             edtSoPhongWc, edtPrice, edtDienTich;
     private LinearLayout addImageProduct;
     private Button btnDangTin, suaTinBDS;
-
     private String date, strTitlePost, strDescription, strTenKhu, strAddress, strLoaiHinhDat, strSoPhongNgu, strSoPhongWc, strPrice, strDienTich, nameUser, tenDanhMuc;
     private double dbPrice;
     private int maxID;
@@ -74,12 +75,12 @@ public class dangTinBDSActivity extends AppCompatActivity implements com.example
     private List<BDSNews> listBDS;
     private MainActivity mainActivity;
     BDSNews bdsNewsId;
-
     private ProgressDialog progressDialog;
     DatabaseReference myData;
     StorageReference imageFolder;
     private Bitmap bitmapselect;
     private Calendar calendar = Calendar.getInstance();
+    private Broadcast broadcast;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -334,7 +335,6 @@ public class dangTinBDSActivity extends AppCompatActivity implements com.example
         tvTenDanhMuc = findViewById(R.id.tvTenDanhMuc);
         Intent intent = getIntent();
         title_Post = intent.getStringExtra("title");
-
         tvTenDanhMuc.setText("Danh Mục - " + intent.getStringExtra("tenDanhMuc"));
         imgBackPage = findViewById(R.id.icon_back);
         addImageProduct = findViewById(R.id.addImageProduct);
@@ -354,6 +354,8 @@ public class dangTinBDSActivity extends AppCompatActivity implements com.example
         rcvView_select_img_BDS = findViewById(R.id.rcvView_select_img_BDS);
         Intent intent1 = getIntent();
         tenDanhMuc = intent1.getStringExtra("tenDanhMuc");
+
+        broadcast = new Broadcast();
 
     }
 
@@ -486,6 +488,19 @@ public class dangTinBDSActivity extends AppCompatActivity implements com.example
 
     private void UpdateImageUrl(String url, int id) {
         myData.child(tenDanhMuc+"/"+id+"/image").setValue(url);
+    }
+
+    @Override
+    protected void onStart() {
+        IntentFilter intentFilter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+        registerReceiver(broadcast, intentFilter);
+        super.onStart();
+    }
+
+    @Override
+    protected void onStop() {
+        unregisterReceiver(broadcast);
+        super.onStop();
     }
 
 

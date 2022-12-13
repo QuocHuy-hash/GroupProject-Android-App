@@ -11,8 +11,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -26,6 +28,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.duan1.Adapter.photoAdapter;
+import com.example.duan1.Broadcast.Broadcast;
 import com.example.duan1.model.BDSNews;
 import com.example.duan1.model.thoiTrangNews;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -54,7 +57,6 @@ public class dangTinBDSPhongTroActivity extends AppCompatActivity implements com
     private EditText title_post, description, address, dienTich, price;
     private LinearLayout addImageProduct;
     private Button btnDangTin, btnSuaTin;
-
     private com.example.duan1.Adapter.photoAdapter photoAdapter;
     private RecyclerView rcvView_select_img_PhongTro;
     private ArrayList<Uri> imageUri;
@@ -72,6 +74,7 @@ public class dangTinBDSPhongTroActivity extends AppCompatActivity implements com
     DatabaseReference myData;
     private Bitmap bitmapselect;
     private Calendar calendar = Calendar.getInstance();
+    private Broadcast broadcast;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -424,6 +427,18 @@ public class dangTinBDSPhongTroActivity extends AppCompatActivity implements com
         myData.child(tenDanhMuc+"/"+id+"/image").setValue(url);
     }
 
+    @Override
+    protected void onStart() {
+        IntentFilter intentFilter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+        registerReceiver(broadcast, intentFilter);
+        super.onStart();
+    }
+
+    @Override
+    protected void onStop() {
+        unregisterReceiver(broadcast);
+        super.onStop();
+    }
 
 
 }

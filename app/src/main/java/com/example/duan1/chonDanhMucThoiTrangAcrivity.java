@@ -5,12 +5,15 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.example.duan1.Adapter.dmucThoiTrangAdapter;
+import com.example.duan1.Broadcast.Broadcast;
 import com.example.duan1.model.thoiTrang;
 
 import java.util.ArrayList;
@@ -23,6 +26,8 @@ public class chonDanhMucThoiTrangAcrivity extends AppCompatActivity {
     dmucThoiTrangAdapter dmucThoiTrangAdapter;
     public static int IdUser = 0;
     public static String nameUser = "";
+    private Broadcast broadcast;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -62,6 +67,8 @@ public class chonDanhMucThoiTrangAcrivity extends AppCompatActivity {
     private void initUi() {
         backPage = findViewById(R.id.icon_back);
         rcvChonDanhMuc = findViewById(R.id.rcvChonDanhMucThoiTrang);
+
+        broadcast = new Broadcast();
     }
     public int getIdUser() {
         Intent intent = getIntent();
@@ -75,4 +82,21 @@ public class chonDanhMucThoiTrangAcrivity extends AppCompatActivity {
         String name = bundle.getString("Name");
         return nameUser =  name;
     }
+
+    @Override
+    protected void onStart() {
+        IntentFilter intentFilter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+        registerReceiver(broadcast, intentFilter);
+        super.onStart();
+    }
+
+    @Override
+    protected void onStop() {
+        unregisterReceiver(broadcast);
+        super.onStop();
+    }
+
+
+
+
 }
