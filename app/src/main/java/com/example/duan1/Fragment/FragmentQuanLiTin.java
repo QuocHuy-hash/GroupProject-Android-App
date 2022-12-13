@@ -21,6 +21,7 @@ import com.example.duan1.Adapter.historyNewsAdapter;
 import com.example.duan1.MainActivity;
 import com.example.duan1.R;
 import com.example.duan1.model.BDSNews;
+import com.example.duan1.model.NewsTrangChu;
 import com.example.duan1.model.giaiTriNews;
 import com.example.duan1.model.historyNews;
 import com.example.duan1.model.thoiTrangNews;
@@ -43,6 +44,10 @@ public class FragmentQuanLiTin extends Fragment {
     private RecyclerView rcvQuanLyTinDang;
     private historyNewsAdapter historyNewsAdapter;
     private List<historyNews> listHistoryNews;
+    private List<historyNews> listHistoryNewsBDS;
+    private List<historyNews> listHistoryNewsGT;
+    private List<historyNews> listHistoryNewsTT;
+
     private Context mContext;
 
     private String nameUser;
@@ -67,11 +72,14 @@ public class FragmentQuanLiTin extends Fragment {
             rcvQuanLyTinDang = view.findViewById(R.id.rcvQuanLyTin);
             mainActivity = (MainActivity) getActivity();
             listHistoryNews = new ArrayList<>();
+            listHistoryNewsBDS = new ArrayList<>();
+            listHistoryNewsTT = new ArrayList<>();
+            listHistoryNewsGT = new ArrayList<>();
             idUser = mainActivity.id;
             nameUser = mainActivity.name;
-            listChild1();
-            listChild2();
-            listChild3();
+//            listChild1();
+//            listChild2();
+//            listChild3();
             getListHistoryNews();
             new Handler().postDelayed(new Runnable() {
                 @Override
@@ -79,8 +87,8 @@ public class FragmentQuanLiTin extends Fragment {
                     historyNewsAdapter = new historyNewsAdapter(getContext(),mainActivity, listHistoryNews);
                     rcvQuanLyTinDang.setLayoutManager(new LinearLayoutManager(getContext()));
                     rcvQuanLyTinDang.setAdapter(historyNewsAdapter);
-                    RecyclerView.ItemDecoration decoration = new DividerItemDecoration(getContext() , DividerItemDecoration.VERTICAL);
-                    rcvQuanLyTinDang.addItemDecoration(decoration);
+//                    RecyclerView.ItemDecoration decoration = new DividerItemDecoration(getContext() , DividerItemDecoration.VERTICAL);
+//                    rcvQuanLyTinDang.addItemDecoration(decoration);
                 }
             }, 500);
         }
@@ -89,128 +97,116 @@ public class FragmentQuanLiTin extends Fragment {
     }
 
     public void getListHistoryNews() {
-        for (int i = 0; i < listChild.size(); i++) {
-            myData.child(listChild.get(i)).addChildEventListener(new ChildEventListener() {
-                @Override
-                public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-                    giaiTriNews giaiTriNews = snapshot.getValue(giaiTriNews.class);
+        myData.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                listHistoryNewsGT.clear();
+                for (DataSnapshot snapshot1: snapshot.getChildren()){
+                    giaiTriNews giaiTriNews = snapshot1.getValue(giaiTriNews.class);
 
                     if (giaiTriNews.getIdUser() == idUser) {
-
-                        listHistoryNews.add(new historyNews(id, giaiTriNews.getTitle(), giaiTriNews.getDescription() , giaiTriNews.getDate(), giaiTriNews.getTenDanhMuc()));
+                        listHistoryNews.add(new historyNews(id, giaiTriNews.getTitle(),
+                                giaiTriNews.getDescription(), giaiTriNews.getDate(),
+                                giaiTriNews.getTenDanhMuc(),giaiTriNews.getImage()));
                         id++;
                     }
                 }
+//                addData();
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
 
-                @Override
-                public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+            }
+        });
 
-                }
-
-                @Override
-                public void onChildRemoved(@NonNull DataSnapshot snapshot) {
-
-                }
-
-                @Override
-                public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-
-                }
-
-                @Override
-                public void onCancelled(@NonNull DatabaseError error) {
-
-                }
-            });
-        }
-        for (int i = 0; i < listChild1.size(); i++) {
-            myData2.child(listChild1.get(i)).addChildEventListener(new ChildEventListener() {
-                @Override
-                public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-                    thoiTrangNews thoiTrangNews = snapshot.getValue(com.example.duan1.model.thoiTrangNews.class);
+        myData2.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                listHistoryNewsTT.clear();
+                for (DataSnapshot snapshot1: snapshot.getChildren()){
+                    thoiTrangNews thoiTrangNews = snapshot1.getValue(com.example.duan1.model.thoiTrangNews.class);
                     if (thoiTrangNews.getIdUser() == idUser) {
-
-                        listHistoryNews.add(new historyNews(id, thoiTrangNews.getTitlePost(), thoiTrangNews.getDescriptionPost(), thoiTrangNews.getDate(),thoiTrangNews.getTenDanhMuc()));
+                        listHistoryNews.add(new historyNews(id, thoiTrangNews.getTitlePost(),
+                                thoiTrangNews.getDescriptionPost(), thoiTrangNews.getDate(),
+                                thoiTrangNews.getTenDanhMuc(),thoiTrangNews.getImage()));
                         id++;
                     }
 
                 }
+//                addData();
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
 
-                @Override
-                public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-
-                }
-
-                @Override
-                public void onChildRemoved(@NonNull DataSnapshot snapshot) {
-
-                }
-
-                @Override
-                public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-
-                }
-
-                @Override
-                public void onCancelled(@NonNull DatabaseError error) {
-
-                }
-            });
-        }
-        for (int i = 0; i < listChild2.size(); i++) {
-            myData1.child(listChild2.get(i)).addValueEventListener(new ValueEventListener() {
+            }
+        });
+            myData1.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    listHistoryNewsBDS.clear();
                     for (DataSnapshot snapshot1: snapshot.getChildren()){
                         BDSNews bdsNews = snapshot1.getValue(BDSNews.class);
                         if (bdsNews.getIdUser() == idUser) {
-                            listHistoryNews.add(new historyNews(id, bdsNews.getTitle(), bdsNews.getDescription() , bdsNews.getDate(), bdsNews.getTenDanhMuc(), bdsNews.getImage()));
+                            listHistoryNews.add(new historyNews(id, bdsNews.getTitle(),
+                                    bdsNews.getDescription() , bdsNews.getDate(),
+                                    bdsNews.getTenDanhMuc(), bdsNews.getImage()));
                             id++;
                         }
                     }
+//                    addData();
                 }
-
                 @Override
                 public void onCancelled(@NonNull DatabaseError error) {
 
                 }
             });
-
-        }
-
     }
 
-    private List<String> listChild1() {
-        listChild.add(new String("Nhạc cụ"));
-        listChild.add(new String("Sách"));
-        listChild.add(new String("Đồ thể thao, Dã ngoại"));
-        listChild.add(new String("Đồ sưu tầm  ,Đồ cổ"));
-        listChild.add(new String("Thiết bị chơi game"));
-        listChild.add(new String("Sở thích khác"));
 
-        return listChild;
-    }
+//    private void addData(){
+//        for (int i = 0; i < listHistoryNewsBDS.size(); i++){
+//            listHistoryNews.add(listHistoryNewsBDS.get(i));
+//        }
+//        for (int i = 0; i < listHistoryNewsGT.size(); i++){
+//
+//            listHistoryNews.add(listHistoryNewsGT.get(i));
+//        }
+//        for (int i = 0; i < listHistoryNewsTT.size(); i++){
+//            listHistoryNews.add(listHistoryNewsTT.get(i));
+//        }
+//    }
 
-    private List<String> listChild2() {
-        listChild1.add(new String("Quần áo"));
-        listChild1.add(new String("Đồng hồ"));
-        listChild1.add(new String("Giày dép"));
-        listChild1.add(new String("Túi xách"));
-        listChild1.add(new String("Nước hoa"));
-        listChild1.add(new String("Phụ kiện khác"));
-
-        return listChild1;
-    }
-
-    private List<String> listChild3() {
-        listChild2.add(new String("Chung cư"));
-        listChild2.add(new String("Nhà ở"));
-        listChild2.add(new String("Đất"));
-        listChild2.add(new String("Văn Phòng"));
-        listChild2.add(new String("Phòng trọ"));
-
-        return listChild2;
-    }
+//    private List<String> listChild1() {
+//        listChild.add(new String("Nhạc cụ"));
+//        listChild.add(new String("Sách"));
+//        listChild.add(new String("Đồ thể thao, Dã ngoại"));
+//        listChild.add(new String("Đồ sưu tầm  ,Đồ cổ"));
+//        listChild.add(new String("Thiết bị chơi game"));
+//        listChild.add(new String("Sở thích khác"));
+//
+//        return listChild;
+//    }
+//
+//    private List<String> listChild2() {
+//        listChild1.add(new String("Quần áo"));
+//        listChild1.add(new String("Đồng hồ"));
+//        listChild1.add(new String("Giày dép"));
+//        listChild1.add(new String("Túi xách"));
+//        listChild1.add(new String("Nước hoa"));
+//        listChild1.add(new String("Phụ kiện khác"));
+//
+//        return listChild1;
+//    }
+//
+//    private List<String> listChild3() {
+//        listChild2.add(new String("Chung cư"));
+//        listChild2.add(new String("Nhà ở"));
+//        listChild2.add(new String("Đất"));
+//        listChild2.add(new String("Văn Phòng"));
+//        listChild2.add(new String("Phòng trọ"));
+//
+//        return listChild2;
+//    }
 
 
 }

@@ -14,10 +14,12 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -34,6 +36,7 @@ import com.example.duan1.Broadcast.Broadcast;
 import com.example.duan1.model.BDSNews;
 import com.example.duan1.model.direction;
 import com.example.duan1.model.thoiTrangNews;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -45,6 +48,8 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -63,7 +68,7 @@ public class dangTinBDSDatActivity extends AppCompatActivity implements com.exam
     private double dbPrice;
     private String title_Post = null;
     private chonDanhMucThoiTrangAcrivity chonDanhMucThoiTrangAcrivity;
-    private com.example.duan1.Adapter.photoAdapter photoAdapter;
+    private photoAdapter photoAdapter;
     private RecyclerView rcvView_select_img_Dat;
     private ArrayList<Uri> imageUri;
     private int REQUEST_PERMISSION_CODE = 35;
@@ -75,6 +80,8 @@ public class dangTinBDSDatActivity extends AppCompatActivity implements com.exam
     private List<BDSNews> listBDS;
     MainActivity mainActivity;
     BDSNews bdsNewsId;
+    private Bitmap bitmapselect;
+    private Calendar calendar = Calendar.getInstance();
     private Broadcast broadcast;
 
     @Override
@@ -111,7 +118,6 @@ public class dangTinBDSDatActivity extends AppCompatActivity implements com.exam
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
         Calendar c = Calendar.getInstance();
         date = sdf.format(c.getTime());
-        System.out.println("Date : " + date);
     }
     private void editNews() {
         btnSuaTin.setOnClickListener(new View.OnClickListener() {
@@ -144,26 +150,11 @@ public class dangTinBDSDatActivity extends AppCompatActivity implements com.exam
 
                 } else {
                     progressDialog.show();
-                    for (update_count = 0; update_count < imageUri.size(); update_count++) {
-                        Uri indexImage = imageUri.get(update_count);
-                        StorageReference imageName = imageFolder.child("Image " + indexImage.getLastPathSegment());
-                        imageName.child(strTitlePost).putFile(indexImage).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                            @Override
-                            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                                imageName.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                                    @Override
-                                    public void onSuccess(Uri uri) {
-                                        String Url = String.valueOf(uri);
-                                        StoreLick(Url);
 
-                                    }
-                                });
-                            }
-                        });
-                    }
+                    upImage(idEdit);
 
                     String strId = String.valueOf(idEdit);
-                    myData.child(tenDanhMuc).child(strId).setValue(new BDSNews(idEdit, strTitlePost, strDescription, dbPrice
+                    myData.child(strId).setValue(new BDSNews(idEdit, strTitlePost, strDescription, dbPrice
                                     , strDienTich, strAddress, strTenPhanKhu, strLoaiHinhDat,
                                     strDirection, idUser, nameUser,tenDanhMuc, date))
                             .addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -182,7 +173,7 @@ public class dangTinBDSDatActivity extends AppCompatActivity implements com.exam
     private void setTextInput() {
         FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
         DatabaseReference databaseReference = firebaseDatabase.getReference("Tin").child("BDS");
-        databaseReference.child(tenDanhMuc).addChildEventListener(new ChildEventListener() {
+        databaseReference.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
                 BDSNews bdsNews = snapshot.getValue(BDSNews.class);
@@ -254,7 +245,7 @@ public class dangTinBDSDatActivity extends AppCompatActivity implements com.exam
 
     private void clickAddImageFashion() {
         photoAdapter = new photoAdapter(imageUri, this, this);
-        rcvView_select_img_Dat.setLayoutManager(new GridLayoutManager(dangTinBDSDatActivity.this, 6));
+        rcvView_select_img_Dat.setLayoutManager(new GridLayoutManager(dangTinBDSDatActivity.this, 1));
         rcvView_select_img_Dat.setAdapter(photoAdapter);
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
@@ -313,8 +304,6 @@ public class dangTinBDSDatActivity extends AppCompatActivity implements com.exam
 
 
     private void clickDangTin() {
-
-
         btnDangTin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -337,33 +326,19 @@ public class dangTinBDSDatActivity extends AppCompatActivity implements com.exam
 
                 strDirection = spn_Direction.getSelectedItem().toString();
 
-
                 if (strTitlePost.isEmpty() || strDescription.isEmpty() || strPrice.isEmpty()
                         || strAddress.isEmpty() || strTenPhanKhu.isEmpty() || strLoaiHinhDat.isEmpty()) {
                     MainActivity.showDiaLogWarning(dangTinBDSDatActivity.this, "vui lòng nhập đầy đủ thông tin");
 
                 } else {
                     progressDialog.show();
-                    for (update_count = 0; update_count < imageUri.size(); update_count++) {
-                        Uri indexImage = imageUri.get(update_count);
-                        StorageReference imageName = imageFolder.child("Image " + indexImage.getLastPathSegment());
-                        imageName.child(strTitlePost).putFile(indexImage).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                            @Override
-                            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                                imageName.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                                    @Override
-                                    public void onSuccess(Uri uri) {
-                                        String Url = String.valueOf(uri);
-                                        StoreLick(Url);
 
-                                    }
-                                });
-                            }
-                        });
-                    }
                     maxID = bdsNewsId.getId() + 1;
+
+                    upImage(maxID);
+
                     String strId = String.valueOf(maxID);
-                    myData.child(tenDanhMuc).child(strId).setValue(new BDSNews(maxID, strTitlePost, strDescription, dbPrice
+                    myData.child(strId).setValue(new BDSNews(maxID, strTitlePost, strDescription, dbPrice
                                     , strDienTich, strAddress, strTenPhanKhu, strLoaiHinhDat,
                                     strDirection, idUser, nameUser, tenDanhMuc ,date))
                             .addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -385,7 +360,7 @@ public class dangTinBDSDatActivity extends AppCompatActivity implements com.exam
         listBDS = new ArrayList<>();
         FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
         DatabaseReference databaseReference = firebaseDatabase.getReference("Tin").child("BDS");
-        databaseReference.child(tenDanhMuc).addValueEventListener(new ValueEventListener() {
+        databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 listBDS.clear();
@@ -403,14 +378,6 @@ public class dangTinBDSDatActivity extends AppCompatActivity implements com.exam
         });
 
         return listBDS;
-
-    }
-
-    private void StoreLick(String url) {
-        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("List Image");
-        HashMap<String, String> hashMap = new HashMap<>();
-        hashMap.put("Imglink", url);
-        databaseReference.push().setValue(hashMap);
 
     }
 
@@ -456,6 +423,59 @@ public class dangTinBDSDatActivity extends AppCompatActivity implements com.exam
             direction drt8 = new direction("Tây-Nam");
             return new direction[]{drt1, drt2, drt3, drt4, drt5, drt6, drt7, drt8};
         }
+    }
+
+    private void upImage(int id) {
+        if (imageUri.size() == 0){
+            return;
+        }
+        Uri uri = imageUri.get(0);
+        try {
+            bitmapselect = MediaStore.Images.Media.getBitmap(getContentResolver(),uri);
+            FirebaseStorage storage = FirebaseStorage.getInstance();
+            StorageReference storageRef = storage.getReference();
+            StorageReference mountainsRef = storageRef.child(tenDanhMuc+"/image"+calendar.getTimeInMillis());
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            bitmapselect.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+            byte[] dataImage = baos.toByteArray();
+
+            UploadTask uploadTask = mountainsRef.putBytes(dataImage);
+            uploadTask.addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception exception) {
+                    // Handle unsuccessful uploads
+                    progressDialog.dismiss();
+                    Toast.makeText(dangTinBDSDatActivity.this, "Lỗi cập nhật hình ảnh!", Toast.LENGTH_SHORT).show();
+                }
+            }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                    // taskSnapshot.getMetadata() contains file metadata such as size, content-type, etc.
+
+                    mountainsRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                        @Override
+                        public void onSuccess(Uri uri) {
+                            String strImage = String.valueOf(uri);
+                            UpdateImageUrl(strImage, id);
+                            progressDialog.dismiss();
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception exception) {
+                            // Handle any errors
+                            progressDialog.dismiss();
+                            Toast.makeText(dangTinBDSDatActivity.this, "Lỗi tải URL hình ảnh!", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+            });
+        } catch (IOException e) {
+            Toast.makeText(mainActivity, "Lỗi try-catch", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void UpdateImageUrl(String url, int id) {
+        myData.child(id+"/image").setValue(url);
     }
 
     @Override

@@ -153,9 +153,11 @@
                 android:layout_margin="10dp"
                 android:layout_marginTop="10dp"
                 android:background="@drawable/duongvien_goctron"
-                android:gravity="center_horizontal"
+                android:gravity="center"
                 android:orientation="vertical"
-                android:padding="10dp">
+                android:padding="10dp"
+
+                >
 
                 <ImageView
                     android:id="@+id/addImageProductTT"
@@ -163,18 +165,18 @@
                     android:layout_height="40dp"
                     android:src="@drawable/ic_camera" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="5dp"
-                    android:text="Đăng từ 02 đến 05 hình"
-                    android:textColor="#7E7A7A" />
+<!--                <TextView-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_marginTop="5dp"-->
+<!--                    android:text="Đăng từ 02 đến 05 hình"-->
+<!--                    android:textColor="#7E7A7A" />-->
 
                 <androidx.recyclerview.widget.RecyclerView
+
                     android:id="@+id/rcvView_select_img_fashion"
-                    android:layout_width="wrap_content"
+                    android:layout_width="205dp"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="start"
                     android:scrollbarStyle="outsideInset"
                     android:scrollbars="horizontal" />
 

@@ -34,7 +34,7 @@ public class chonDanhMucGiaiTriActivity extends AppCompatActivity {
         clickBackPage();
 
         listGiaTri = new ArrayList<>();
-        dmucTheThaoAdapter = new dmucTheThaoAdapter(getApplicationContext() , getListData());
+        dmucTheThaoAdapter = new dmucTheThaoAdapter(this , getListData());
         rcvChonDanhMuc.setAdapter(dmucTheThaoAdapter);
         rcvChonDanhMuc.setLayoutManager(new LinearLayoutManager(this));
     }

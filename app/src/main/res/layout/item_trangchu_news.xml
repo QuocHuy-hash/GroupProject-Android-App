@@ -2,24 +2,33 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_width="160dp"
+    android:layout_height="250dp"
     android:orientation="vertical"
-    android:padding="10dp">
+    android:padding="10dp"
+    android:gravity="center"
+    android:background="@drawable/bg_item_trang_chu"
+    android:layout_marginRight="10dp"
+    android:layout_marginBottom="10dp"
+    >
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="200dp"
-        android:layout_height="200dp">
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+
+        >
+
 
         <ImageView
             android:id="@+id/img_item_trangchu_news_Pic"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:src="@color/gray_1"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            android:background="@color/gray_1"
+            />
 
         <LinearLayout
             android:id="@+id/layout_item_trangchu_news_SLA"
@@ -77,14 +86,16 @@
             android:text="FEE"
             android:textStyle="bold"
             android:textColor="@color/red"
-            android:textSize="20dp"/>
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text=" VND"
-            android:textStyle="bold"
-            android:textColor="@color/red"
-            android:textSize="20dp"/>
+            android:textSize="16dp"
+            android:gravity="center"
+            />
+<!--        <TextView-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text=" VND"-->
+<!--            android:textStyle="bold"-->
+<!--            android:textColor="@color/red"-->
+<!--            android:textSize="20dp"/>-->
     </LinearLayout>
 
     <LinearLayout

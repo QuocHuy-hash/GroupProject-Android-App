@@ -22,6 +22,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.duan1.Broadcast.Broadcast;
@@ -101,10 +102,12 @@ public class MainActivity extends AppCompatActivity {
                 switch (item.getItemId()) {
                     case R.id.home:
                         getSupportFragmentManager().beginTransaction().replace(R.id.container, fragmentTrangChu).commit();
+
                         return true;
 
                     case R.id.believe:
                         getSupportFragmentManager().beginTransaction().replace(R.id.container, fragmentQuanLiTin).commit();
+
                         return true;
 
                     case R.id.fab:
@@ -112,6 +115,7 @@ public class MainActivity extends AppCompatActivity {
 
                     case R.id.market:
                         getSupportFragmentManager().beginTransaction().replace(R.id.container, fragmentDaoCho).commit();
+
                         return true;
 
                     case R.id.more:
@@ -154,8 +158,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void showDialogChooseListProduct() {
-
-
         final Dialog dialog = new Dialog(this);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.layout_dialog_chon_danh_muc);
@@ -261,7 +263,6 @@ public class MainActivity extends AppCompatActivity {
     private void initUi() {
         bottomNavigationView = findViewById(R.id.bottomNavigationView);
         floatingActionButton = findViewById(R.id.fab);
-
         getSupportFragmentManager().beginTransaction().replace(R.id.container, fragmentTrangChu).commit();
         broadcast = new Broadcast();
     }

@@ -148,16 +148,15 @@ public void setFilter(List<historyNews> listFilter){
 private void XoaTin(String title){
     ProgressDialog progressDialog = new ProgressDialog(mainActivity);
     progressDialog.show();
-    for(int i = 0 ; i < listChild.size() ;i++) {
-        myData.child(listChild.get(i)).addChildEventListener(new ChildEventListener() {
+        myData.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
                 giaiTriNews giaiTriNew = snapshot.getValue(giaiTriNews.class);
                 if(giaiTriNew.getTitle().equals(title)){
                     String id = String.valueOf(giaiTriNew.getId());
-                    String tenDanhMuc = String.valueOf(giaiTriNew.getTenDanhMuc());
-                        myData.child(tenDanhMuc).child(id).removeValue();
+                        myData.child(id).removeValue();
                         Toast.makeText(mContext.getApplicationContext(), "Đã xóa Tin", Toast.LENGTH_SHORT).show();
+                    progressDialog.dismiss();
                 }
             }
 
@@ -181,21 +180,20 @@ private void XoaTin(String title){
 
             }
         });
-        progressDialog.dismiss();
-    }
 
-    for (int i = 0; i< listChild2.size() ;i++) {
-        myData1.child(listChild2.get(i)).addChildEventListener(new ChildEventListener() {
+
+
+
+        myData1.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
                 BDSNews bdsNews = snapshot.getValue(BDSNews.class);
                 if(bdsNews.getTitle().equals(title)){
                     String id = String.valueOf(bdsNews.getId());
-                    String tenDanhMuc = String.valueOf(bdsNews.getTenDanhMuc());
-                    System.out.println(tenDanhMuc);
-                    myData1.child(tenDanhMuc).child(id).removeValue();
+                    myData1.child(id).removeValue();
                     notifyDataSetChanged();
                     Toast.makeText(mContext.getApplicationContext(), "Đã xóa Tin", Toast.LENGTH_SHORT).show();
+                    progressDialog.dismiss();
                 }
             }
 
@@ -219,20 +217,17 @@ private void XoaTin(String title){
 
             }
         });
-    }
 
-    for(int i = 0; i < listChild1.size();i++){
-        myData2.child(listChild1.get(i)).addChildEventListener(new ChildEventListener() {
+        myData2.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
                 thoiTrangNews thoiTrangNews = snapshot.getValue(com.example.duan1.model.thoiTrangNews.class);
                 if(thoiTrangNews.getTitlePost().equals(title)){
                     String id = String.valueOf(thoiTrangNews.getId());
-                    String tenDanhMuc = String.valueOf(thoiTrangNews.getTenDanhMuc());
-                    
-                    myData2.child(tenDanhMuc).child(id).removeValue();
+                    myData2.child(id).removeValue();
                     notifyDataSetChanged();
                     Toast.makeText(mContext, "Xóa Thành công", Toast.LENGTH_SHORT).show();
+                    progressDialog.dismiss();
                 }
             }
 
@@ -256,7 +251,7 @@ private void XoaTin(String title){
 
             }
         });
-    }
+
 
 }
 

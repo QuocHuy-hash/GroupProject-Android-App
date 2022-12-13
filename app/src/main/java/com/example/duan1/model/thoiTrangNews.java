@@ -16,8 +16,25 @@ public class thoiTrangNews {
     private String nameUser;
     private String tenDanhMuc;
     private String date;
+    private String image;
 
     public thoiTrangNews() {
+    }
+
+    public thoiTrangNews(int id, String titlePost, String descriptionPost, String typeproduct,
+                         double price, String address, int idUser, String nameUser,
+                         String tenDanhMuc, String date, String image) {
+        this.id = id;
+        this.titlePost = titlePost;
+        this.descriptionPost = descriptionPost;
+        this.typeproduct = typeproduct;
+        this.price = price;
+        this.address = address;
+        this.idUser = idUser;
+        this.nameUser = nameUser;
+        this.tenDanhMuc = tenDanhMuc;
+        this.date = date;
+        this.image = image;
     }
 
     public thoiTrangNews(int id, String titlePost, String descriptionPost, String typeproduct
@@ -111,5 +128,13 @@ public class thoiTrangNews {
 
     public void setAddress(String address) {
         this.address = address;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
     }
 }

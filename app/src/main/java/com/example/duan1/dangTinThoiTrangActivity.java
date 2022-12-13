@@ -144,12 +144,12 @@ public class dangTinThoiTrangActivity extends AppCompatActivity implements photo
 
                 } else {
                     progressDialog.show();
+                    maxID = newsFashion.getId();
 
-
-                maxID = newsFashion.getId();
                     upImage(maxID);
+
                 String strId = String.valueOf(maxID);
-                myData.child(tenDanhMuc).child(strId ).setValue(new thoiTrangNews(maxID ,
+                myData.child(strId ).setValue(new thoiTrangNews(maxID ,
                         strTitlePost,
                         strDescription,
                         strLoaiSanPham,
@@ -171,7 +171,7 @@ public class dangTinThoiTrangActivity extends AppCompatActivity implements photo
     private void setTextInput() {
         FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
         DatabaseReference databaseReference1 = firebaseDatabase.getReference("Tin").child("ThoiTrang");
-        databaseReference1.child(tenDanhMuc).addChildEventListener(new ChildEventListener() {
+        databaseReference1.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
                 thoiTrangNews thoiTrangNews = snapshot.getValue(com.example.duan1.model.thoiTrangNews.class);
@@ -215,12 +215,10 @@ public class dangTinThoiTrangActivity extends AppCompatActivity implements photo
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
         Calendar c = Calendar.getInstance();
          date = sdf.format(c.getTime());
-        System.out.println("Date : " + date);
     }
 
 
     private void clickDangTin() {
-
         btnDangTin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -257,8 +255,9 @@ public class dangTinThoiTrangActivity extends AppCompatActivity implements photo
 
                 }
                 upImage(maxID);
+
                     String strId = String.valueOf(maxID);
-                    myData.child(tenDanhMuc).child(strId ).setValue(new thoiTrangNews(maxID ,
+                    myData.child(strId ).setValue(new thoiTrangNews(maxID ,
                                     strTitlePost,
                                     strDescription,
                                     strLoaiSanPham,
@@ -325,22 +324,15 @@ public class dangTinThoiTrangActivity extends AppCompatActivity implements photo
         }
     }
     private void UpdateImageUrl(String url, int id) {
-        myData.child(tenDanhMuc+"/"+id+"/image").setValue(url);
+        myData.child(id+"/image").setValue(url);
     }
-
-//    private void StoreLick(String url) {
-//        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("List Image");
-//        HashMap<String, String> hashMap = new HashMap<>();
-//        hashMap.put("Imglink", url);
-//        databaseReference.push().setValue(hashMap);
-//    }
 
     private List<thoiTrangNews> getListFashion() {
          listFashion = new ArrayList<>();
         FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
         DatabaseReference databaseReference = firebaseDatabase.getReference("Tin").child("ThoiTrang");
 
-        databaseReference.child(tenDanhMuc).addValueEventListener(new ValueEventListener() {
+        databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 listFashion.clear();
@@ -361,7 +353,6 @@ public class dangTinThoiTrangActivity extends AppCompatActivity implements photo
 
     }
 
-
 //      @Override
 //      public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
 //       Task<Uri> urlTask = taskSnapshot.getStorage().getDownloadUrl();
@@ -372,7 +363,7 @@ public class dangTinThoiTrangActivity extends AppCompatActivity implements photo
 
     private void clickAddImageFashion() {
         photoAdapter = new photoAdapter(imageUri, this, this);
-        rcvView_select_img_fashion.setLayoutManager(new GridLayoutManager(dangTinThoiTrangActivity.this, 6));
+        rcvView_select_img_fashion.setLayoutManager(new GridLayoutManager(dangTinThoiTrangActivity.this, 1));
         rcvView_select_img_fashion.setAdapter(photoAdapter);
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)

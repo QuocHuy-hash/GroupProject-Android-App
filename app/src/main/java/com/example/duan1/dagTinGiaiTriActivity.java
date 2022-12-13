@@ -119,11 +119,9 @@ public class dagTinGiaiTriActivity extends AppCompatActivity implements com.exam
     }
 
     private void getCurrentDate() {
-
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
         Calendar c = Calendar.getInstance();
         date = sdf.format(c.getTime());
-        System.out.println("Date : " + date);
     }
 
     private void editNews() {
@@ -157,7 +155,7 @@ public class dagTinGiaiTriActivity extends AppCompatActivity implements com.exam
                     upImage(id);
 
                     String strId = String.valueOf(id);
-                    myData.child(tenDanhMuc).child(strId ).setValue(new giaiTriNews(id ,strTitlePost , strDescription ,strAddress, dbPrice
+                    myData.child(strId ).setValue(new giaiTriNews(id ,strTitlePost , strDescription ,strAddress, dbPrice
                                     ,strLoaiSanPham ,idUser ,nameUser , tenDanhMuc, date))
                             .addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
@@ -175,7 +173,7 @@ public class dagTinGiaiTriActivity extends AppCompatActivity implements com.exam
     private void setTextInput() {
         FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
         DatabaseReference databaseReference = firebaseDatabase.getReference("Tin").child("GiaiTri");
-        databaseReference.child(tenDanhMuc).addChildEventListener(new ChildEventListener() {
+        databaseReference.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
                 giaiTriNews giaiTriNews = snapshot.getValue(com.example.duan1.model.giaiTriNews.class);
@@ -242,7 +240,7 @@ public class dagTinGiaiTriActivity extends AppCompatActivity implements com.exam
 
     private void clickAddImageFashion() {
         photoAdapter = new photoAdapter(imageUri, this, this);
-        rcvView_select_img_GiaiTri.setLayoutManager(new GridLayoutManager(dagTinGiaiTriActivity.this, 6));
+        rcvView_select_img_GiaiTri.setLayoutManager(new GridLayoutManager(dagTinGiaiTriActivity.this, 1));
         rcvView_select_img_GiaiTri.setAdapter(photoAdapter);
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
@@ -336,7 +334,7 @@ public class dagTinGiaiTriActivity extends AppCompatActivity implements com.exam
                     upImage(maxID);
 
                     String strId = String.valueOf(maxID);
-                    myData.child(tenDanhMuc).child(strId ).setValue(new giaiTriNews(maxID ,strTitlePost , strDescription ,strAddress, dbPrice
+                    myData.child(strId ).setValue(new giaiTriNews(maxID ,strTitlePost , strDescription ,strAddress, dbPrice
                                       ,strLoaiSanPham ,idUser ,nameUser , tenDanhMuc ,date))
                             .addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
@@ -357,7 +355,7 @@ public class dagTinGiaiTriActivity extends AppCompatActivity implements com.exam
         listGiaiTri = new ArrayList<>();
         FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
         DatabaseReference databaseReference = firebaseDatabase.getReference("Tin").child("GiaiTri");
-        databaseReference.child(tenDanhMuc).addValueEventListener(new ValueEventListener() {
+        databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 listGiaiTri.clear();
@@ -377,15 +375,6 @@ public class dagTinGiaiTriActivity extends AppCompatActivity implements com.exam
         return listGiaiTri;
 
     }
-
-    private void StoreLick(String url) {
-        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("List Image");
-        HashMap<String, String> hashMap = new HashMap<>();
-        hashMap.put("Imglink", url);
-        databaseReference.push().setValue(hashMap);
-
-    }
-
 
     private void initUi() {
         tvTenDanhMuc = findViewById(R.id.tvTenDanhMuc);
@@ -481,7 +470,7 @@ public class dagTinGiaiTriActivity extends AppCompatActivity implements com.exam
     }
 
     private void UpdateImageUrl(String url, int id) {
-        myData.child(tenDanhMuc+"/"+id+"/image").setValue(url);
+        myData.child(id+"/image").setValue(url);
     }
 
     @Override
