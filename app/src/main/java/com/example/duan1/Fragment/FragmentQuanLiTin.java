@@ -215,50 +215,5 @@ public class FragmentQuanLiTin extends Fragment {
     }
 
 
-//    private void addData(){
-//        for (int i = 0; i < listHistoryNewsBDS.size(); i++){
-//            listHistoryNews.add(listHistoryNewsBDS.get(i));
-//        }
-//        for (int i = 0; i < listHistoryNewsGT.size(); i++){
-//
-//            listHistoryNews.add(listHistoryNewsGT.get(i));
-//        }
-//        for (int i = 0; i < listHistoryNewsTT.size(); i++){
-//            listHistoryNews.add(listHistoryNewsTT.get(i));
-//        }
-//    }
-
-//    private List<String> listChild1() {
-//        listChild.add(new String("Nhạc cụ"));
-//        listChild.add(new String("Sách"));
-//        listChild.add(new String("Đồ thể thao, Dã ngoại"));
-//        listChild.add(new String("Đồ sưu tầm  ,Đồ cổ"));
-//        listChild.add(new String("Thiết bị chơi game"));
-//        listChild.add(new String("Sở thích khác"));
-//
-//        return listChild;
-//    }
-//
-//    private List<String> listChild2() {
-//        listChild1.add(new String("Quần áo"));
-//        listChild1.add(new String("Đồng hồ"));
-//        listChild1.add(new String("Giày dép"));
-//        listChild1.add(new String("Túi xách"));
-//        listChild1.add(new String("Nước hoa"));
-//        listChild1.add(new String("Phụ kiện khác"));
-//
-//        return listChild1;
-//    }
-//
-//    private List<String> listChild3() {
-//        listChild2.add(new String("Chung cư"));
-//        listChild2.add(new String("Nhà ở"));
-//        listChild2.add(new String("Đất"));
-//        listChild2.add(new String("Văn Phòng"));
-//        listChild2.add(new String("Phòng trọ"));
-//
-//        return listChild2;
-//    }
-
 
 }
