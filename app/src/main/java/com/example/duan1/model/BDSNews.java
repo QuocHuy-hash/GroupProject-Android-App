@@ -16,13 +16,38 @@ public class BDSNews {
     private String nameUser;
     private String tenDanhMuc;
     private String date;
+    private String image;
+
+    public BDSNews(int maxID, String strTitlePost, String strDescription, double dbPrice, String strDienTich,
+                   String strAddress, String strTenKhu, String strLoaiHinhDat, String strSoPhongNgu,
+                   String strSoPhongWc, int idUser, String nameUser, String tenDanhMuc, String date, String s) {
+    }
 
     public BDSNews() {
     }
 
-    public BDSNews(int maxID, String strTitlePost, String strDescription, double dbPrice, String strDienTich,
+    public BDSNews(int id, String title, String description, double price, String dienTich, String adress, String tenPhanKhu, String loaiDat, String direction, String soPhongNgu, String soPhongWc, int idUser, String nameUser, String tenDanhMuc, String date, String image) {
+        this.id = id;
+        this.title = title;
+        this.description = description;
+        this.price = price;
+        this.dienTich = dienTich;
+        this.adress = adress;
+        this.tenPhanKhu = tenPhanKhu;
+        this.loaiDat = loaiDat;
+        this.direction = direction;
+        this.soPhongNgu = soPhongNgu;
+        this.soPhongWc = soPhongWc;
+        this.idUser = idUser;
+        this.nameUser = nameUser;
+        this.tenDanhMuc = tenDanhMuc;
+        this.date = date;
+        this.image = image;
+    }
+
+        public BDSNews(int maxID, String strTitlePost, String strDescription, double dbPrice, String strDienTich,
                    String strAddress, String strTenKhu, String strLoaiHinhDat,
-                   String strSoPhongNgu, String strSoPhongWc, int idUser, String nameUser , String tenDanhMuc, String date) {
+                   String strSoPhongNgu, String strSoPhongWc, int idUser, String nameUser , String tenDanhMuc, String date ) {
         this.id = maxID;
         this.title = strTitlePost;
         this.description = strDescription;
@@ -37,6 +62,8 @@ public class BDSNews {
         this.nameUser = nameUser;
         this.tenDanhMuc = tenDanhMuc;
         this.date = date;
+
+
     }
 
 
@@ -192,5 +219,13 @@ public class BDSNews {
 
     public void setAdress(String adress) {
         this.adress = adress;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
     }
 }

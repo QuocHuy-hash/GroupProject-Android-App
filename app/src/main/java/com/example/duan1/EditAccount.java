@@ -5,10 +5,12 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -33,7 +35,10 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.duan1.Broadcast.Broadcast;
 import com.example.duan1.model.Users;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -74,9 +79,11 @@ public class EditAccount extends AppCompatActivity {
     private Bitmap bitmapselect;
     private String strImage = " ";
     private FirebaseAuth auth;
-    private FirebaseUser user;
+    private FirebaseUser userr;
     private ProgressDialog progressDialog;
     private List<Users> mListUser;
+    private String oldPasswordUser = " ";
+    private Broadcast broadcast;
 
     private ActivityResultLauncher<Intent> mActivityResultLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
@@ -101,7 +108,7 @@ public class EditAccount extends AppCompatActivity {
 
                             FirebaseStorage storage = FirebaseStorage.getInstance();
                             StorageReference storageRef = storage.getReference();
-                            StorageReference mountainsRef = storageRef.child("AvatarUser/"+user.getEmail()+"/image"+calendar.getTimeInMillis());
+                            StorageReference mountainsRef = storageRef.child("AvatarUser/"+userr.getEmail()+"/image"+calendar.getTimeInMillis());
                             ByteArrayOutputStream baos = new ByteArrayOutputStream();
                             bitmapselect.compress(Bitmap.CompressFormat.JPEG, 100, baos);
                             byte[] dataImage = baos.toByteArray();
@@ -147,7 +154,6 @@ public class EditAccount extends AppCompatActivity {
             }
     );
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -181,9 +187,11 @@ public class EditAccount extends AppCompatActivity {
         btnBack = findViewById(R.id.imgbtn_back);
 
         auth = FirebaseAuth.getInstance();
-        user = auth.getCurrentUser();
+        userr = auth.getCurrentUser();
 
         progressDialog = new ProgressDialog(this);
+
+        broadcast = new Broadcast();
     }
 
     //sự kiện click
@@ -194,7 +202,6 @@ public class EditAccount extends AppCompatActivity {
                 requestPermissionsimage();
             }
         });
-
 
         imgName.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -227,8 +234,85 @@ public class EditAccount extends AppCompatActivity {
             }
         });
 
+        tvPassword.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                resetPassword();
+            }
+        });
+
     }
 
+    private void resetPassword() {
+        final Dialog dialog = new Dialog(EditAccount.this);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.dialog_reset_password);
+
+        Window window = dialog.getWindow();
+        if(window == null){
+            return;
+        }
+        dialog.setCancelable(false);
+
+        window.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT);
+        window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+        WindowManager.LayoutParams windowAttributes = window.getAttributes();
+        windowAttributes.gravity = Gravity.CENTER;
+        window.setAttributes(windowAttributes);
+
+        //initUi
+        EditText edtOldPassword = dialog.findViewById(R.id.edt_dialog_old_password);
+        EditText edtNewPassword = dialog.findViewById(R.id.edt_dialog_new_password);
+        Button btnUpdate = dialog.findViewById(R.id.btn_dialog_update_password);
+        Button btnCancal = dialog.findViewById(R.id.btn_dialog_cancel_reset_password);
+
+        btnCancal.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+            }
+        });
+
+        btnUpdate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                if (userr != null){
+                    String strOldPassword = edtOldPassword.getText().toString().trim();
+                    String strNewPassword = edtNewPassword.getText().toString().trim();
+                    if (strOldPassword.isEmpty() || edtOldPassword == null){
+                        edtOldPassword.setError("Không được để trống");
+                        return;
+                    }
+                    if (strNewPassword.isEmpty() || edtNewPassword == null){
+                        edtNewPassword.setError("Không được để trống");
+                        return;
+                    }
+                    progressDialog.setTitle("Xin chờ...!");
+                    progressDialog.show();
+                    if (strOldPassword.equals(oldPasswordUser)){
+                        userr.updatePassword(strNewPassword)
+                                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        if (task.isSuccessful()) {
+                                            resetPasswordDatabase(strNewPassword);
+                                            dialog.dismiss();
+                                            progressDialog.dismiss();
+                                        }
+                                    }
+                                });
+                    }else{
+                        edtOldPassword.setError("Mật khẩu cũ không chính xác!");
+                        progressDialog.dismiss();
+                    }
+                }
+
+            }
+        });
+        dialog.show();
+    }
 
     @Nullable
     private String checkname(@NonNull String s){
@@ -263,6 +347,7 @@ public class EditAccount extends AppCompatActivity {
                     if (user.getEmail().equals(email)){
                         tvName.setText(checkname(user.getName()));
                         String strImage = user.getImage().trim();
+                        oldPasswordUser = user.getPassword();
                         if (strImage.isEmpty()){
                             return;
                         }
@@ -299,7 +384,6 @@ public class EditAccount extends AppCompatActivity {
                 openGallery();
             }
         }
-
     }
 
     private void requestPermissionsimage() {
@@ -325,7 +409,7 @@ public class EditAccount extends AppCompatActivity {
         if (mListUser.size() == 0){
             return;
         }
-        String email = user.getEmail();
+        String email = userr.getEmail();
         int index = -1;
         for (int i = 0; i < mListUser.size(); i++){
             if (mListUser.get(i).getEmail().equals(email)){
@@ -348,7 +432,7 @@ public class EditAccount extends AppCompatActivity {
         if (mListUser.size() == 0){
             finish();
         }
-        String email = user.getEmail();
+        String email = userr.getEmail();
         String name = tvName.getText().toString().trim();
         int index = -1;
         for (int i = 0; i < mListUser.size(); i++){
@@ -366,6 +450,28 @@ public class EditAccount extends AppCompatActivity {
                     }
                 });
 
+    }
+
+    private void resetPasswordDatabase(String newPassword){
+        if (mListUser.size() == 0){
+            finish();
+        }
+        String email = userr.getEmail();
+        int index = -1;
+        for (int i = 0; i < mListUser.size(); i++){
+            if (mListUser.get(i).getEmail().equals(email)){
+                index = i;
+            }
+        }
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference myRef = database.getReference();
+        myRef.child("Users").child(mListUser.get(index).getId()+"").child("password").setValue(newPassword)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        Toast.makeText(EditAccount.this, "Đã cập nhật mật khẩu", Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
 
     private void setSdt() {
@@ -411,7 +517,7 @@ public class EditAccount extends AppCompatActivity {
                     edtSdt.setError("không được để trống!");
                     return;
                 }
-                String email = user.getEmail();
+                String email = userr.getEmail();
                 int index = -1;
                 for (int i = 0; i < mListUser.size(); i++){
                     if (mListUser.get(i).getEmail().equals(email)){
@@ -477,7 +583,7 @@ public class EditAccount extends AppCompatActivity {
                     edtCCCD.setError("không được để trống!");
                     return;
                 }
-                String email = user.getEmail();
+                String email = userr.getEmail();
                 int index = -1;
                 for (int i = 0; i < mListUser.size(); i++){
                     if (mListUser.get(i).getEmail().equals(email)){
@@ -499,4 +605,21 @@ public class EditAccount extends AppCompatActivity {
 
         dialog.show();
     }
+
+    @Override
+    protected void onStart() {
+        IntentFilter intentFilter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+        registerReceiver(broadcast, intentFilter);
+        super.onStart();
+    }
+
+    @Override
+    protected void onStop() {
+        unregisterReceiver(broadcast);
+        super.onStop();
+    }
+
+
+
+
 }

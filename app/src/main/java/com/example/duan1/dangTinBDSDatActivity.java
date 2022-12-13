@@ -12,7 +12,9 @@ import android.Manifest;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -28,6 +30,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.duan1.Adapter.photoAdapter;
+import com.example.duan1.Broadcast.Broadcast;
 import com.example.duan1.model.BDSNews;
 import com.example.duan1.model.direction;
 import com.example.duan1.model.thoiTrangNews;
@@ -51,7 +54,6 @@ import java.util.List;
 public class dangTinBDSDatActivity extends AppCompatActivity implements com.example.duan1.Adapter.photoAdapter.CountOfImageWhenRemove {
     private TextView tvTenDanhMuc;
     private ImageView imgBackPage;
-
     private EditText edtTitlePost, edtDescription, edtTenPhanKhu, edtLoaiHinhDat, edtAddress, edtDienTich, edtPrice;
     private LinearLayout addImageProduct;
     private Button btnDangTin ,btnSuaTin;
@@ -61,8 +63,6 @@ public class dangTinBDSDatActivity extends AppCompatActivity implements com.exam
     private double dbPrice;
     private String title_Post = null;
     private chonDanhMucThoiTrangAcrivity chonDanhMucThoiTrangAcrivity;
-
-
     private com.example.duan1.Adapter.photoAdapter photoAdapter;
     private RecyclerView rcvView_select_img_Dat;
     private ArrayList<Uri> imageUri;
@@ -75,7 +75,7 @@ public class dangTinBDSDatActivity extends AppCompatActivity implements com.exam
     private List<BDSNews> listBDS;
     MainActivity mainActivity;
     BDSNews bdsNewsId;
-
+    private Broadcast broadcast;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -435,6 +435,8 @@ public class dangTinBDSDatActivity extends AppCompatActivity implements com.exam
         Intent intent1 = getIntent();
         tenDanhMuc = intent1.getStringExtra("tenDanhMuc");
 
+        broadcast = new Broadcast();
+
     }
 
     @Override
@@ -455,4 +457,20 @@ public class dangTinBDSDatActivity extends AppCompatActivity implements com.exam
             return new direction[]{drt1, drt2, drt3, drt4, drt5, drt6, drt7, drt8};
         }
     }
+
+    @Override
+    protected void onStart() {
+        IntentFilter intentFilter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+        registerReceiver(broadcast, intentFilter);
+        super.onStart();
+    }
+
+    @Override
+    protected void onStop() {
+        unregisterReceiver(broadcast);
+        super.onStop();
+    }
+
+
+
 }

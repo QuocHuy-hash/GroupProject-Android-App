@@ -2,15 +2,20 @@ package com.example.duan1;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SearchView;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.drawable.ColorDrawable;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.view.Gravity;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
@@ -19,6 +24,7 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import com.example.duan1.Broadcast.Broadcast;
 import com.example.duan1.Fragment.FragmentDaoCho;
 import com.example.duan1.Fragment.FragmentQuanLiTin;
 import com.example.duan1.Fragment.FragmentThem;
@@ -44,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
 
     BottomNavigationView bottomNavigationView;
     FloatingActionButton floatingActionButton;
-
+    SearchView searchView;
     FragmentTrangChu fragmentTrangChu = new FragmentTrangChu();
     FragmentQuanLiTin fragmentQuanLiTin = new FragmentQuanLiTin();
     FragmentDaoCho fragmentDaoCho = new FragmentDaoCho();
@@ -55,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
     private DatabaseReference myRef;
     public static String name;
     public static int id;
-
+    private Broadcast broadcast;
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -63,14 +69,15 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         initUi();
-
+        searchView = findViewById(R.id.searchView);
         mAuth = FirebaseAuth.getInstance();
         currentUser = mAuth.getCurrentUser();
 
         database = FirebaseDatabase.getInstance();
         myRef = database.getReference("Users");
-        getUser();
-
+        if (currentUser != null) {
+            getUser();
+        }
 
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -86,6 +93,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+
 
         bottomNavigationView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
             @Override
@@ -203,7 +211,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Toast.makeText(MainActivity.this, "Id : " + id + " NAme : " + name, Toast.LENGTH_SHORT).show();
-
                 Intent intent = new Intent(getApplicationContext(), chonDanhMucBDSActivity.class);
                 Bundle bundle = new Bundle();
                 bundle.putString("Name", name);
@@ -228,7 +235,6 @@ public class MainActivity extends AppCompatActivity {
         layout_thoiTrang.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
                 Intent intent = new Intent(getApplicationContext(), chonDanhMucThoiTrangAcrivity.class);
                 Bundle bundle = new Bundle();
                 bundle.putString("Name", name);
@@ -241,7 +247,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Toast.makeText(MainActivity.this, "Id : " + id + " NAme : " + name, Toast.LENGTH_SHORT).show();
-
                 Intent intent = new Intent(getApplicationContext(), chonDanhMucDoDienTuActivity.class);
                 Bundle bundle = new Bundle();
                 bundle.putString("Name", name);
@@ -258,6 +263,7 @@ public class MainActivity extends AppCompatActivity {
         floatingActionButton = findViewById(R.id.fab);
 
         getSupportFragmentManager().beginTransaction().replace(R.id.container, fragmentTrangChu).commit();
+        broadcast = new Broadcast();
     }
 
     public static void showDiaLogWarning(Context context, String text) {
@@ -266,6 +272,20 @@ public class MainActivity extends AppCompatActivity {
                 .setNegativeButton("Ok", null);
         alertDialog.show();
     }
+
+    @Override
+    protected void onStart() {
+        IntentFilter intentFilter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+        registerReceiver(broadcast, intentFilter);
+        super.onStart();
+    }
+
+    @Override
+    protected void onStop() {
+        unregisterReceiver(broadcast);
+        super.onStop();
+    }
+
 
 
 }

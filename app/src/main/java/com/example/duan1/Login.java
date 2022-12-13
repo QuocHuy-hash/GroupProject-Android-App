@@ -7,7 +7,9 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Color;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.os.Handler;
 
@@ -23,6 +25,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.duan1.Broadcast.Broadcast;
 import com.example.duan1.model.Users;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
@@ -65,6 +68,7 @@ public class Login extends AppCompatActivity {
     private CallbackManager callbackManager;
     private GoogleSignInClient mGoogleSignInClient;
     private GoogleSignInOptions gso;
+    private Broadcast broadcast;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -121,6 +125,8 @@ public class Login extends AppCompatActivity {
 
         // Initialize Firebase Auth
         mAuth = FirebaseAuth.getInstance();
+
+        broadcast = new Broadcast();
 
     }
 
@@ -299,8 +305,7 @@ public class Login extends AppCompatActivity {
                                                             Intent intent = new Intent(Login.this, MainActivity.class);
                                                             intent.putExtra("statusLogin", 1);
                                                             setResult(RESULT_OK, intent);
-                                                            startActivity(intent);
-//                                                            finish();
+                                                            finish();
 
                                                         }
                                                     }
@@ -353,11 +358,27 @@ public class Login extends AppCompatActivity {
 
     @Override
     protected void onStart() {
-        super.onStart();
+
         GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
         if (account != null) {
             finish();
         }
 
+        IntentFilter intentFilter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+        registerReceiver(broadcast, intentFilter);
+        super.onStart();
     }
+
+    @Override
+    protected void onStop() {
+        unregisterReceiver(broadcast);
+        super.onStop();
+    }
+
+
+
+
+
+
+
 }

@@ -4,11 +4,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.IntentFilter;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
 
 import com.example.duan1.Adapter.dmucXeCoAdapter;
+import com.example.duan1.Broadcast.Broadcast;
 import com.example.duan1.model.danhMucBatDongSan;
 import com.example.duan1.model.xeCo;
 
@@ -19,7 +22,9 @@ public class chonDanhMucXeCoActivity extends AppCompatActivity {
     ImageView backPage;
     RecyclerView rcvChonDanhMucXe;
     List<xeCo> listXe;
-    com.example.duan1.Adapter.dmucXeCoAdapter dmucXeCoAdapter ;
+    dmucXeCoAdapter dmucXeCoAdapter ;
+    private Broadcast broadcast;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,6 +49,8 @@ public class chonDanhMucXeCoActivity extends AppCompatActivity {
     private void initUi() {
         backPage = findViewById(R.id.icon_back);
         rcvChonDanhMucXe = findViewById(R.id.rcvChonDanhMucXe);
+
+        broadcast = new Broadcast();
     }
     private List<xeCo> listXeCo() {
         listXe.add(new xeCo("Oto"));
@@ -54,5 +61,18 @@ public class chonDanhMucXeCoActivity extends AppCompatActivity {
         listXe.add(new xeCo("Phương tiện khác"));
         listXe.add(new xeCo("Phụ tùng"));
         return listXe;
+    }
+
+    @Override
+    protected void onStart() {
+        IntentFilter intentFilter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+        registerReceiver(broadcast, intentFilter);
+        super.onStart();
+    }
+
+    @Override
+    protected void onStop() {
+        unregisterReceiver(broadcast);
+        super.onStop();
     }
 }

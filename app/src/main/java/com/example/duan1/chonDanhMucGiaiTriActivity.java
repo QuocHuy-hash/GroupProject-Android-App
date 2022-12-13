@@ -4,12 +4,15 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.IntentFilter;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
 
 import com.example.duan1.Adapter.dmucDoDienTuAdapter;
 import com.example.duan1.Adapter.dmucTheThaoAdapter;
+import com.example.duan1.Broadcast.Broadcast;
 import com.example.duan1.model.dienTu;
 import com.example.duan1.model.giaiTri;
 
@@ -21,6 +24,8 @@ public class chonDanhMucGiaiTriActivity extends AppCompatActivity {
     private RecyclerView rcvChonDanhMuc;
     List<giaiTri> listGiaTri;
     dmucTheThaoAdapter dmucTheThaoAdapter;
+    private Broadcast broadcast;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,5 +62,24 @@ public class chonDanhMucGiaiTriActivity extends AppCompatActivity {
     private void initUi() {
         backPage = findViewById(R.id.icon_back);
         rcvChonDanhMuc = findViewById(R.id.rcvChonDanhMucGiaiTri);
+
+        broadcast = new Broadcast();
+
         }
+
+    @Override
+    protected void onStart() {
+        IntentFilter intentFilter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+        registerReceiver(broadcast, intentFilter);
+        super.onStart();
+    }
+
+    @Override
+    protected void onStop() {
+        unregisterReceiver(broadcast);
+        super.onStop();
+    }
+
+
+
 }

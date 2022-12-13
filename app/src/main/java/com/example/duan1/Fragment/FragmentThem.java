@@ -173,7 +173,6 @@ public class FragmentThem extends Fragment implements NavigationView.OnNavigatio
 
             }
         });
-
     }
 
     @Override

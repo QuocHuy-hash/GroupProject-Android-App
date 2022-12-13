@@ -6,8 +6,18 @@ public class historyNews {
     private String desc_historyNews;
     private String time_historyNews;
     private String tenDanhMuc;
+    private String image;
 
-    public historyNews(int id, String title_historyNews, String desc_historyNews ,String time_historyNews ,String tenDanhMuc) {
+    public historyNews(int id, String title_historyNews, String desc_historyNews, String time_historyNews, String tenDanhMuc, String image) {
+        this.id = id;
+        this.title_historyNews = title_historyNews;
+        this.desc_historyNews = desc_historyNews;
+        this.time_historyNews = time_historyNews;
+        this.tenDanhMuc = tenDanhMuc;
+        this.image = image;
+    }
+
+    public historyNews(int id, String title_historyNews, String desc_historyNews, String time_historyNews, String tenDanhMuc) {
         this.id = id;
         this.title_historyNews = title_historyNews;
         this.desc_historyNews = desc_historyNews;
@@ -56,5 +66,13 @@ public class historyNews {
 
     public void setDesc_historyNews(String desc_historyNews) {
         this.desc_historyNews = desc_historyNews;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
     }
 }

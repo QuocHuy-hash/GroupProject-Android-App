@@ -11,10 +11,14 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -27,10 +31,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.duan1.Adapter.photoAdapter;
+import com.example.duan1.Broadcast.Broadcast;
 import com.example.duan1.model.BDSNews;
 import com.example.duan1.model.direction;
 import com.example.duan1.model.giaiTriNews;
 import com.example.duan1.model.product_type;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -42,6 +48,8 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -69,9 +77,12 @@ public class dagTinGiaiTriActivity extends AppCompatActivity implements com.exam
     MainActivity mainActivity;
     giaiTriNews giaiTriNewsId;
     giaiTriNews giaiTriNewsIdEdit;
-    private
-    DatabaseReference myData;
-    StorageReference imageFolder;
+    private DatabaseReference myData;
+    private StorageReference imageFolder;
+    private Bitmap bitmapselect;
+    private Calendar calendar = Calendar.getInstance();
+    private Broadcast broadcast;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -135,32 +146,15 @@ public class dagTinGiaiTriActivity extends AppCompatActivity implements com.exam
                     System.err.println("Lỗi Parse kiểu dữ liệu");
                 }
 
-
-
                 if (strTitlePost.isEmpty() || strDescription.isEmpty() || strPrice.isEmpty()
                         || strAddress.isEmpty() ||  strLoaiSanPham.isEmpty()) {
                     MainActivity.showDiaLogWarning(dagTinGiaiTriActivity.this, "vui lòng nhập đầy đủ thông tin");
 
                 } else {
                     progressDialog.show();
-                    for (update_count = 0; update_count < imageUri.size(); update_count++) {
-                        Uri indexImage = imageUri.get(update_count);
-                        StorageReference imageName = imageFolder.child("Image " + indexImage.getLastPathSegment());
-                        imageName.child(strTitlePost).putFile(indexImage).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                            @Override
-                            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                                imageName.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                                    @Override
-                                    public void onSuccess(Uri uri) {
-                                        String Url = String.valueOf(uri);
-                                        StoreLick(Url);
-
-                                    }
-                                });
-                            }
-                        });
-                    }
                     id = giaiTriNewsIdEdit.getId();
+
+                    upImage(id);
 
                     String strId = String.valueOf(id);
                     myData.child(tenDanhMuc).child(strId ).setValue(new giaiTriNews(id ,strTitlePost , strDescription ,strAddress, dbPrice
@@ -326,36 +320,20 @@ public class dagTinGiaiTriActivity extends AppCompatActivity implements com.exam
                     System.err.println("Lỗi Parse kiểu dữ liệu");
                 }
 
-
-
                 if (strTitlePost.isEmpty() || strDescription.isEmpty() || strPrice.isEmpty()
                         || strAddress.isEmpty() ||  strLoaiSanPham.isEmpty()) {
                     MainActivity.showDiaLogWarning(dagTinGiaiTriActivity.this, "vui lòng nhập đầy đủ thông tin");
 
                 } else {
                     progressDialog.show();
-                    for (update_count = 0; update_count < imageUri.size(); update_count++) {
-                        Uri indexImage = imageUri.get(update_count);
-                        StorageReference imageName = imageFolder.child("Image " + indexImage.getLastPathSegment());
-                        imageName.child(strTitlePost).putFile(indexImage).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                            @Override
-                            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                                imageName.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                                    @Override
-                                    public void onSuccess(Uri uri) {
-                                        String Url = String.valueOf(uri);
-                                        StoreLick(Url);
 
-                                    }
-                                });
-                            }
-                        });
-                    }
                     if(giaiTriNewsId == null) {
-                        maxID = 1;
+                        maxID = 0;
                     }else {
-                        maxID = listGiaiTri.size() +1;
+                        maxID = giaiTriNewsId.getId() +1;
                     }
+
+                    upImage(maxID);
 
                     String strId = String.valueOf(maxID);
                     myData.child(tenDanhMuc).child(strId ).setValue(new giaiTriNews(maxID ,strTitlePost , strDescription ,strAddress, dbPrice
@@ -430,6 +408,8 @@ public class dagTinGiaiTriActivity extends AppCompatActivity implements com.exam
         Intent intent1 = getIntent();
        tenDanhMuc = intent1.getStringExtra("tenDanhMuc");
 
+       broadcast = new Broadcast();
+
     }
 
     @Override
@@ -449,4 +429,74 @@ public class dagTinGiaiTriActivity extends AppCompatActivity implements com.exam
 
         }
     }
+
+    private void upImage(int id) {
+        if (imageUri.size() == 0){
+            return;
+        }
+        Uri uri = imageUri.get(0);
+        try {
+            bitmapselect = MediaStore.Images.Media.getBitmap(getContentResolver(),uri);
+            FirebaseStorage storage = FirebaseStorage.getInstance();
+            StorageReference storageRef = storage.getReference();
+            StorageReference mountainsRef = storageRef.child(tenDanhMuc+"/image"+calendar.getTimeInMillis());
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            bitmapselect.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+            byte[] dataImage = baos.toByteArray();
+
+            UploadTask uploadTask = mountainsRef.putBytes(dataImage);
+            uploadTask.addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception exception) {
+                    // Handle unsuccessful uploads
+                    progressDialog.dismiss();
+                    Toast.makeText(dagTinGiaiTriActivity.this, "Lỗi cập nhật hình ảnh!", Toast.LENGTH_SHORT).show();
+                }
+            }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                    // taskSnapshot.getMetadata() contains file metadata such as size, content-type, etc.
+
+                    mountainsRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                        @Override
+                        public void onSuccess(Uri uri) {
+                            String strImage = String.valueOf(uri);
+                            UpdateImageUrl(strImage, id);
+                            progressDialog.dismiss();
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception exception) {
+                            // Handle any errors
+                            progressDialog.dismiss();
+                            Toast.makeText(dagTinGiaiTriActivity.this, "Lỗi tải URL hình ảnh!", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+            });
+        } catch (IOException e) {
+            Toast.makeText(mainActivity, "Lỗi try-catch", Toast.LENGTH_SHORT).show();
+        }
+
+    }
+
+    private void UpdateImageUrl(String url, int id) {
+        myData.child(tenDanhMuc+"/"+id+"/image").setValue(url);
+    }
+
+    @Override
+    protected void onStart() {
+        IntentFilter intentFilter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+        registerReceiver(broadcast, intentFilter);
+        super.onStart();
+    }
+
+    @Override
+    protected void onStop() {
+        unregisterReceiver(broadcast);
+        super.onStop();
+    }
+
+
+
 }

@@ -1,0 +1,68 @@
+Index: app/src/main/java/com/example/duan1/Fragment/FragmentQuanLiTin.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.duan1.Fragment;\r\n\r\n\r\nimport android.content.Context;\r\nimport android.os.Bundle;\r\n\r\nimport androidx.annotation.NonNull;\r\nimport androidx.annotation.Nullable;\r\nimport androidx.fragment.app.Fragment;\r\nimport androidx.recyclerview.widget.DividerItemDecoration;\r\nimport androidx.recyclerview.widget.LinearLayoutManager;\r\nimport androidx.recyclerview.widget.RecyclerView;\r\n\r\nimport android.os.Handler;\r\nimport android.view.LayoutInflater;\r\nimport android.view.View;\r\nimport android.view.ViewGroup;\r\nimport android.widget.Toast;\r\n\r\nimport com.example.duan1.Adapter.historyNewsAdapter;\r\nimport com.example.duan1.MainActivity;\r\nimport com.example.duan1.R;\r\nimport com.example.duan1.model.BDSNews;\r\nimport com.example.duan1.model.giaiTriNews;\r\nimport com.example.duan1.model.historyNews;\r\nimport com.example.duan1.model.thoiTrangNews;\r\nimport com.google.firebase.database.ChildEventListener;\r\nimport com.google.firebase.database.DataSnapshot;\r\nimport com.google.firebase.database.DatabaseError;\r\nimport com.google.firebase.database.DatabaseReference;\r\nimport com.google.firebase.database.FirebaseDatabase;\r\n\r\nimport com.google.firebase.database.ValueEventListener;\r\nimport com.google.firebase.storage.FirebaseStorage;\r\nimport com.google.firebase.storage.StorageReference;\r\n\r\nimport java.util.ArrayList;\r\nimport java.util.List;\r\n\r\npublic class FragmentQuanLiTin extends Fragment {\r\n    private RecyclerView rcvQuanLyTinDang;\r\n    private historyNewsAdapter historyNewsAdapter;\r\n    private List<historyNews> listHistoryNews;\r\n    private Context mContext;\r\n\r\n    private String nameUser;\r\n    private int idUser;\r\n    private List<String> listChild = new ArrayList<>();\r\n    private List<String> listChild1 = new ArrayList<>();\r\n    private List<String> listChild2 = new ArrayList<>();\r\n\r\n    int id = 0;\r\n\r\n    DatabaseReference myData = FirebaseDatabase.getInstance().getReference(\"Tin\").child(\"GiaiTri\");\r\n    DatabaseReference myData1 = FirebaseDatabase.getInstance().getReference(\"Tin\").child(\"BDS\");\r\n    DatabaseReference myData2 = FirebaseDatabase.getInstance().getReference(\"Tin\").child(\"ThoiTrang\");\r\n    MainActivity mainActivity;\r\n    @Override\r\n    public View onCreateView(LayoutInflater inflater, ViewGroup container,\r\n                             Bundle savedInstanceState) {\r\n        View view = inflater.inflate(R.layout.fragment_quan_li_tin, container, false);\r\n        rcvQuanLyTinDang = view.findViewById(R.id.rcvQuanLyTin);\r\n        mainActivity = (MainActivity) getActivity();\r\n        listHistoryNews = new ArrayList<>();\r\n        idUser = mainActivity.id;\r\n        nameUser = mainActivity.name;\r\n        listChild1();\r\n        listChild2();\r\n        listChild3();\r\n        getListHistoryNews();\r\n        new Handler().postDelayed(new Runnable() {\r\n            @Override\r\n            public void run() {\r\n                historyNewsAdapter = new historyNewsAdapter(getContext(), listHistoryNews);\r\n                rcvQuanLyTinDang.setLayoutManager(new LinearLayoutManager(getContext()));\r\n                rcvQuanLyTinDang.setAdapter(historyNewsAdapter);\r\n                RecyclerView.ItemDecoration decoration = new DividerItemDecoration(getContext() , DividerItemDecoration.VERTICAL);\r\n                rcvQuanLyTinDang.addItemDecoration(decoration);\r\n            }\r\n        }, 500);\r\n\r\n        return view;\r\n    }\r\n\r\n    public void getListHistoryNews() {\r\n        for (int i = 0; i < listChild.size(); i++) {\r\n            myData.child(listChild.get(i)).addChildEventListener(new ChildEventListener() {\r\n                @Override\r\n                public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {\r\n                    giaiTriNews giaiTriNews = snapshot.getValue(giaiTriNews.class);\r\n\r\n                    if (giaiTriNews.getIdUser() == idUser) {\r\n\r\n                        listHistoryNews.add(new historyNews(id, giaiTriNews.getTitle(), giaiTriNews.getDescription() , giaiTriNews.getDate(), giaiTriNews.getTenDanhMuc()));\r\n                        id++;\r\n                    }\r\n                }\r\n\r\n                @Override\r\n                public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {\r\n\r\n                }\r\n\r\n                @Override\r\n                public void onChildRemoved(@NonNull DataSnapshot snapshot) {\r\n\r\n                }\r\n\r\n                @Override\r\n                public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {\r\n\r\n                }\r\n\r\n                @Override\r\n                public void onCancelled(@NonNull DatabaseError error) {\r\n\r\n                }\r\n            });\r\n        }\r\n        for (int i = 0; i < listChild1.size(); i++) {\r\n            myData2.child(listChild1.get(i)).addChildEventListener(new ChildEventListener() {\r\n                @Override\r\n                public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {\r\n                    thoiTrangNews thoiTrangNews = snapshot.getValue(com.example.duan1.model.thoiTrangNews.class);\r\n                    if (thoiTrangNews.getIdUser() == idUser) {\r\n\r\n                        listHistoryNews.add(new historyNews(id, thoiTrangNews.getTitlePost(), thoiTrangNews.getDescriptionPost(), thoiTrangNews.getDate(),thoiTrangNews.getTenDanhMuc()));\r\n                        id++;\r\n                    }\r\n\r\n                }\r\n\r\n                @Override\r\n                public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {\r\n\r\n                }\r\n\r\n                @Override\r\n                public void onChildRemoved(@NonNull DataSnapshot snapshot) {\r\n\r\n                }\r\n\r\n                @Override\r\n                public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {\r\n\r\n                }\r\n\r\n                @Override\r\n                public void onCancelled(@NonNull DatabaseError error) {\r\n\r\n                }\r\n            });\r\n        }\r\n        for (int i = 0; i < listChild2.size(); i++) {\r\n            myData1.child(listChild2.get(i)).addValueEventListener(new ValueEventListener() {\r\n                @Override\r\n                public void onDataChange(@NonNull DataSnapshot snapshot) {\r\n                    for (DataSnapshot snapshot1: snapshot.getChildren()){\r\n                        BDSNews bdsNews = snapshot1.getValue(BDSNews.class);\r\n                        if (bdsNews.getIdUser() == idUser) {\r\n                            listHistoryNews.add(new historyNews(id, bdsNews.getTitle(), bdsNews.getDescription() , bdsNews.getDate(), bdsNews.getTenDanhMuc(), bdsNews.getImage()));\r\n                            id++;\r\n                        }\r\n                    }\r\n                }\r\n\r\n                @Override\r\n                public void onCancelled(@NonNull DatabaseError error) {\r\n\r\n                }\r\n            });\r\n\r\n        }\r\n\r\n    }\r\n\r\n    private List<String> listChild1() {\r\n        listChild.add(new String(\"Nhạc cụ\"));\r\n        listChild.add(new String(\"Sách\"));\r\n        listChild.add(new String(\"Đồ thể thao, Dã ngoại\"));\r\n        listChild.add(new String(\"Đồ sưu tầm  ,Đồ cổ\"));\r\n        listChild.add(new String(\"Thiết bị chơi game\"));\r\n        listChild.add(new String(\"Sở thích khác\"));\r\n\r\n        return listChild;\r\n    }\r\n\r\n    private List<String> listChild2() {\r\n        listChild1.add(new String(\"Quần áo\"));\r\n        listChild1.add(new String(\"Đồng hồ\"));\r\n        listChild1.add(new String(\"Giày dép\"));\r\n        listChild1.add(new String(\"Túi xách\"));\r\n        listChild1.add(new String(\"Nước hoa\"));\r\n        listChild1.add(new String(\"Phụ kiện khác\"));\r\n\r\n        return listChild1;\r\n    }\r\n\r\n    private List<String> listChild3() {\r\n        listChild2.add(new String(\"Chung cư\"));\r\n        listChild2.add(new String(\"Nhà ở\"));\r\n        listChild2.add(new String(\"Đất\"));\r\n        listChild2.add(new String(\"Văn Phòng\"));\r\n        listChild2.add(new String(\"Phòng trọ\"));\r\n\r\n        return listChild2;\r\n    }\r\n\r\n\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/duan1/Fragment/FragmentQuanLiTin.java b/app/src/main/java/com/example/duan1/Fragment/FragmentQuanLiTin.java
+--- a/app/src/main/java/com/example/duan1/Fragment/FragmentQuanLiTin.java	
++++ b/app/src/main/java/com/example/duan1/Fragment/FragmentQuanLiTin.java	
+@@ -24,6 +24,8 @@
+ import com.example.duan1.model.giaiTriNews;
+ import com.example.duan1.model.historyNews;
+ import com.example.duan1.model.thoiTrangNews;
++import com.google.firebase.auth.FirebaseAuth;
++import com.google.firebase.auth.FirebaseUser;
+ import com.google.firebase.database.ChildEventListener;
+ import com.google.firebase.database.DataSnapshot;
+ import com.google.firebase.database.DatabaseError;
+@@ -59,26 +61,28 @@
+     public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                              Bundle savedInstanceState) {
+         View view = inflater.inflate(R.layout.fragment_quan_li_tin, container, false);
+-        rcvQuanLyTinDang = view.findViewById(R.id.rcvQuanLyTin);
+-        mainActivity = (MainActivity) getActivity();
+-        listHistoryNews = new ArrayList<>();
+-        idUser = mainActivity.id;
+-        nameUser = mainActivity.name;
+-        listChild1();
+-        listChild2();
+-        listChild3();
+-        getListHistoryNews();
+-        new Handler().postDelayed(new Runnable() {
+-            @Override
+-            public void run() {
+-                historyNewsAdapter = new historyNewsAdapter(getContext(), listHistoryNews);
+-                rcvQuanLyTinDang.setLayoutManager(new LinearLayoutManager(getContext()));
+-                rcvQuanLyTinDang.setAdapter(historyNewsAdapter);
+-                RecyclerView.ItemDecoration decoration = new DividerItemDecoration(getContext() , DividerItemDecoration.VERTICAL);
+-                rcvQuanLyTinDang.addItemDecoration(decoration);
+-            }
+-        }, 500);
+-
++        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
++        if (user != null){ //điều kiện phải đăng nhập để tiếp tục
++            rcvQuanLyTinDang = view.findViewById(R.id.rcvQuanLyTin);
++            mainActivity = (MainActivity) getActivity();
++            listHistoryNews = new ArrayList<>();
++            idUser = mainActivity.id;
++            nameUser = mainActivity.name;
++            listChild1();
++            listChild2();
++            listChild3();
++            getListHistoryNews();
++            new Handler().postDelayed(new Runnable() {
++                @Override
++                public void run() {
++                    historyNewsAdapter = new historyNewsAdapter(getContext(), listHistoryNews);
++                    rcvQuanLyTinDang.setLayoutManager(new LinearLayoutManager(getContext()));
++                    rcvQuanLyTinDang.setAdapter(historyNewsAdapter);
++                    RecyclerView.ItemDecoration decoration = new DividerItemDecoration(getContext() , DividerItemDecoration.VERTICAL);
++                    rcvQuanLyTinDang.addItemDecoration(decoration);
++                }
++            }, 500);
++        }
+         return view;
+     }
+ 
