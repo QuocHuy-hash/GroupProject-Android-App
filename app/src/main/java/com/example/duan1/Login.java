@@ -85,6 +85,7 @@ public class Login extends AppCompatActivity {
                         Toast.makeText(Login.this, "Đăng nhập thành công!", Toast.LENGTH_SHORT).show();
                         Intent intent = new Intent(Login.this, MainActivity.class);
                         setResult(RESULT_OK, intent);
+
                         finish();
                     }
 
@@ -258,6 +259,7 @@ public class Login extends AppCompatActivity {
                     edtPassword.setError("Mật khẩu phải bằng hoặc trên 6 kí tự");
                     return;
                 }
+
 
                 progressDialog.setTitle("Xin chờ");
                 progressDialog.show();

@@ -14,6 +14,9 @@
             <item android:title="Ví bán hàng"
                 android:id="@+id/vibanhang"
                 />
+            <item android:title="Danh sách người dùng"
+                android:id="@+id/listUser"
+                />
 
         </menu>
 

@@ -129,6 +129,12 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        getUser();
+    }
+
     private void getUser() {
         List<Users> mListUser = new ArrayList<>();
 

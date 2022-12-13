@@ -15,6 +15,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.duan1.Fragment.FragmentQuanLiTin;
 import com.example.duan1.MainActivity;
 import com.example.duan1.R;
 import com.example.duan1.dagTinGiaiTriActivity;
@@ -44,9 +45,9 @@ public class historyNewsAdapter extends RecyclerView.Adapter<historyNewsAdapter.
     private List<String> listChild = new ArrayList<>();
     private List<String> listChild1 = new ArrayList<>();
     private List<String> listChild2 = new ArrayList<>();
-    private String title_News;
-    private int id;
+
     private MainActivity mainActivity;
+    private String name = FragmentQuanLiTin.nameUser;
 
     DatabaseReference myData = FirebaseDatabase.getInstance().getReference("Tin").child("GiaiTri");
     DatabaseReference myData1 = FirebaseDatabase.getInstance().getReference("Tin").child("BDS");
@@ -58,10 +59,7 @@ public class historyNewsAdapter extends RecyclerView.Adapter<historyNewsAdapter.
         this.mainActivity = mainActivity;
         notifyDataSetChanged();
     }
-public void setFilter(List<historyNews> listFilter){
-        this.listHistory = listFilter;
-        notifyDataSetChanged();
-}
+
 
     @NonNull
     @Override
@@ -77,8 +75,7 @@ public void setFilter(List<historyNews> listFilter){
         historyNews giaiTriNews =  listHistory.get(position);
         String tenDanhMuc = giaiTriNews.getTenDanhMuc();
         String Title_Post = giaiTriNews.getTitle_historyNews();
-        Locale localeEN = new Locale("en", "EN");
-        NumberFormat en = NumberFormat.getInstance(localeEN);
+        System.out.println("");
         listChild1();
         listChild2();
         listChild3();
@@ -99,6 +96,15 @@ public void setFilter(List<historyNews> listFilter){
             }
         });
         int id = giaiTriNews.getId();
+        if(name.equals("Admin")){
+            holder.layout_item.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Toast.makeText(mContext, "Đang Chờ Layout", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }else {
+
         holder.layout_item.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -128,7 +134,10 @@ public void setFilter(List<historyNews> listFilter){
                     intent.putExtra("title" , Title_Post);
                     intent.putExtra("tenDanhMuc" , tenDanhMuc);
                     mContext.startActivity(intent);
-                }else {
+                }else if(mainActivity.name.equals("Admin")){
+                    Toast.makeText(mContext, "đang chờ layout", Toast.LENGTH_SHORT).show();
+                }
+                else {
                     Intent intent = new Intent(mContext , dagTinGiaiTriActivity.class);
                     intent.putExtra("title" , Title_Post);
                     intent.putExtra("tenDanhMuc" , tenDanhMuc);
@@ -136,6 +145,8 @@ public void setFilter(List<historyNews> listFilter){
                 }
             }
         });
+        }
+
     }
     @Override
     public int getItemCount() {
