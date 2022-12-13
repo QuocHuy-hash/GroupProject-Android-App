@@ -115,7 +115,6 @@ public class dangTinBDSActivity extends AppCompatActivity implements com.example
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
         Calendar c = Calendar.getInstance();
         date = sdf.format(c.getTime());
-        System.out.println("Date : " + date);
     }
     private void editNews() {
         suaTinBDS.setOnClickListener(new View.OnClickListener() {
@@ -149,7 +148,7 @@ public class dangTinBDSActivity extends AppCompatActivity implements com.example
                     upImage(idEdit);
 
                     String strId = String.valueOf(idEdit);
-                    myData.child(tenDanhMuc).child(strId ).setValue(
+                    myData.child(strId ).setValue(
                                     new BDSNews(idEdit ,strTitlePost , strDescription , dbPrice
                                             ,strDienTich ,strAddress ,strTenKhu ,strLoaiHinhDat ,
                                             strSoPhongNgu,strSoPhongWc ,idUser,nameUser ,tenDanhMuc, date ))
@@ -168,7 +167,7 @@ public class dangTinBDSActivity extends AppCompatActivity implements com.example
     private void setTextInput() {
         FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
         DatabaseReference databaseReference = firebaseDatabase.getReference("Tin").child("BDS");
-        databaseReference.child(tenDanhMuc).addChildEventListener(new ChildEventListener() {
+        databaseReference.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
                 BDSNews bdsNews = snapshot.getValue(BDSNews.class);
@@ -244,7 +243,6 @@ public class dangTinBDSActivity extends AppCompatActivity implements com.example
         });
     }
 
-
     private void clickDangTin() {
         btnDangTin.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -285,7 +283,7 @@ public class dangTinBDSActivity extends AppCompatActivity implements com.example
                     upImage(maxID);
 
                     String strId = String.valueOf(maxID);
-                    myData.child(tenDanhMuc).child(strId).setValue(
+                    myData.child(strId).setValue(
                                     new BDSNews(maxID, strTitlePost, strDescription, dbPrice
                                             , strDienTich, strAddress, strTenKhu, strLoaiHinhDat,
                                             strSoPhongNgu, strSoPhongWc, idUser, nameUser, tenDanhMuc, date))
@@ -294,6 +292,7 @@ public class dangTinBDSActivity extends AppCompatActivity implements com.example
                                 public void onSuccess(Void unused) {
                                     Toast.makeText(dangTinBDSActivity.this, "Đăng tin thành công", Toast.LENGTH_SHORT).show();
                                     progressDialog.dismiss();
+                                    finish();
                                 }
                             });
 
@@ -309,7 +308,7 @@ public class dangTinBDSActivity extends AppCompatActivity implements com.example
         listBDS = new ArrayList<>();
         FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
         DatabaseReference databaseReference = firebaseDatabase.getReference("Tin").child("BDS");
-        databaseReference.child(tenDanhMuc).addValueEventListener(new ValueEventListener() {
+        databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 listBDS.clear();
@@ -359,10 +358,9 @@ public class dangTinBDSActivity extends AppCompatActivity implements com.example
 
     }
 
-
     private void clickAddImageFashion() {
         photoAdapter = new photoAdapter(imageUri, this, this);
-        rcvView_select_img_BDS.setLayoutManager(new GridLayoutManager(dangTinBDSActivity.this, 6));
+        rcvView_select_img_BDS.setLayoutManager(new GridLayoutManager(dangTinBDSActivity.this, 1));
         rcvView_select_img_BDS.setAdapter(photoAdapter);
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
@@ -440,54 +438,56 @@ public class dangTinBDSActivity extends AppCompatActivity implements com.example
     private void upImage(int id) {
         if (imageUri.size() == 0){
             return;
-        }
-        Uri uri = imageUri.get(0);
-        try {
-            bitmapselect = MediaStore.Images.Media.getBitmap(getContentResolver(),uri);
-            FirebaseStorage storage = FirebaseStorage.getInstance();
-            StorageReference storageRef = storage.getReference();
-            StorageReference mountainsRef = storageRef.child(tenDanhMuc+"/image"+calendar.getTimeInMillis());
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            bitmapselect.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-            byte[] dataImage = baos.toByteArray();
+        }else{
+            Uri uri = imageUri.get(0);
+            try {
+                bitmapselect = MediaStore.Images.Media.getBitmap(getContentResolver(),uri);
+                FirebaseStorage storage = FirebaseStorage.getInstance();
+                StorageReference storageRef = storage.getReference();
+                StorageReference mountainsRef = storageRef.child(tenDanhMuc+"/image"+calendar.getTimeInMillis());
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                bitmapselect.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+                byte[] dataImage = baos.toByteArray();
 
-            UploadTask uploadTask = mountainsRef.putBytes(dataImage);
-            uploadTask.addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception exception) {
-                    // Handle unsuccessful uploads
-                    progressDialog.dismiss();
-                    Toast.makeText(dangTinBDSActivity.this, "Lỗi cập nhật hình ảnh!", Toast.LENGTH_SHORT).show();
-                }
-            }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                @Override
-                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                    // taskSnapshot.getMetadata() contains file metadata such as size, content-type, etc.
+                UploadTask uploadTask = mountainsRef.putBytes(dataImage);
+                uploadTask.addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception exception) {
+                        // Handle unsuccessful uploads
+                        progressDialog.dismiss();
+                        Toast.makeText(dangTinBDSActivity.this, "Lỗi cập nhật hình ảnh!", Toast.LENGTH_SHORT).show();
+                    }
+                }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                        // taskSnapshot.getMetadata() contains file metadata such as size, content-type, etc.
 
-                    mountainsRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                        @Override
-                        public void onSuccess(Uri uri) {
-                            String strImage = String.valueOf(uri);
-                            UpdateImageUrl(strImage, id);
-                            progressDialog.dismiss();
-                        }
-                    }).addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception exception) {
-                            // Handle any errors
-                            progressDialog.dismiss();
-                            Toast.makeText(dangTinBDSActivity.this, "Lỗi tải URL hình ảnh!", Toast.LENGTH_SHORT).show();
-                        }
-                    });
-                }
-            });
-        } catch (IOException e) {
-            Toast.makeText(mainActivity, "Lỗi try-catch", Toast.LENGTH_SHORT).show();
+                        mountainsRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                            @Override
+                            public void onSuccess(Uri uri) {
+                                String strImage = String.valueOf(uri);
+                                UpdateImageUrl(strImage, id);
+                                progressDialog.dismiss();
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception exception) {
+                                // Handle any errors
+                                progressDialog.dismiss();
+                                Toast.makeText(dangTinBDSActivity.this, "Lỗi tải URL hình ảnh!", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }
+                });
+            } catch (IOException e) {
+                Toast.makeText(mainActivity, "Lỗi try-catch", Toast.LENGTH_SHORT).show();
+            }
         }
+
     }
 
     private void UpdateImageUrl(String url, int id) {
-        myData.child(tenDanhMuc+"/"+id+"/image").setValue(url);
+        myData.child(id+"/image").setValue(url);
     }
 
     @Override

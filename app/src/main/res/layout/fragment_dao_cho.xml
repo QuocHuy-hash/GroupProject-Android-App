@@ -5,16 +5,30 @@
     android:layout_height="match_parent"
     tools:context=".Fragment.FragmentQuanLiTin"
     android:orientation="vertical"
-    android:gravity="center"
-    android:background="@color/Yellow"
+    android:background="@color/white"
     >
+    <androidx.appcompat.widget.Toolbar
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="@color/Orenge"
+        >
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/black"
+            android:textStyle="bold"
+            android:text="Dạo chợ"
+            android:textSize="18dp"
+            />
 
+
+    </androidx.appcompat.widget.Toolbar>
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Fragment Dạo chợ"
-        android:textColor="@color/black"
-        android:textSize="30dp"
+        android:text="Đang phát triển"
+        android:textSize="16dp"
+        android:layout_gravity="center"
         />
 
 </LinearLayout>

@@ -133,7 +133,7 @@ public class dangTinBDSPhongTroActivity extends AppCompatActivity implements com
                     upImage(maxID);
 
                     String strId = String.valueOf(maxID);
-                    myData.child(tenDanhMuc).child(strId).setValue(
+                    myData.child(strId).setValue(
                             new BDSNews(maxID, strTitle, strDesc, dbPrice, strDienTich, strAddress,
                                     idUser, nameUser,tenDanhMuc, date
                             )).addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -151,7 +151,7 @@ public class dangTinBDSPhongTroActivity extends AppCompatActivity implements com
     private void setTextInput() {
         FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
         DatabaseReference databaseReference1 = firebaseDatabase.getReference("Tin").child("BDS");
-        databaseReference1.child(tenDanhMuc).addChildEventListener(new ChildEventListener() {
+        databaseReference1.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
                 BDSNews bdsNews = snapshot.getValue(BDSNews.class);
@@ -210,7 +210,7 @@ public class dangTinBDSPhongTroActivity extends AppCompatActivity implements com
 
     private void clickAddImageFashion() {
         photoAdapter = new photoAdapter(imageUri, this, this);
-        rcvView_select_img_PhongTro.setLayoutManager(new GridLayoutManager(dangTinBDSPhongTroActivity.this, 6));
+        rcvView_select_img_PhongTro.setLayoutManager(new GridLayoutManager(dangTinBDSPhongTroActivity.this, 1));
         rcvView_select_img_PhongTro.setAdapter(photoAdapter);
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
@@ -301,7 +301,7 @@ public class dangTinBDSPhongTroActivity extends AppCompatActivity implements com
 
                     String strId = String.valueOf(maxID);
 
-                    myData.child(tenDanhMuc).child(strId).setValue(
+                    myData.child(strId).setValue(
                             new BDSNews(maxID, strTitle, strDesc, dbPrice, strDienTich, strAddress,
                                     idUser, nameUser, tenDanhMuc, date
                             )).addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -317,18 +317,11 @@ public class dangTinBDSPhongTroActivity extends AppCompatActivity implements com
         });
     }
 
-    private void StoreLick(String url) {
-        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("List Image");
-        HashMap<String, String> hashMap = new HashMap<>();
-        hashMap.put("Imglink", url);
-        databaseReference.push().setValue(hashMap);
-    }
-
     private List<BDSNews> getListBds() {
         listBDS = new ArrayList<>();
         FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
         DatabaseReference databaseReference = firebaseDatabase.getReference("Tin").child("BDS");
-        databaseReference.child(tenDanhMuc).addValueEventListener(new ValueEventListener() {
+        databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 listBDS.clear();
@@ -367,6 +360,8 @@ public class dangTinBDSPhongTroActivity extends AppCompatActivity implements com
 
         Intent intent1 = getIntent();
         tenDanhMuc = intent1.getStringExtra("tenDanhMuc");
+
+        broadcast = new Broadcast();
     }
 
     @Override
@@ -424,7 +419,7 @@ public class dangTinBDSPhongTroActivity extends AppCompatActivity implements com
     }
 
     private void UpdateImageUrl(String url, int id) {
-        myData.child(tenDanhMuc+"/"+id+"/image").setValue(url);
+        myData.child(id+"/image").setValue(url);
     }
 
     @Override

@@ -37,13 +37,11 @@ public class chonDanhMucThoiTrangAcrivity extends AppCompatActivity {
         getNameUser();
         getIdUser();
         listTT = new ArrayList<>();
-        dmucThoiTrangAdapter = new dmucThoiTrangAdapter(getApplicationContext() , getList());
+        dmucThoiTrangAdapter = new dmucThoiTrangAdapter(this , getList());
 
         rcvChonDanhMuc.setAdapter(dmucThoiTrangAdapter);
         rcvChonDanhMuc.setLayoutManager(new LinearLayoutManager(this));
     }
-
-
 
     private List<thoiTrang> getList() {
         listTT.add(new thoiTrang("Quần áo"));
