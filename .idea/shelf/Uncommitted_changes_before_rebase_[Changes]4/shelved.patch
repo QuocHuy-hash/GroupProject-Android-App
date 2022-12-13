@@ -1,0 +1,277 @@
+Index: app/src/main/res/drawable/ic_baseline_access_time_24.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/drawable/ic_baseline_access_time_24.xml b/app/src/main/res/drawable/ic_baseline_access_time_24.xml
+new file mode 100644
+--- /dev/null	(date 1670898590362)
++++ b/app/src/main/res/drawable/ic_baseline_access_time_24.xml	(date 1670898590362)
+@@ -0,0 +1,6 @@
++<vector android:height="24dp" android:tint="#BAB7AF"
++    android:viewportHeight="24" android:viewportWidth="24"
++    android:width="24dp" xmlns:android="http://schemas.android.com/apk/res/android">
++    <path android:fillColor="@android:color/white" android:pathData="M11.99,2C6.47,2 2,6.48 2,12s4.47,10 9.99,10C17.52,22 22,17.52 22,12S17.52,2 11.99,2zM12,20c-4.42,0 -8,-3.58 -8,-8s3.58,-8 8,-8 8,3.58 8,8 -3.58,8 -8,8z"/>
++    <path android:fillColor="@android:color/white" android:pathData="M12.5,7H11v6l5.25,3.15 0.75,-1.23 -4.5,-2.67z"/>
++</vector>
+Index: app/src/main/res/layout/activity_chitiet_item_news_trangchu.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/layout/activity_chitiet_item_news_trangchu.xml b/app/src/main/res/layout/activity_chitiet_item_news_trangchu.xml
+new file mode 100644
+--- /dev/null	(date 1670899765902)
++++ b/app/src/main/res/layout/activity_chitiet_item_news_trangchu.xml	(date 1670899765902)
+@@ -0,0 +1,163 @@
++<?xml version="1.0" encoding="utf-8"?>
++<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
++    xmlns:app="http://schemas.android.com/apk/res-auto"
++    xmlns:tools="http://schemas.android.com/tools"
++    android:layout_width="match_parent"
++    android:layout_height="match_parent"
++    android:orientation="vertical"
++    tools:context=".Chitiet_item_news_trangchu"
++    android:background="@color/gray_2">
++
++    <ImageView
++        android:id="@+id/img_chitiet_item_news_trangchu"
++        android:layout_width="match_parent"
++        android:layout_height="200dp"
++        android:src="@color/gray_1"/>
++    <LinearLayout
++        android:layout_width="match_parent"
++        android:layout_height="wrap_content"
++        android:padding="20dp"
++        android:layout_marginBottom="10dp"
++        android:orientation="vertical"
++        android:background="@color/white">
++        <TextView
++            android:layout_width="match_parent"
++            android:layout_height="wrap_content"
++            android:textStyle="bold"
++            android:textColor="@color/black"
++            android:textSize="20dp"
++            android:text="00000000000000000"/>
++        <androidx.constraintlayout.widget.ConstraintLayout
++            android:layout_width="match_parent"
++            android:layout_height="wrap_content"
++            >
++
++            <LinearLayout
++                android:layout_width="wrap_content"
++                android:layout_height="match_parent"
++                android:layout_marginEnd="2dp"
++                android:gravity="center"
++                app:layout_constraintEnd_toStartOf="@+id/favorite_save"
++                app:layout_constraintTop_toTopOf="parent">
++
++                <ImageView
++                    android:layout_width="30dp"
++                    android:layout_height="30dp"
++                    android:src="@drawable/share_icon" />
++
++                <TextView
++                    android:layout_width="wrap_content"
++                    android:layout_height="wrap_content"
++                    android:text="Share"
++                    android:textColor="@color/gray_2"
++                    android:textStyle="bold" />
++            </LinearLayout>
++            <LinearLayout
++                android:id="@+id/favorite_save"
++                android:layout_width="wrap_content"
++                android:layout_height="match_parent"
++                app:layout_constraintEnd_toEndOf="parent"
++                app:layout_constraintTop_toTopOf="parent"
++                android:gravity="center">
++
++                <ImageView
++                    android:id="@+id/img_chitiet_item_news_trangchu_favorite"
++                    android:layout_width="30dp"
++                    android:layout_height="30dp"
++                    android:src="@drawable/ic_item_trangchu_unfavorite" />
++
++                <TextView
++                    android:layout_width="wrap_content"
++                    android:layout_height="wrap_content"
++                    android:text="lưu"
++                    android:textStyle="bold"
++                    android:textColor="@color/gray_2" />
++            </LinearLayout>
++            <TextView
++                android:id="@+id/tv_chitiet_item_trangchu_fee"
++                android:layout_width="match_parent"
++                android:layout_height="wrap_content"
++                android:text="00000000000000000"
++                android:textColor="@color/red"
++                android:textSize="20dp"
++                android:textStyle="bold"
++                app:layout_constraintStart_toStartOf="parent"
++                app:layout_constraintTop_toTopOf="parent" />
++
++
++        </androidx.constraintlayout.widget.ConstraintLayout>
++        <LinearLayout
++            android:layout_width="match_parent"
++            android:layout_height="wrap_content">
++            <ImageView
++                android:layout_width="wrap_content"
++                android:layout_height="wrap_content"
++                android:src="@drawable/ic_outline_location_on_24"/>
++            <LinearLayout
++                android:layout_width="match_parent"
++                android:layout_height="wrap_content"
++                android:orientation="vertical">
++                <TextView
++                    android:id="@+id/tv_chitiet_location"
++                    android:layout_width="wrap_content"
++                    android:layout_height="wrap_content"
++                    android:text="xxxxxxxxxxxxxxxxx"
++                    android:textColor="@color/gray_2"
++                    android:textSize="16dp"
++                    />
++                <TextView
++                    android:id="@+id/tv_chitiet_location_map"
++                    android:layout_width="wrap_content"
++                    android:layout_height="wrap_content"
++                    android:text="Xem bản đồ >"
++                    android:textColor="@color/blue"
++                    android:textSize="16dp"
++                    android:textStyle="bold"
++                    />
++            </LinearLayout>
++
++        </LinearLayout>
++        <LinearLayout
++            android:layout_width="match_parent"
++            android:layout_height="wrap_content">
++            <ImageView
++                android:layout_width="wrap_content"
++                android:layout_height="wrap_content"
++                android:src="@drawable/ic_baseline_access_time_24"/>
++
++            <TextView
++                android:id="@+id/tv_chitiet_time"
++                android:layout_width="wrap_content"
++                android:layout_height="wrap_content"
++                android:text="xxxxxxxxxxxxxxxxx"
++                android:textColor="@color/gray_2"
++                android:textSize="16dp"
++                />
++
++
++
++        </LinearLayout>
++    </LinearLayout>
++
++    <LinearLayout
++        android:layout_width="match_parent"
++        android:layout_height="wrap_content"
++        android:padding="20dp"
++        android:layout_marginBottom="10dp"
++        android:background="@color/white"
++        android:orientation="vertical">
++        <TextView
++            android:id="@+id/tv_chitiet_dacdiem"
++            android:layout_width="match_parent"
++            android:layout_height="wrap_content"
++            android:textStyle="bold"
++            android:textColor="@color/black"
++            android:textSize="20dp"
++            android:text="Đặc điểm"/>
++        <GridLayout
++            android:layout_width="match_parent"
++            android:layout_height="wrap_content">
++            <LinearLayout
++        </GridLayout>
++    </LinearLayout>
++</LinearLayout>
+\ No newline at end of file
+Index: app/src/main/res/drawable/ic_outline_location_on_24.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/drawable/ic_outline_location_on_24.xml b/app/src/main/res/drawable/ic_outline_location_on_24.xml
+new file mode 100644
+--- /dev/null	(date 1670898073097)
++++ b/app/src/main/res/drawable/ic_outline_location_on_24.xml	(date 1670898073097)
+@@ -0,0 +1,6 @@
++<vector android:height="24dp" android:tint="#BAB7AF"
++    android:viewportHeight="24" android:viewportWidth="24"
++    android:width="24dp" xmlns:android="http://schemas.android.com/apk/res/android">
++    <path android:fillColor="@android:color/white" android:pathData="M12,2C8.13,2 5,5.13 5,9c0,5.25 7,13 7,13s7,-7.75 7,-13c0,-3.87 -3.13,-7 -7,-7zM7,9c0,-2.76 2.24,-5 5,-5s5,2.24 5,5c0,2.88 -2.88,7.19 -5,9.88C9.92,16.21 7,11.85 7,9z"/>
++    <path android:fillColor="@android:color/white" android:pathData="M12,9m-2.5,0a2.5,2.5 0,1 1,5 0a2.5,2.5 0,1 1,-5 0"/>
++</vector>
+Index: app/src/main/java/com/example/duan1/Adapter/NewsTrangChuAdapter.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.duan1.Adapter;\r\n\r\nimport android.content.Context;\r\nimport android.view.LayoutInflater;\r\nimport android.view.View;\r\nimport android.view.ViewGroup;\r\nimport android.widget.ImageView;\r\nimport android.widget.LinearLayout;\r\nimport android.widget.TextView;\r\n\r\nimport androidx.annotation.NonNull;\r\nimport androidx.recyclerview.widget.RecyclerView;\r\n\r\nimport com.bumptech.glide.Glide;\r\nimport com.example.duan1.R;\r\nimport com.example.duan1.model.BDSNews;\r\nimport com.example.duan1.model.NewsTrangChu;\r\nimport com.squareup.picasso.Picasso;\r\n\r\nimport java.text.NumberFormat;\r\nimport java.util.List;\r\nimport java.util.Locale;\r\n\r\npublic class NewsTrangChuAdapter extends RecyclerView.Adapter<NewsTrangChuAdapter.ViewHolder> {private Context context;\r\n    private List<NewsTrangChu> newsTrangChuList;\r\n    public NewsTrangChuAdapter(Context context) {\r\n        this.context = context;\r\n    }\r\n\r\n    public void setDATA(List<NewsTrangChu> x) {\r\n        this.newsTrangChuList = x;\r\n        notifyDataSetChanged();\r\n    }\r\n\r\n    @NonNull\r\n    @Override\r\n    public NewsTrangChuAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {\r\n        View view = LayoutInflater.from(\r\n                parent.getContext()).inflate(R.layout.item_trangchu_news,parent,false);\r\n\r\n        return new ViewHolder(view);\r\n    }\r\n\r\n    @Override\r\n    public void onBindViewHolder(@NonNull NewsTrangChuAdapter.ViewHolder h, int position) {\r\n        NewsTrangChu OOP = newsTrangChuList.get(position);\r\n        if(OOP == null){\r\n            return;\r\n        }\r\n\r\n        Locale localeEN = new Locale(\"en\", \"EN\");\r\n        NumberFormat en = NumberFormat.getInstance(localeEN);\r\n\r\n        h.tvTitle.setText(OOP.getTitle());\r\n        String str1 = en.format(OOP.getFee());\r\n        h.tvFee.setText(str1);\r\n        h.tvTime.setText(OOP.getTime());\r\n        h.tvDes.setText(OOP.getDescripsion());\r\n        String strimage = OOP.getImage();\r\n        try {\r\n            Picasso.with(context)\r\n                    .load(strimage)\r\n                    .into(h.imgNews);\r\n        }catch (Exception e) {\r\n            System.out.println(\"Lỗi load ảnh trong newsAdapter\" + e);\r\n        }\r\n\r\n//        if(OOP.getsoluonganh() > 1){\r\n//            h.linearLayout.setVisibility(View.VISIBLE);\r\n//            h.tvSLAnh.setText(OOP.getsoluonganh());\r\n//        }else{\r\n//            h.linearLayout.setVisibility(View.INVISIBLE);\r\n//        }\r\n\r\n//        Glide.with(context).load(OOP.getImage()).into(h.imgNews);\r\n\r\n        if(OOP.isFavorite()){\r\n            h.imgFavorite.setImageResource(R.drawable.ic_item_trangchu_favorite);\r\n        }else{\r\n            h.imgFavorite.setImageResource(R.drawable.ic_item_trangchu_unfavorite);\r\n        }\r\n        h.imgFavorite.setOnClickListener(new View.OnClickListener() {\r\n            @Override\r\n            public void onClick(View view) {\r\n                if(OOP.isFavorite()){\r\n                    OOP.setFavorite(false);\r\n                }else{\r\n                    OOP.setFavorite(true);\r\n                }\r\n            }\r\n        });\r\n    }\r\n\r\n    @Override\r\n    public int getItemCount() {\r\n        if(newsTrangChuList != null){\r\n            return newsTrangChuList.size();\r\n        }\r\n\r\n        return 0;\r\n    }\r\n\r\n    public class ViewHolder extends RecyclerView.ViewHolder {\r\n        private TextView tvSLAnh,tvTitle,tvFee,tvDes,tvTime;\r\n        private ImageView imgNews,imgFavorite,imgLoaiTin;\r\n        private LinearLayout linearLayout;\r\n        public ViewHolder(@NonNull View itemView) {\r\n            super(itemView);\r\n            tvSLAnh = itemView.findViewById(R.id.tv_item_trangchu_news_SoLuongAnh);\r\n            tvDes = itemView.findViewById(R.id.tv_item_trangchu_descripsion);\r\n            tvFee = itemView.findViewById(R.id.tv_item_trangchu_fee);\r\n            tvTime = itemView.findViewById(R.id.tv_item_trangchu_news_Time);\r\n            tvTitle = itemView.findViewById(R.id.tv_item_trangchu_title);\r\n\r\n            imgFavorite = itemView.findViewById(R.id.img_item_trangchu_news_favorite);\r\n            imgNews = itemView.findViewById(R.id.img_item_trangchu_news_Pic);\r\n            imgLoaiTin = itemView.findViewById(R.id.img_item_trangchu_news_LoaiTin);\r\n\r\n            linearLayout = itemView.findViewById(R.id.layout_item_trangchu_news_SLA);\r\n        }\r\n    }\r\n}\r\n\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/duan1/Adapter/NewsTrangChuAdapter.java b/app/src/main/java/com/example/duan1/Adapter/NewsTrangChuAdapter.java
+--- a/app/src/main/java/com/example/duan1/Adapter/NewsTrangChuAdapter.java	(revision 683b1797d036440e5a182e5a03636a6122ec2760)
++++ b/app/src/main/java/com/example/duan1/Adapter/NewsTrangChuAdapter.java	(date 1670841594000)
+@@ -84,8 +84,10 @@
+             public void onClick(View view) {
+                 if(OOP.isFavorite()){
+                     OOP.setFavorite(false);
++                    h.imgFavorite.setImageResource(R.drawable.ic_item_trangchu_unfavorite);
+                 }else{
+                     OOP.setFavorite(true);
++                    h.imgFavorite.setImageResource(R.drawable.ic_item_trangchu_favorite);
+                 }
+             }
+         });
+Index: app/src/main/java/com/example/duan1/Chitiet_item_news_trangchu.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/duan1/Chitiet_item_news_trangchu.java b/app/src/main/java/com/example/duan1/Chitiet_item_news_trangchu.java
+new file mode 100644
+--- /dev/null	(date 1670841593959)
++++ b/app/src/main/java/com/example/duan1/Chitiet_item_news_trangchu.java	(date 1670841593959)
+@@ -0,0 +1,15 @@
++package com.example.duan1;
++
++import androidx.appcompat.app.AppCompatActivity;
++
++import android.os.Bundle;
++
++public class Chitiet_item_news_trangchu extends AppCompatActivity {
++
++    @Override
++    protected void onCreate(Bundle savedInstanceState) {
++        super.onCreate(savedInstanceState);
++        setContentView(R.layout.activity_chitiet_item_news_trangchu);
++
++    }
++}
+\ No newline at end of file
+Index: app/src/main/AndroidManifest.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<manifest xmlns:android=\"http://schemas.android.com/apk/res/android\"\r\n    xmlns:tools=\"http://schemas.android.com/tools\"\r\n    package=\"com.example.duan1\">\r\n\r\n    <uses-permission android:name=\"android.permission.CAMERA\" />\r\n    <uses-permission android:name=\"android.permission.READ_EXTERNAL_STORAGE\" />\r\n    <uses-permission android:name=\"android.permission.WRITE_EXTERNAL_STORAGE\" />\r\n    <uses-permission android:name=\"android.permission.INTERNET\" />\r\n    <uses-permission android:name=\"android.permission.READ_EXTERNAL_STORAGE\" />\r\n    <uses-permission android:name=\"android.permission.WRITE_EXTERNAL_STORAGE\" />\r\n    <uses-permission android:name=\"android.permission.CAMERA\" />\r\n\r\n    <application\r\n        android:allowBackup=\"true\"\r\n        android:dataExtractionRules=\"@xml/data_extraction_rules\"\r\n        android:fullBackupContent=\"@xml/backup_rules\"\r\n        android:hardwareAccelerated=\"false\"\r\n        android:icon=\"@drawable/logoapp\"\r\n        android:label=\"@string/app_name\"\r\n        android:largeHeap=\"true\"\r\n        android:roundIcon=\"@mipmap/ic_launcher_round\"\r\n        android:supportsRtl=\"true\"\r\n        android:theme=\"@style/Theme.DuAn1\"\r\n        tools:targetApi=\"31\">\r\n        <activity\r\n            android:name=\".dagTinGiaiTriActivity\"\r\n            android:exported=\"false\" />\r\n        <activity\r\n            android:name=\".dangTinThoiTrangActivity\"\r\n            android:exported=\"false\" />\r\n        <activity\r\n            android:name=\".EditAccount\"\r\n            android:exported=\"false\">\r\n            <meta-data\r\n                android:name=\"android.app.lib_name\"\r\n                android:value=\"\" />\r\n        </activity>\r\n        <activity\r\n            android:name=\".dangTinBDSPhongTroActivity\"\r\n            android:exported=\"false\" />\r\n        <activity\r\n            android:name=\".dangTinBDSDatActivity\"\r\n            android:exported=\"false\" />\r\n        <activity\r\n            android:name=\".dangTinBDSActivity\"\r\n            android:exported=\"false\" />\r\n        <activity\r\n            android:name=\".chonDanhMucDienMayActivity\"\r\n            android:exported=\"false\" />\r\n        <activity\r\n            android:name=\".chonDanhMucGiaiTriActivity\"\r\n            android:exported=\"false\" />\r\n        <activity\r\n            android:name=\".chonDanhMucDoDienTuActivity\"\r\n            android:exported=\"false\" />\r\n        <activity\r\n            android:name=\".chonDanhMucThoiTrangAcrivity\"\r\n            android:exported=\"false\" />\r\n        <activity\r\n            android:name=\".chonDanhMucXeCoActivity\"\r\n            android:exported=\"false\" />\r\n        <activity\r\n            android:name=\".chonDanhMucBDSActivity\"\r\n            android:exported=\"false\" />\r\n        <activity\r\n            android:name=\".Account\"\r\n            android:exported=\"false\">\r\n            <meta-data\r\n                android:name=\"android.app.lib_name\"\r\n                android:value=\"\" />\r\n        </activity>\r\n        <activity\r\n            android:name=\".Register\"\r\n            android:exported=\"false\">\r\n            <meta-data\r\n                android:name=\"android.app.lib_name\"\r\n                android:value=\"\" />\r\n        </activity>\r\n        <activity\r\n            android:name=\".Login\"\r\n            android:exported=\"false\">\r\n            <meta-data\r\n                android:name=\"android.app.lib_name\"\r\n                android:value=\"\" />\r\n        </activity>\r\n        <activity\r\n            android:name=\".MainActivity\"\r\n            android:exported=\"true\">\r\n            <intent-filter>\r\n                <action android:name=\"android.intent.action.MAIN\" />\r\n\r\n                <category android:name=\"android.intent.category.LAUNCHER\" />\r\n            </intent-filter>\r\n        </activity>\r\n\r\n        <meta-data\r\n            android:name=\"com.facebook.sdk.ApplicationId\"\r\n            android:value=\"@string/facebook_app_id\" />\r\n        <meta-data\r\n            android:name=\"com.facebook.sdk.ClientToken\"\r\n            android:value=\"@string/facebook_client_token\" />\r\n\r\n        <activity\r\n            android:name=\"com.facebook.FacebookActivity\"\r\n            android:configChanges=\"keyboard|keyboardHidden|screenLayout|screenSize|orientation\"\r\n            android:label=\"@string/app_name\" />\r\n        <activity\r\n            android:name=\"com.facebook.CustomTabActivity\"\r\n            android:exported=\"true\">\r\n            <intent-filter>\r\n                <action android:name=\"android.intent.action.VIEW\" />\r\n\r\n                <category android:name=\"android.intent.category.DEFAULT\" />\r\n                <category android:name=\"android.intent.category.BROWSABLE\" />\r\n\r\n                <data android:scheme=\"@string/fb_login_protocol_scheme\" />\r\n            </intent-filter>\r\n        </activity>\r\n    </application>\r\n\r\n</manifest>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/AndroidManifest.xml b/app/src/main/AndroidManifest.xml
+--- a/app/src/main/AndroidManifest.xml	(revision 683b1797d036440e5a182e5a03636a6122ec2760)
++++ b/app/src/main/AndroidManifest.xml	(date 1670841594010)
+@@ -24,6 +24,13 @@
+         android:theme="@style/Theme.DuAn1"
+         tools:targetApi="31">
+         <activity
++            android:name=".Chitiet_item_news_trangchu"
++            android:exported="false">
++            <meta-data
++                android:name="android.app.lib_name"
++                android:value="" />
++        </activity>
++        <activity
+             android:name=".dagTinGiaiTriActivity"
+             android:exported="false" />
+         <activity
