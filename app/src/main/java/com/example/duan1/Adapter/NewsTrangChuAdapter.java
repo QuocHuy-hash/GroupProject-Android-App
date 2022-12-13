@@ -21,7 +21,8 @@ import java.text.NumberFormat;
 import java.util.List;
 import java.util.Locale;
 
-public class NewsTrangChuAdapter extends RecyclerView.Adapter<NewsTrangChuAdapter.ViewHolder> {private Context context;
+public class NewsTrangChuAdapter extends RecyclerView.Adapter<NewsTrangChuAdapter.ViewHolder> {
+    private Context context;
     private List<NewsTrangChu> newsTrangChuList;
     public NewsTrangChuAdapter(Context context) {
         this.context = context;
@@ -65,6 +66,7 @@ public class NewsTrangChuAdapter extends RecyclerView.Adapter<NewsTrangChuAdapte
             System.out.println("Lỗi load ảnh trong newsAdapter" + e);
         }
 
+//        áasasasasasasasasasasasassaas
 //        if(OOP.getsoluonganh() > 1){
 //            h.linearLayout.setVisibility(View.VISIBLE);
 //            h.tvSLAnh.setText(OOP.getsoluonganh());

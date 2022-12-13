@@ -9,7 +9,7 @@ public class NewsTrangChu {
 
 //    public int getsoluonganh(){
 //        return getArrURL().size();
-//    }
+//    }âssaassasasasaas
 
     public NewsTrangChu() {
     }

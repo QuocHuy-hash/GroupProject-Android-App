@@ -39,7 +39,7 @@
             android:layout_marginTop="10dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
-
+<!--âsassaasas-->
             <TextView
                 android:id="@+id/tv_item_trangchu_news_SoLuongAnh"
                 android:layout_width="match_parent"
