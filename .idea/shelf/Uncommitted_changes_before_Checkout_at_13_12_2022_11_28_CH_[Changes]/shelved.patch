@@ -1,0 +1,285 @@
+Index: app/src/main/java/com/example/duan1/Fragment/FragmentTrangChu.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.duan1.Fragment;\r\n\r\nimport android.annotation.SuppressLint;\r\nimport android.os.Bundle;\r\n\r\nimport androidx.annotation.NonNull;\r\nimport androidx.annotation.Nullable;\r\nimport androidx.fragment.app.Fragment;\r\nimport androidx.recyclerview.widget.GridLayoutManager;\r\nimport androidx.recyclerview.widget.LinearLayoutManager;\r\nimport androidx.recyclerview.widget.RecyclerView;\r\nimport androidx.viewpager.widget.ViewPager;\r\n\r\nimport android.os.Handler;\r\nimport android.os.Looper;\r\nimport android.view.LayoutInflater;\r\nimport android.view.MotionEvent;\r\nimport android.view.View;\r\nimport android.view.ViewGroup;\r\n\r\nimport com.example.duan1.Adapter.NewsTrangChuAdapter;\r\nimport com.example.duan1.Adapter.historyNewsAdapter;\r\nimport com.example.duan1.Adapter.slidersAdapter;\r\nimport com.example.duan1.MainActivity;\r\nimport com.example.duan1.R;\r\nimport com.example.duan1.model.BDSNews;\r\nimport com.example.duan1.model.NewsTrangChu;\r\nimport com.example.duan1.model.giaiTriNews;\r\nimport com.example.duan1.model.historyNews;\r\nimport com.example.duan1.model.photosSlider;\r\nimport com.example.duan1.model.thoiTrangNews;\r\nimport com.google.firebase.database.ChildEventListener;\r\nimport com.google.firebase.database.DataSnapshot;\r\nimport com.google.firebase.database.DatabaseError;\r\nimport com.google.firebase.database.DatabaseReference;\r\nimport com.google.firebase.database.FirebaseDatabase;\r\n\r\n\r\nimport java.util.ArrayList;\r\nimport java.util.List;\r\nimport java.util.Timer;\r\nimport java.util.TimerTask;\r\n\r\n\r\nimport me.relex.circleindicator.CircleIndicator;\r\n\r\n\r\npublic class FragmentTrangChu extends Fragment {\r\n    private ViewPager viewPager;\r\n    private CircleIndicator circleIndicator;\r\n    private slidersAdapter slidersAdapter;\r\n    private List<photosSlider> mListPhoto = new ArrayList<>();\r\n    private Timer mTimer;\r\n    public MainActivity mainActivity;\r\n    private RecyclerView rcvNewsTrangChu;\r\n    private List<NewsTrangChu> newsTrangChuList = new ArrayList<>();\r\n    private NewsTrangChuAdapter mNewsTrangChuAdapter;\r\n    private List<String> listChild = new ArrayList<>();\r\n    private List<String> listChild1 = new ArrayList<>();\r\n    private List<String> listChild2 = new ArrayList<>();\r\n    DatabaseReference myData = FirebaseDatabase.getInstance().getReference(\"Tin\").child(\"GiaiTri\");\r\n    DatabaseReference myData1 = FirebaseDatabase.getInstance().getReference(\"Tin\").child(\"BDS\");\r\n    DatabaseReference myData2 = FirebaseDatabase.getInstance().getReference(\"Tin\").child(\"ThoiTrang\");\r\n\r\n    @SuppressLint(\"MissingInflatedId\")\r\n    @Override\r\n    public View onCreateView(LayoutInflater inflater, ViewGroup container,\r\n                             Bundle savedInstanceState) {\r\n        View view = inflater.inflate(R.layout.fragment_trang_chu, container, false);\r\n        mainActivity = (MainActivity) getActivity();\r\n\r\n\r\n        viewPager = view.findViewById(R.id.viewPager_slide);\r\n        \r\n        circleIndicator = view.findViewById(R.id.circle_indicator);\r\n\r\n        slidersAdapter = new slidersAdapter(getContext(), getListPhoto());\r\n        viewPager.setAdapter(slidersAdapter);\r\n\r\n        circleIndicator.setViewPager(viewPager);\r\n        slidersAdapter.registerDataSetObserver(circleIndicator.getDataSetObserver());\r\n\r\n        autoSliderImg();\r\n        listChild1();\r\n        listChild2();\r\n        listChild3();\r\n        getListNews();\r\n        rcvNewsTrangChu = view.findViewById(R.id.rcv_news_trangchu);\r\n        mNewsTrangChuAdapter = new NewsTrangChuAdapter(getContext());\r\n        GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), 2);\r\n        rcvNewsTrangChu.setLayoutManager(gridLayoutManager);\r\n        mNewsTrangChuAdapter.setDATA(newsTrangChuList);\r\n        rcvNewsTrangChu.setAdapter(mNewsTrangChuAdapter);\r\n//        rcvNewsTrangChu.addOnItemTouchListener(new RecyclerView.SimpleOnItemTouchListener() {\r\n//            @Override\r\n//            public boolean onInterceptTouchEvent(@NonNull RecyclerView rv, @NonNull MotionEvent e) {\r\n//                return rv.getScrollState() == RecyclerView.SCROLL_STATE_DRAGGING;\r\n//            }\r\n//        });\r\n        return view;\r\n    }\r\n\r\n    private void autoSliderImg() {\r\n\r\n        if (mTimer == null) {\r\n            mTimer = new Timer();\r\n        }\r\n\r\n        mTimer.schedule(new TimerTask() {\r\n            @Override\r\n            public void run() {\r\n                new Handler(Looper.getMainLooper()).post(new Runnable() {\r\n                    @Override\r\n                    public void run() {\r\n                        int currentitem = viewPager.getCurrentItem();\r\n                        int totalItem = mListPhoto.size() - 1;\r\n\r\n                        if (currentitem < totalItem) {\r\n                            currentitem++;\r\n                            viewPager.setCurrentItem(currentitem);\r\n                        } else {\r\n                            viewPager.setCurrentItem(0);\r\n                        }\r\n                    }\r\n                });\r\n            }\r\n        }, 500, 3000);\r\n    }\r\n\r\n    @Override\r\n    public void onDestroyView() {\r\n        super.onDestroyView();\r\n\r\n        if (mTimer != null) {\r\n            mTimer.cancel();\r\n            mTimer = null;\r\n        }\r\n\r\n    }\r\n\r\n\r\n    private List<photosSlider> getListPhoto() {\r\n//    List<photosSlider> list = new ArrayList<>();\r\n\r\n        mListPhoto.add(new photosSlider(R.drawable.img_slider1));\r\n        mListPhoto.add(new photosSlider(R.drawable.img_slider2));\r\n        mListPhoto.add(new photosSlider(R.drawable.img_slider3));\r\n        mListPhoto.add(new photosSlider(R.drawable.img_slider4));\r\n\r\n        return mListPhoto;\r\n    }\r\n    private void getListNews() {\r\n        for (int i = 0; i < listChild.size(); i++) {\r\n            myData.child(listChild.get(i)).addChildEventListener(new ChildEventListener() {\r\n                @Override\r\n                public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {\r\n                    giaiTriNews giaiTriNews = snapshot.getValue(giaiTriNews.class);\r\n                    newsTrangChuList.add(new NewsTrangChu(giaiTriNews.getTitle() , giaiTriNews.getDescription(),\r\n                            giaiTriNews.getPrice(),giaiTriNews.getDate(),true, \"\"));\r\n\r\n\r\n                }\r\n\r\n                @Override\r\n                public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {\r\n\r\n                }\r\n\r\n                @Override\r\n                public void onChildRemoved(@NonNull DataSnapshot snapshot) {\r\n\r\n                }\r\n\r\n                @Override\r\n                public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {\r\n\r\n                }\r\n\r\n                @Override\r\n                public void onCancelled(@NonNull DatabaseError error) {\r\n\r\n                }\r\n            });\r\n\r\n        }\r\n        for (int i = 0; i < listChild1.size(); i++) {\r\n            myData2.child(listChild1.get(i)).addChildEventListener(new ChildEventListener() {\r\n                @Override\r\n                public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {\r\n                    thoiTrangNews thoiTrangNews = snapshot.getValue(com.example.duan1.model.thoiTrangNews.class);\r\n                    newsTrangChuList.add(new NewsTrangChu(thoiTrangNews.getTitlePost(), thoiTrangNews.getDescriptionPost(),\r\n                            thoiTrangNews.getPrice(), thoiTrangNews.getDate(), true , \"\"));\r\n\r\n                }\r\n\r\n                @Override\r\n                public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {\r\n\r\n                }\r\n\r\n                @Override\r\n                public void onChildRemoved(@NonNull DataSnapshot snapshot) {\r\n\r\n                }\r\n\r\n                @Override\r\n                public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {\r\n\r\n                }\r\n\r\n                @Override\r\n                public void onCancelled(@NonNull DatabaseError error) {\r\n\r\n                }\r\n            });\r\n        }\r\n        for (int i = 0; i < listChild2.size(); i++) {\r\n            myData1.child(listChild2.get(i)).addChildEventListener(new ChildEventListener() {\r\n                @Override\r\n                public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {\r\n                    BDSNews bdsNews = snapshot.getValue(BDSNews.class);\r\n\r\n                    newsTrangChuList.add(new NewsTrangChu(bdsNews.getTitle() , bdsNews.getDescription() ,\r\n                            bdsNews.getPrice(),bdsNews.getDate(),false , \"\"));\r\n                    mNewsTrangChuAdapter = new NewsTrangChuAdapter(getContext());\r\n                    GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), 2);\r\n                    rcvNewsTrangChu.setLayoutManager(gridLayoutManager);\r\n                    mNewsTrangChuAdapter.setDATA(newsTrangChuList);\r\n                    rcvNewsTrangChu.setAdapter(mNewsTrangChuAdapter);\r\n                }\r\n\r\n                @Override\r\n                public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {\r\n\r\n                }\r\n\r\n                @Override\r\n                public void onChildRemoved(@NonNull DataSnapshot snapshot) {\r\n\r\n                }\r\n\r\n                @Override\r\n                public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {\r\n\r\n                }\r\n\r\n                @Override\r\n                public void onCancelled(@NonNull DatabaseError error) {\r\n\r\n                }\r\n            });\r\n\r\n        }\r\n\r\n\r\n\r\n    }\r\n    private List<String> listChild1() {\r\n        listChild.add(new String(\"Nhạc cụ\"));\r\n        listChild.add(new String(\"Sách\"));\r\n        listChild.add(new String(\"Đồ thể thao, Dã ngoại\"));\r\n        listChild.add(new String(\"Đồ sưu tầm  ,Đồ cổ\"));\r\n        listChild.add(new String(\"Thiết bị chơi game\"));\r\n        listChild.add(new String(\"Sở thích khác\"));\r\n\r\n        return listChild;\r\n    }\r\n\r\n    private List<String> listChild2() {\r\n        listChild1.add(new String(\"Quần áo\"));\r\n        listChild1.add(new String(\"Đồng hồ\"));\r\n        listChild1.add(new String(\"Giày dép\"));\r\n        listChild1.add(new String(\"Túi xách\"));\r\n        listChild1.add(new String(\"Nước hoa\"));\r\n        listChild1.add(new String(\"Phụ kiện khác\"));\r\n\r\n        return listChild1;\r\n    }\r\n\r\n    private List<String> listChild3() {\r\n        listChild2.add(new String(\"Chung cư\"));\r\n        listChild2.add(new String(\"Nhà ở\"));\r\n        listChild2.add(new String(\"Đất\"));\r\n        listChild2.add(new String(\"Văn Phòng\"));\r\n        listChild2.add(new String(\"Phòng trọ\"));\r\n\r\n        return listChild2;\r\n    }\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/duan1/Fragment/FragmentTrangChu.java b/app/src/main/java/com/example/duan1/Fragment/FragmentTrangChu.java
+--- a/app/src/main/java/com/example/duan1/Fragment/FragmentTrangChu.java	
++++ b/app/src/main/java/com/example/duan1/Fragment/FragmentTrangChu.java	
+@@ -4,10 +4,8 @@
+ import android.os.Bundle;
+ 
+ import androidx.annotation.NonNull;
+-import androidx.annotation.Nullable;
+ import androidx.fragment.app.Fragment;
+ import androidx.recyclerview.widget.GridLayoutManager;
+-import androidx.recyclerview.widget.LinearLayoutManager;
+ import androidx.recyclerview.widget.RecyclerView;
+ import androidx.viewpager.widget.ViewPager;
+ 
+@@ -19,21 +17,11 @@
+ import android.view.ViewGroup;
+ 
+ import com.example.duan1.Adapter.NewsTrangChuAdapter;
+-import com.example.duan1.Adapter.historyNewsAdapter;
+ import com.example.duan1.Adapter.slidersAdapter;
+ import com.example.duan1.MainActivity;
+ import com.example.duan1.R;
+-import com.example.duan1.model.BDSNews;
+ import com.example.duan1.model.NewsTrangChu;
+-import com.example.duan1.model.giaiTriNews;
+-import com.example.duan1.model.historyNews;
+ import com.example.duan1.model.photosSlider;
+-import com.example.duan1.model.thoiTrangNews;
+-import com.google.firebase.database.ChildEventListener;
+-import com.google.firebase.database.DataSnapshot;
+-import com.google.firebase.database.DatabaseError;
+-import com.google.firebase.database.DatabaseReference;
+-import com.google.firebase.database.FirebaseDatabase;
+ 
+ 
+ import java.util.ArrayList;
+@@ -55,12 +43,6 @@
+     private RecyclerView rcvNewsTrangChu;
+     private List<NewsTrangChu> newsTrangChuList = new ArrayList<>();
+     private NewsTrangChuAdapter mNewsTrangChuAdapter;
+-    private List<String> listChild = new ArrayList<>();
+-    private List<String> listChild1 = new ArrayList<>();
+-    private List<String> listChild2 = new ArrayList<>();
+-    DatabaseReference myData = FirebaseDatabase.getInstance().getReference("Tin").child("GiaiTri");
+-    DatabaseReference myData1 = FirebaseDatabase.getInstance().getReference("Tin").child("BDS");
+-    DatabaseReference myData2 = FirebaseDatabase.getInstance().getReference("Tin").child("ThoiTrang");
+ 
+     @SuppressLint("MissingInflatedId")
+     @Override
+@@ -68,10 +50,9 @@
+                              Bundle savedInstanceState) {
+         View view = inflater.inflate(R.layout.fragment_trang_chu, container, false);
+         mainActivity = (MainActivity) getActivity();
+-
+-
++//âsasasasassa
+         viewPager = view.findViewById(R.id.viewPager_slide);
+-        
++
+         circleIndicator = view.findViewById(R.id.circle_indicator);
+ 
+         slidersAdapter = new slidersAdapter(getContext(), getListPhoto());
+@@ -81,15 +62,12 @@
+         slidersAdapter.registerDataSetObserver(circleIndicator.getDataSetObserver());
+ 
+         autoSliderImg();
+-        listChild1();
+-        listChild2();
+-        listChild3();
+-        getListNews();
++
+         rcvNewsTrangChu = view.findViewById(R.id.rcv_news_trangchu);
+         mNewsTrangChuAdapter = new NewsTrangChuAdapter(getContext());
+         GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), 2);
+         rcvNewsTrangChu.setLayoutManager(gridLayoutManager);
+-        mNewsTrangChuAdapter.setDATA(newsTrangChuList);
++        mNewsTrangChuAdapter.setDATA(getListNews());
+         rcvNewsTrangChu.setAdapter(mNewsTrangChuAdapter);
+ //        rcvNewsTrangChu.addOnItemTouchListener(new RecyclerView.SimpleOnItemTouchListener() {
+ //            @Override
+@@ -149,141 +127,34 @@
+ 
+         return mListPhoto;
+     }
+-    private void getListNews() {
+-        for (int i = 0; i < listChild.size(); i++) {
+-            myData.child(listChild.get(i)).addChildEventListener(new ChildEventListener() {
+-                @Override
+-                public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+-                    giaiTriNews giaiTriNews = snapshot.getValue(giaiTriNews.class);
+-                    newsTrangChuList.add(new NewsTrangChu(giaiTriNews.getTitle() , giaiTriNews.getDescription(),
+-                            giaiTriNews.getPrice(),giaiTriNews.getDate(),true, ""));
+-
+-
+-                }
+-
+-                @Override
+-                public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+-
+-                }
+-
+-                @Override
+-                public void onChildRemoved(@NonNull DataSnapshot snapshot) {
+-
+-                }
+-
+-                @Override
+-                public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+-
+-                }
+-
+-                @Override
+-                public void onCancelled(@NonNull DatabaseError error) {
+-
+-                }
+-            });
+-
+-        }
+-        for (int i = 0; i < listChild1.size(); i++) {
+-            myData2.child(listChild1.get(i)).addChildEventListener(new ChildEventListener() {
+-                @Override
+-                public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+-                    thoiTrangNews thoiTrangNews = snapshot.getValue(com.example.duan1.model.thoiTrangNews.class);
+-                    newsTrangChuList.add(new NewsTrangChu(thoiTrangNews.getTitlePost(), thoiTrangNews.getDescriptionPost(),
+-                            thoiTrangNews.getPrice(), thoiTrangNews.getDate(), true , ""));
+-
+-                }
+-
+-                @Override
+-                public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+-
+-                }
+-
+-                @Override
+-                public void onChildRemoved(@NonNull DataSnapshot snapshot) {
+-
+-                }
+-
+-                @Override
+-                public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+-
+-                }
+-
+-                @Override
+-                public void onCancelled(@NonNull DatabaseError error) {
+-
+-                }
+-            });
+-        }
+-        for (int i = 0; i < listChild2.size(); i++) {
+-            myData1.child(listChild2.get(i)).addChildEventListener(new ChildEventListener() {
+-                @Override
+-                public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+-                    BDSNews bdsNews = snapshot.getValue(BDSNews.class);
+-
+-                    newsTrangChuList.add(new NewsTrangChu(bdsNews.getTitle() , bdsNews.getDescription() ,
+-                            bdsNews.getPrice(),bdsNews.getDate(),false , ""));
+-                    mNewsTrangChuAdapter = new NewsTrangChuAdapter(getContext());
+-                    GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), 2);
+-                    rcvNewsTrangChu.setLayoutManager(gridLayoutManager);
+-                    mNewsTrangChuAdapter.setDATA(newsTrangChuList);
+-                    rcvNewsTrangChu.setAdapter(mNewsTrangChuAdapter);
+-                }
+-
+-                @Override
+-                public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+-
+-                }
+-
+-                @Override
+-                public void onChildRemoved(@NonNull DataSnapshot snapshot) {
+-
+-                }
+-
+-                @Override
+-                public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+-
+-                }
+-
+-                @Override
+-                public void onCancelled(@NonNull DatabaseError error) {
++    private List<NewsTrangChu> getListNews() {
++//        List<String> UrlArr = new ArrayList<>();
++//        UrlArr.add("https://firebasestorage.googleapis.com/v0/b/cho-tot-du-an-1.appspot.com/o/Image.jpg%2FImage%20image%3A62%2FN%C6%B0%E1%BB%9Bc%20Hoa%20Chionhs%20H%C3%A3ng?alt=media&token=d6d9bfaf-f8bf-4225-b388-031e6456b149");
++//        UrlArr.add("https://firebasestorage.googleapis.com/v0/b/cho-tot-du-an-1.appspot.com/o/Image.jpg%2FImage%20image%3A62%2FN%C6%B0%E1%BB%9Bc%20Hoa%20Chionhs%20H%C3%A3ng?alt=media&token=d6d9bfaf-f8bf-4225-b388-031e6456b149");
++//        UrlArr.add("https://firebasestorage.googleapis.com/v0/b/cho-tot-du-an-1.appspot.com/o/Image.jpg%2FImage%20image%3A62%2FN%C6%B0%E1%BB%9Bc%20Hoa%20Chionhs%20H%C3%A3ng?alt=media&token=d6d9bfaf-f8bf-4225-b388-031e6456b149");
+ 
+-                }
+-            });
+ 
+-        }
+-
+-
+-
+-    }
+-    private List<String> listChild1() {
+-        listChild.add(new String("Nhạc cụ"));
+-        listChild.add(new String("Sách"));
+-        listChild.add(new String("Đồ thể thao, Dã ngoại"));
+-        listChild.add(new String("Đồ sưu tầm  ,Đồ cổ"));
+-        listChild.add(new String("Thiết bị chơi game"));
+-        listChild.add(new String("Sở thích khác"));
+-
+-        return listChild;
+-    }
+-
+-    private List<String> listChild2() {
+-        listChild1.add(new String("Quần áo"));
+-        listChild1.add(new String("Đồng hồ"));
+-        listChild1.add(new String("Giày dép"));
+-        listChild1.add(new String("Túi xách"));
+-        listChild1.add(new String("Nước hoa"));
+-        listChild1.add(new String("Phụ kiện khác"));
+-
+-        return listChild1;
+-    }
+-
+-    private List<String> listChild3() {
+-        listChild2.add(new String("Chung cư"));
+-        listChild2.add(new String("Nhà ở"));
+-        listChild2.add(new String("Đất"));
+-        listChild2.add(new String("Văn Phòng"));
+-        listChild2.add(new String("Phòng trọ"));
+-
+-        return listChild2;
++        newsTrangChuList.add(new NewsTrangChu(
++                "String title1"
++                , "String descripsion"
++                , "String fee"
++                , "String time"
++                , false
++                ,"https://firebasestorage.googleapis.com/v0/b/cho-tot-du-an-1.appspot.com/o/Image.jpg%2FImage%20image%3A62%2FN%C6%B0%E1%BB%9Bc%20Hoa%20Chionhs%20H%C3%A3ng?alt=media&token=d6d9bfaf-f8bf-4225-b388-031e6456b149"));
++        newsTrangChuList.add(new NewsTrangChu(
++                "String title2"
++                , "String descripsion"
++                , "String fee"
++                , "String time"
++                , false
++                ,"https://firebasestorage.googleapis.com/v0/b/cho-tot-du-an-1.appspot.com/o/Image.jpg%2FImage%20image%3A62%2FN%C6%B0%E1%BB%9Bc%20Hoa%20Chionhs%20H%C3%A3ng?alt=media&token=d6d9bfaf-f8bf-4225-b388-031e6456b149"));
++        newsTrangChuList.add(new NewsTrangChu(
++                "String title3"
++                , "String descripsion"
++                , "String fee"
++                , "String time"
++                , false
++                ,"https://firebasestorage.googleapis.com/v0/b/cho-tot-du-an-1.appspot.com/o/Image.jpg%2FImage%20image%3A62%2FN%C6%B0%E1%BB%9Bc%20Hoa%20Chionhs%20H%C3%A3ng?alt=media&token=d6d9bfaf-f8bf-4225-b388-031e6456b149"));
++        return newsTrangChuList;
+     }
+ }
+\ No newline at end of file
+Index: app/src/main/java/com/example/duan1/chitiet_news.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.duan1;\r\n\r\nimport androidx.appcompat.app.AppCompatActivity;\r\nimport androidx.recyclerview.widget.GridLayoutManager;\r\nimport androidx.recyclerview.widget.LinearLayoutManager;\r\nimport androidx.recyclerview.widget.RecyclerView;\r\n\r\nimport android.os.Bundle;\r\nimport android.view.View;\r\nimport android.widget.ImageView;\r\nimport android.widget.LinearLayout;\r\nimport android.widget.TextView;\r\nimport android.widget.Toast;\r\n\r\nimport com.bumptech.glide.Glide;\r\nimport com.example.duan1.Adapter.NewsTrangChuAdapter;\r\nimport com.example.duan1.Adapter.chitietDacDiemAdapter;\r\nimport com.example.duan1.model.NewsTrangChu;\r\nimport com.example.duan1.model.chitietdacdiem;\r\n\r\nimport java.util.List;\r\n\r\n\r\npublic class chitiet_news extends AppCompatActivity {\r\n    private NewsTrangChuAdapter newsTrangChuAdapter;\r\n    private chitietDacDiemAdapter chitietDacDiemAdapter;\r\n    private RecyclerView rcvTinkhac1,rcvTinkhac2,rcvDacdiem;\r\n    private ImageView imgavatar,imgfavoriteheart,imgPic;\r\n    private TextView tvTitle,tvFee,tvaddress,tvaddressMap,tvTime,\r\n            tvTitleDacDiem,tvTitleMota,tvMota,tvMotaLienhe,\r\n            tvNameNguoiBan,tvXemTrang,tvTitleTinkhac1,tvTitleTinkhac2;\r\n    private LinearLayout layoutDacDiem;\r\n    private int id;\r\n    private String Loai;\r\n    private List<NewsTrangChu> newsTrangChuList1,newsTrangChuList2;\r\n//    1. cùng người bán\r\n//    2. cùng loại tin\r\n    private List<chitietdacdiem> chitietdacdiemList;\r\n    @Override\r\n    protected void onCreate(Bundle savedInstanceState) {\r\n        super.onCreate(savedInstanceState);\r\n        setContentView(R.layout.activity_chitiet_news);\r\n        unitUI();\r\n        Bundle bundle = getIntent().getExtras();\r\n        if(bundle.getInt(\"id\",-1) == -1 && bundle.getString(\"Loai\") == null){\r\n            Toast.makeText(this, \"không thể get id hoặc phân loại\", Toast.LENGTH_SHORT).show();\r\n//            dùng intent và putextra đẩy id và loại sản phẩm để get được sản phẩm từ firebase\r\n        }\r\n        id = bundle.getInt(\"id\");\r\n        Loai = bundle.getString(\"Loai\");\r\n\r\n        setData();\r\n\r\n\r\n        setDataDacDiemSanPham();\r\n        rcvDacdiem = findViewById(R.id.rcv_chitiet_dacdiem);\r\n        chitietDacDiemAdapter = new chitietDacDiemAdapter(chitiet_news.this);\r\n        GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 2);\r\n        rcvDacdiem.setLayoutManager(gridLayoutManager);\r\n        chitietDacDiemAdapter.setData(chitietdacdiemList);\r\n        rcvDacdiem.setAdapter(chitietDacDiemAdapter);\r\n\r\n        \r\n        setDataTinCungSeller();\r\n        rcvTinkhac1 = findViewById(R.id.rcv_chitiet_tinkhac1);\r\n        newsTrangChuAdapter = new NewsTrangChuAdapter(chitiet_news.this);\r\n        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this,RecyclerView.HORIZONTAL,false);\r\n        rcvTinkhac1.setLayoutManager(linearLayoutManager);\r\n        newsTrangChuAdapter.setDATA(newsTrangChuList1);\r\n        rcvTinkhac1.setAdapter(newsTrangChuAdapter);\r\n\r\n        setDataTinCungLoai();\r\n        rcvTinkhac2 = findViewById(R.id.rcv_chitiet_tinkhac1);\r\n        newsTrangChuAdapter = new NewsTrangChuAdapter(chitiet_news.this);\r\n        LinearLayoutManager linearLayoutManager2 = new LinearLayoutManager(this,RecyclerView.HORIZONTAL,false);\r\n        rcvTinkhac2.setLayoutManager(linearLayoutManager2);\r\n        newsTrangChuAdapter.setDATA(newsTrangChuList2);\r\n        rcvTinkhac2.setAdapter(newsTrangChuAdapter);\r\n\r\n\r\n    }\r\n\r\n    private void setDataDacDiemSanPham() {\r\n\r\n    }\r\n\r\n    // cùng data giống như News bên trang chủ\r\n    private void setDataTinCungLoai() {\r\n\r\n    }\r\n\r\n    private void setDataTinCungSeller() {\r\n    }\r\n\r\n    private void setData() {\r\n        tvTitle.setText(\"\");\r\n        tvFee.setText(\"\");\r\n        tvaddress.setText(\"\");\r\n        tvTime.setText(\"\");\r\n\r\n//        nếu loại sản phẩm có đặc điểm để hiển thị ở đây anh set dữ liệu giúp em xem thử ở layout nó là RCV chitiet dacdiem\r\n        if(Loai == \"\"){\r\n            tvTitleDacDiem.setText(\"\");\r\n        }else if(Loai == \"\"){\r\n            tvTitleDacDiem.setText(\"\");\r\n        }else {\r\n            layoutDacDiem.setVisibility(View.GONE);\r\n//            nếu set hết không có là nó sẽ biến mất\r\n        }\r\n\r\n        tvMota.setText(\"\");\r\n        tvMotaLienhe.setText(\"\");\r\n        tvMotaLienhe.setOnClickListener(new View.OnClickListener() {\r\n            @Override\r\n            public void onClick(View view) {\r\n                SnsLienHe();\r\n            }\r\n        });\r\n\r\n        tvNameNguoiBan.setText(\"\");\r\n        tvXemTrang.setOnClickListener(new View.OnClickListener() {\r\n            @Override\r\n            public void onClick(View view) {\r\n                profileSeller();\r\n            }\r\n        });\r\n\r\n//      Ảnh chính\r\n        Glide.with(this).load(\"\").into(imgPic);\r\n//      Avatar\r\n        Glide.with(this).load(\"\").into(imgavatar);\r\n//      setfavorite\r\n        if(false){\r\n            imgfavoriteheart.setImageResource(R.drawable.ic_item_trangchu_favorite);\r\n        }else{\r\n            imgfavoriteheart.setImageResource(R.drawable.ic_item_trangchu_unfavorite);\r\n        }\r\n    }\r\n\r\n    private void profileSeller() {\r\n//        mở đến trang người bán.\r\n    }\r\n\r\n    private void SnsLienHe() {\r\n//      code mở điện thoại liên hệ.\r\n    }\r\n\r\n    private void unitUI() {\r\n\r\n        rcvDacdiem = findViewById(R.id.rcv_chitiet_dacdiem);\r\n        rcvTinkhac1 = findViewById(R.id.rcv_chitiet_tinkhac1);\r\n        rcvTinkhac2 = findViewById(R.id.rcv_chitiet_tinkhac1);\r\n\r\n        imgavatar = findViewById(R.id.img_chitiet_nguoiban_avatar);\r\n        imgfavoriteheart = findViewById(R.id.img_chitiet_favorite);\r\n        imgPic = findViewById(R.id.img_chitiet_pic);\r\n\r\n        tvTitle = findViewById(R.id.tv_chitiet_title);\r\n        tvTitleDacDiem = findViewById(R.id.tv_chitiet_title_dacdiem);\r\n        tvTitleMota = findViewById(R.id.tv_chitiet_title_mota);\r\n        tvTitleTinkhac1 = findViewById(R.id.tv_chitiet_tinkhac1);\r\n        tvTitleTinkhac2 = findViewById(R.id.tv_chitiet_tinkhac2);\r\n\r\n        tvFee = findViewById(R.id.tv_chitiet_fee);\r\n        tvaddress = findViewById(R.id.tv_chitiet_location);\r\n        tvaddressMap = findViewById(R.id.tv_chitiet_location_map);\r\n        tvTime = findViewById(R.id.tv_chitiet_time);\r\n\r\n        tvMota = findViewById(R.id.tv_chitiet_mota_thongtin);\r\n        tvMotaLienhe = findViewById(R.id.tv_chitiet_mota_thongtinlienhe);\r\n\r\n        tvNameNguoiBan = findViewById(R.id.tv_chitiet_nguoiban_name);\r\n        tvXemTrang = findViewById(R.id.tv_chitiet_nguoiban_xemtrang);\r\n\r\n        layoutDacDiem = findViewById(R.id.layout_chitiet_dacdiem);\r\n    }\r\n}
+===================================================================
+diff --git a/app/src/main/java/com/example/duan1/chitiet_news.java b/app/src/main/java/com/example/duan1/chitiet_news.java
+--- a/app/src/main/java/com/example/duan1/chitiet_news.java	
++++ b/app/src/main/java/com/example/duan1/chitiet_news.java	
+@@ -60,7 +60,7 @@
+         chitietDacDiemAdapter.setData(chitietdacdiemList);
+         rcvDacdiem.setAdapter(chitietDacDiemAdapter);
+ 
+-        
++
+         setDataTinCungSeller();
+         rcvTinkhac1 = findViewById(R.id.rcv_chitiet_tinkhac1);
+         newsTrangChuAdapter = new NewsTrangChuAdapter(chitiet_news.this);
+@@ -81,7 +81,9 @@
+     }
+ 
+     private void setDataDacDiemSanPham() {
+-
++        chitietdacdiemList.add(new chitietdacdiem("name","mota"));
++        chitietdacdiemList.add(new chitietdacdiem("name","mota"));
++        chitietdacdiemList.add(new chitietdacdiem("name","mota"));
+     }
+ 
+     // cùng data giống như News bên trang chủ
