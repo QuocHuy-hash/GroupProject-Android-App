@@ -1,5 +1,6 @@
 package com.example.duan1.model;
 
+
 public class chitietdacdiem {
     private String name,mota;
 
