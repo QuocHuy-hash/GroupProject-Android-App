@@ -83,8 +83,9 @@ public class MainActivity extends AppCompatActivity {
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//        currentUser = mAuth.getCurrentUser();
-
+            mAuth = FirebaseAuth.getInstance();
+            currentUser = mAuth.getCurrentUser();
+                
                 if (currentUser != null) {
 
                     showDialogChooseListProduct();
@@ -130,8 +131,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void getUser() {
+        mAuth = FirebaseAuth.getInstance();
+        currentUser = mAuth.getCurrentUser();
+        
         List<Users> mListUser = new ArrayList<>();
-
         String email = currentUser.getEmail();
         myRef.addValueEventListener(new ValueEventListener() {
             @Override
