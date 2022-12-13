@@ -15,6 +15,7 @@ import com.example.duan1.model.chitietdacdiem;
 
 import java.util.List;
 
+
 public class chitietDacDiemAdapter extends RecyclerView.Adapter<chitietDacDiemAdapter.ViewHolder> {
     private Context context;
     private List<chitietdacdiem> chitietdacdiemList;

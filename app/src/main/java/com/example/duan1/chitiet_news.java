@@ -21,6 +21,7 @@ import com.example.duan1.model.chitietdacdiem;
 import java.util.List;
 
 
+
 public class chitiet_news extends AppCompatActivity {
     private NewsTrangChuAdapter newsTrangChuAdapter;
     private chitietDacDiemAdapter chitietDacDiemAdapter;
