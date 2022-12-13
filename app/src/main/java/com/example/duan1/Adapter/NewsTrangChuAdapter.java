@@ -17,7 +17,8 @@ import com.example.duan1.model.NewsTrangChu;
 
 import java.util.List;
 
-public class NewsTrangChuAdapter extends RecyclerView.Adapter<NewsTrangChuAdapter.ViewHolder> {private Context context;
+public class NewsTrangChuAdapter extends RecyclerView.Adapter<NewsTrangChuAdapter.ViewHolder> {
+    private Context context;
     private List<NewsTrangChu> newsTrangChuList;
 
     public NewsTrangChuAdapter(Context context) {
