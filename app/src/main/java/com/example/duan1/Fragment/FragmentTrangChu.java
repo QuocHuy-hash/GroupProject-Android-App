@@ -2,6 +2,7 @@ package com.example.duan1.Fragment;
 
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -15,6 +16,8 @@ import androidx.viewpager.widget.ViewPager;
 
 import android.os.Handler;
 import android.os.Looper;
+import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -62,11 +65,11 @@ public class FragmentTrangChu extends Fragment {
     private SearchView searchView;
     private Spinner spn_phanLoaiTin;
     public MainActivity mainActivity;
-    private RecyclerView rcvNewsTrangChu ,rcvFilter;
+    private RecyclerView rcvNewsTrangChu, rcvFilter;
     private List<NewsTrangChu> newsTrangChuList = new ArrayList<>();
-    private List<NewsTrangChu> newsTrangChuListBDS = new ArrayList<>();
-    private List<NewsTrangChu> newsTrangChuListGT = new ArrayList<>();
-    private List<NewsTrangChu> newsTrangChuListTT = new ArrayList<>();
+    //    private List<NewsTrangChu> newsTrangChuListBDS = new ArrayList<>();
+//    private List<NewsTrangChu> newsTrangChuListGT = new ArrayList<>();
+//    private List<NewsTrangChu> newsTrangChuListTT = new ArrayList<>();
     private NewsTrangChuAdapter mNewsTrangChuAdapter;
     private List<String> listChild = new ArrayList<>();
     private List<String> listChild1 = new ArrayList<>();
@@ -95,25 +98,21 @@ public class FragmentTrangChu extends Fragment {
         slidersAdapter.registerDataSetObserver(circleIndicator.getDataSetObserver());
         searchView.clearFocus();
         autoSliderImg();
-//        listChild1();
-//        listChild2();
-//        listChild3();
-        clickSpinerLoaiTin();
-//        newsTrangChuList.clear();
-        getListNews();
-//        getValuesSpinner();
-        searchNews();
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                mNewsTrangChuAdapter = new NewsTrangChuAdapter(getContext());
-                GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), 2);
-                rcvNewsTrangChu.setLayoutManager(gridLayoutManager);
-                mNewsTrangChuAdapter.setDATA(newsTrangChuList);
-                rcvNewsTrangChu.setAdapter(mNewsTrangChuAdapter);
-            }
-        }, 500);
 
+        clickSpinerLoaiTin();
+
+        getListNews();
+
+        searchNews();
+
+        mNewsTrangChuAdapter = new NewsTrangChuAdapter(getContext(), newsTrangChuList);
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), 2);
+        rcvNewsTrangChu.setLayoutManager(gridLayoutManager);
+        rcvNewsTrangChu.setAdapter(mNewsTrangChuAdapter);
+        rcvNewsTrangChu.getRecycledViewPool().setMaxRecycledViews(2 , 10);
+        mNewsTrangChuAdapter.notifyItemInserted(newsTrangChuList.size());
+
+//
         return view;
     }
 
@@ -128,9 +127,9 @@ public class FragmentTrangChu extends Fragment {
             @Override
             public boolean onQueryTextChange(String newText) {
 
-                if(newText.isEmpty()) {
+                if (newText.isEmpty()) {
                     rcvFilter.setVisibility(View.INVISIBLE);
-                }else {
+                } else {
                     rcvFilter.setVisibility(View.VISIBLE);
                     filterList(newText);
                 }
@@ -142,26 +141,27 @@ public class FragmentTrangChu extends Fragment {
     }
 
     private void filterList(String newText) {
-         listFilter = new ArrayList<>();
-        for(int i = 0; i < newsTrangChuList.size(); i++) {
+        listFilter = new ArrayList<>();
+        for (int i = 0; i < newsTrangChuList.size(); i++) {
             String title = newsTrangChuList.get(i).getTitle();
             String product_type = newsTrangChuList.get(i).getTenDanhMuc();
 
-            if(title.toLowerCase().contains(newText.toLowerCase()) || product_type.toLowerCase().contains(newText.toLowerCase())){
+            if (title.toLowerCase().contains(newText.toLowerCase()) || product_type.toLowerCase().contains(newText.toLowerCase())) {
 
-                listFilter.add(new resultSearch(newsTrangChuList.get(i).getTitle() ,newsTrangChuList.get(i).getTime()
-                , newsTrangChuList.get(i).getImage() , newsTrangChuList.get(i).getFee()));
+                listFilter.add(new resultSearch(newsTrangChuList.get(i).getTitle(), newsTrangChuList.get(i).getTime()
+                        , newsTrangChuList.get(i).getImage(), newsTrangChuList.get(i).getFee()));
 
 
             }
         }
-        if(listFilter.isEmpty()) {
+        if (listFilter.isEmpty()) {
             Toast.makeText(mainActivity, "Mời bạn nhập thông tin tìm kiếm", Toast.LENGTH_SHORT).show();
-        }else {
-            rsSearchAdapter = new rsSearchAdapter(getContext() ,listFilter);
+        } else {
+            rsSearchAdapter = new rsSearchAdapter(getContext(), listFilter);
             rcvFilter.setLayoutManager(new LinearLayoutManager(getContext()));
             rcvFilter.setAdapter(rsSearchAdapter);
-            RecyclerView.ItemDecoration decoration = new DividerItemDecoration(getContext() ,  DividerItemDecoration.VERTICAL);
+
+            RecyclerView.ItemDecoration decoration = new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL);
             rcvFilter.addItemDecoration(decoration);
         }
     }
@@ -199,12 +199,12 @@ public class FragmentTrangChu extends Fragment {
         } else if (loaiTin.equals("Thời trang")) {
 
             getListThoitrang();
-        }else {
-            mNewsTrangChuAdapter = new NewsTrangChuAdapter(getContext());
-            GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), 2);
-            rcvNewsTrangChu.setLayoutManager(gridLayoutManager);
-            mNewsTrangChuAdapter.setDATA(newsTrangChuList);
+        } else {
+            mNewsTrangChuAdapter = new NewsTrangChuAdapter(getContext(), newsTrangChuList);
+            rcvNewsTrangChu.setLayoutManager(new WrapContentLinearLayoutManager(getContext(), 2));
             rcvNewsTrangChu.setAdapter(mNewsTrangChuAdapter);
+
+
         }
     }
 
@@ -219,10 +219,9 @@ public class FragmentTrangChu extends Fragment {
                         , newsTrangChuList.get(i).getTime(), newsTrangChuList.get(i).getFee(), false, newsTrangChuList.get(i).getImage(), newsTrangChuList.get(i).getTenDanhMuc()));
             }
         }
-        mNewsTrangChuAdapter = new NewsTrangChuAdapter(getContext());
-        GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), 2);
-        rcvNewsTrangChu.setLayoutManager(gridLayoutManager);
-        mNewsTrangChuAdapter.setDATA(listfilter);
+        mNewsTrangChuAdapter = new NewsTrangChuAdapter(getContext(), listfilter);
+        rcvNewsTrangChu.setLayoutManager(new GridLayoutManager(getContext() , 2));
+        rcvNewsTrangChu.getRecycledViewPool().clear();
         rcvNewsTrangChu.setAdapter(mNewsTrangChuAdapter);
     }
 
@@ -238,11 +237,12 @@ public class FragmentTrangChu extends Fragment {
                         , newsTrangChuList.get(i).getTime(), newsTrangChuList.get(i).getFee(), false, newsTrangChuList.get(i).getImage(), newsTrangChuList.get(i).getTenDanhMuc()));
             }
         }
-        mNewsTrangChuAdapter = new NewsTrangChuAdapter(getContext());
-        GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), 2);
-        rcvNewsTrangChu.setLayoutManager(gridLayoutManager);
-        mNewsTrangChuAdapter.setDATA(listfilter);
+        mNewsTrangChuAdapter = new NewsTrangChuAdapter(getContext(), listfilter);
+        rcvNewsTrangChu.setLayoutManager(new GridLayoutManager(getContext() , 2));
+        rcvNewsTrangChu.getRecycledViewPool().clear();
         rcvNewsTrangChu.setAdapter(mNewsTrangChuAdapter);
+
+
     }
 
     private void getListBDS() {
@@ -251,15 +251,18 @@ public class FragmentTrangChu extends Fragment {
             String title = newsTrangChuList.get(i).getTenDanhMuc();
             if (title.equals("Chung cư") || title.equals("Nhà ở") || title.equals("Đất") || title.equals("Văn Phong")
                     || title.equals("Phòng trọ")) {
+
                 listfilter.add(new NewsTrangChu(newsTrangChuList.get(i).getTitle(), newsTrangChuList.get(i).getDescripsion()
                         , newsTrangChuList.get(i).getTime(), newsTrangChuList.get(i).getFee(), false, newsTrangChuList.get(i).getImage(), newsTrangChuList.get(i).getTenDanhMuc()));
+
             }
         }
-        mNewsTrangChuAdapter = new NewsTrangChuAdapter(getContext());
-        GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), 2);
-        rcvNewsTrangChu.setLayoutManager(gridLayoutManager);
-        mNewsTrangChuAdapter.setDATA(listfilter);
+        mNewsTrangChuAdapter = new NewsTrangChuAdapter(getContext(), listfilter);
+        rcvNewsTrangChu.setLayoutManager(new GridLayoutManager(getContext() , 2));
+        rcvNewsTrangChu.getRecycledViewPool().clear();
+//        mNewsTrangChuAdapter.setDATA(listfilter);
         rcvNewsTrangChu.setAdapter(mNewsTrangChuAdapter);
+
 
     }
 
@@ -326,8 +329,8 @@ public class FragmentTrangChu extends Fragment {
         myData1.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                newsTrangChuListBDS.clear();
-                for (DataSnapshot snapshot1: snapshot.getChildren()){
+//                newsTrangChuListBDS.clear();
+                for (DataSnapshot snapshot1 : snapshot.getChildren()) {
                     BDSNews bdsNews = snapshot1.getValue(BDSNews.class);
 
                     newsTrangChuList.add(new NewsTrangChu(bdsNews.getTitle(), bdsNews.getDescription(),
@@ -346,8 +349,8 @@ public class FragmentTrangChu extends Fragment {
         myData.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                newsTrangChuListGT.clear();
-                for (DataSnapshot snapshot1: snapshot.getChildren()){
+//                newsTrangChuListGT.clear();
+                for (DataSnapshot snapshot1 : snapshot.getChildren()) {
                     giaiTriNews giaiTriNews = snapshot1.getValue(giaiTriNews.class);
                     newsTrangChuList.add(new NewsTrangChu(giaiTriNews.getTitle(), giaiTriNews.getDescription(),
                             giaiTriNews.getDate(), giaiTriNews.getPrice(), true,
@@ -366,15 +369,14 @@ public class FragmentTrangChu extends Fragment {
         myData2.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                newsTrangChuListTT.clear();
-                for (DataSnapshot snapshot1: snapshot.getChildren()){
+//                newsTrangChuListTT.clear();
+                for (DataSnapshot snapshot1 : snapshot.getChildren()) {
                     thoiTrangNews thoiTrangNews = snapshot1.getValue(thoiTrangNews.class);
                     newsTrangChuList.add(new NewsTrangChu(thoiTrangNews.getTitlePost(),
                             thoiTrangNews.getDescriptionPost(),
                             thoiTrangNews.getDate(), thoiTrangNews.getPrice(), true,
                             thoiTrangNews.getImage(), thoiTrangNews.getTenDanhMuc()));
-                            mNewsTrangChuAdapter.notifyDataSetChanged();
-//                    addData();
+                    mNewsTrangChuAdapter.notifyDataSetChanged();
                 }
 
             }
@@ -392,4 +394,30 @@ public class FragmentTrangChu extends Fragment {
         super.onResume();
         newsTrangChuList.clear();
     }
+
+    public class WrapContentLinearLayoutManager extends GridLayoutManager {
+
+
+        public WrapContentLinearLayoutManager(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+            super(context, attrs, defStyleAttr, defStyleRes);
+        }
+
+        public WrapContentLinearLayoutManager(Context context, int spanCount) {
+            super(context, spanCount);
+        }
+
+        public WrapContentLinearLayoutManager(Context context, int spanCount, int orientation, boolean reverseLayout) {
+            super(context, spanCount, orientation, reverseLayout);
+        }
+
+        @Override
+        public void onLayoutChildren(RecyclerView.Recycler recycler, RecyclerView.State state) {
+            try {
+                super.onLayoutChildren(recycler, state);
+            } catch (IndexOutOfBoundsException e) {
+                Log.e("TAG", "meet a IOOBE in RecyclerView");
+            }
+        }
+    }
+
 }
