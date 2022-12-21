@@ -20,12 +20,9 @@ public class chitietDacDiemAdapter extends RecyclerView.Adapter<chitietDacDiemAd
     private Context context;
     private List<chitietdacdiem> chitietdacdiemList;
 
-    public chitietDacDiemAdapter(Context context) {
+    public chitietDacDiemAdapter(Context context, List<chitietdacdiem> chitietdacdiemList) {
         this.context = context;
-    }
-
-    public void setData(List<chitietdacdiem> x) {
-        this.chitietdacdiemList = x;
+        this.chitietdacdiemList = chitietdacdiemList;
         notifyDataSetChanged();
     }
 
@@ -41,15 +38,19 @@ public class chitietDacDiemAdapter extends RecyclerView.Adapter<chitietDacDiemAd
     @Override
     public void onBindViewHolder(@NonNull ViewHolder h, int position) {
         chitietdacdiem OOP = chitietdacdiemList.get(position);
-        if(OOP == null){
-            return;
+
+    if(h.mota == null || h.tenDacDiem == null) {
+        try {
+            h.mota.setText(OOP.getMota());
+            h.tenDacDiem.setText(OOP.getName());
+        }catch (Exception e){
+
         }
-//        set image bằng if else lấy thẳng id để set khi lấy xuống rồi set src
-        if(OOP.getName().equals("tendacdiem")){
-            h.imgDacdiem.setImageResource(R.drawable.ic_item_trangchu_favorite);
-        }
-//
+    }else {
         h.mota.setText(OOP.getMota());
+        h.tenDacDiem.setText(OOP.getName());
+    }
+
     }
 
     @Override
@@ -62,12 +63,11 @@ public class chitietDacDiemAdapter extends RecyclerView.Adapter<chitietDacDiemAd
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder{
-    private TextView mota;
-    private ImageView imgDacdiem;
+    private TextView mota ,tenDacDiem;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            imgDacdiem = itemView.findViewById(R.id.img_chitiet_dacdiem_item);
             mota = itemView.findViewById(R.id.tv_chitiet_dacdiem_item);
+            tenDacDiem = itemView.findViewById(R.id.tvTenDacDiem);
         }
     }
 }

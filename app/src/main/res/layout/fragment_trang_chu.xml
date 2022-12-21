@@ -204,7 +204,6 @@
                 android:id="@+id/rcv_news_trangchu"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:nestedScrollingEnabled="true"
                 android:layout_marginBottom="60dp"
                 android:paddingLeft="13dp"
                 android:paddingTop="10dp"

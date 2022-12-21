@@ -27,13 +27,9 @@ public class NewsTrangChuAdapter extends RecyclerView.Adapter<NewsTrangChuAdapte
     private Context context;
     private List<NewsTrangChu> newsTrangChuList;
 
-    public NewsTrangChuAdapter(Context context) {
+    public NewsTrangChuAdapter(Context context, List<NewsTrangChu> newsTrangChuList) {
         this.context = context;
-    }
-
-    public void setDATA(List<NewsTrangChu> x) {
-        this.newsTrangChuList = x;
-        notifyDataSetChanged();
+        this.newsTrangChuList = newsTrangChuList;
     }
 
     @NonNull
@@ -48,9 +44,6 @@ public class NewsTrangChuAdapter extends RecyclerView.Adapter<NewsTrangChuAdapte
     @Override
     public void onBindViewHolder(@NonNull NewsTrangChuAdapter.ViewHolder h, int position) {
         NewsTrangChu OOP = newsTrangChuList.get(position);
-        if (OOP == null) {
-            return;
-        }
 
         Locale localeEN = new Locale("en", "EN");
         NumberFormat en = NumberFormat.getInstance(localeEN);
@@ -76,40 +69,33 @@ public class NewsTrangChuAdapter extends RecyclerView.Adapter<NewsTrangChuAdapte
                 context.startActivity(intent);
             }
         });
-//        áasasasasasasasasasasasassaas
-//        if(OOP.getsoluonganh() > 1){
-//            h.linearLayout.setVisibility(View.VISIBLE);
-//            h.tvSLAnh.setText(OOP.getsoluonganh());
-//        }else{
-//            h.linearLayout.setVisibility(View.INVISIBLE);
+
+//        if (OOP.isFavorite()) {
+//            h.imgFavorite.setImageResource(R.drawable.ic_item_trangchu_favorite);
+//        } else {
+//            h.imgFavorite.setImageResource(R.drawable.ic_item_trangchu_unfavorite);
 //        }
-
-//        Glide.with(context).load(OOP.getImage()).into(h.imgNews);
-
-        if (OOP.isFavorite()) {
-            h.imgFavorite.setImageResource(R.drawable.ic_item_trangchu_favorite);
-        } else {
-            h.imgFavorite.setImageResource(R.drawable.ic_item_trangchu_unfavorite);
-        }
-        h.imgFavorite.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (OOP.isFavorite()) {
-                    OOP.setFavorite(false);
-                } else {
-                    OOP.setFavorite(true);
-                }
-            }
-        });
+//        h.imgFavorite.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                if (OOP.isFavorite()) {
+//                    OOP.setFavorite(false);
+//                } else {
+//                    OOP.setFavorite(true);
+//                }
+//            }
+//        });
     }
 
     @Override
     public int getItemCount() {
         if (newsTrangChuList != null) {
             return newsTrangChuList.size();
+        }else {
+            return 0;
         }
 
-        return 0;
+
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {

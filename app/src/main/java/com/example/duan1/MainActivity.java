@@ -83,7 +83,8 @@ public class MainActivity extends AppCompatActivity {
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//        currentUser = mAuth.getCurrentUser();
+                mAuth = FirebaseAuth.getInstance();
+                currentUser = mAuth.getCurrentUser();
 
                 if (currentUser != null) {
 
@@ -137,8 +138,16 @@ public class MainActivity extends AppCompatActivity {
 
     private void getUser() {
         List<Users> mListUser = new ArrayList<>();
-
+        mAuth = FirebaseAuth.getInstance();
+        currentUser = mAuth.getCurrentUser();
+        if(currentUser == null){
+            return;
+        }
+        myRef = database.getReference("Users");
         String email = currentUser.getEmail();
+
+
+
         myRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -292,7 +301,6 @@ public class MainActivity extends AppCompatActivity {
         unregisterReceiver(broadcast);
         super.onStop();
     }
-
 
 
 }

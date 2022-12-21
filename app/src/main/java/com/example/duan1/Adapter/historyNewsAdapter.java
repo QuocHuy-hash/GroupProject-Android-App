@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.duan1.Fragment.FragmentQuanLiTin;
 import com.example.duan1.MainActivity;
 import com.example.duan1.R;
+import com.example.duan1.chitiet_news;
 import com.example.duan1.dagTinGiaiTriActivity;
 import com.example.duan1.dangTinBDSActivity;
 import com.example.duan1.dangTinBDSDatActivity;
@@ -100,7 +101,9 @@ public class historyNewsAdapter extends RecyclerView.Adapter<historyNewsAdapter.
             holder.layout_item.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Toast.makeText(mContext, "Đang Chờ Layout", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(mContext , chitiet_news.class);
+                    intent.putExtra("title" , giaiTriNews.getTitle_historyNews());
+                    mContext.startActivity(intent);
                 }
             });
         }else {

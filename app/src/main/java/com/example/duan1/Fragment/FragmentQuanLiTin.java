@@ -100,8 +100,7 @@ public class FragmentQuanLiTin extends Fragment {
                     historyNewsAdapter = new historyNewsAdapter(getContext(),mainActivity, listHistoryNews);
                     rcvQuanLyTinDang.setLayoutManager(new LinearLayoutManager(getContext()));
                     rcvQuanLyTinDang.setAdapter(historyNewsAdapter);
-                    RecyclerView.ItemDecoration decoration = new DividerItemDecoration(getContext() , DividerItemDecoration.VERTICAL);
-                    rcvQuanLyTinDang.addItemDecoration(decoration);
+
                 }
             }, 500);
         }
