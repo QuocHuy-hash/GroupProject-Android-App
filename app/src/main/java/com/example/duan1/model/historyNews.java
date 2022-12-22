@@ -17,13 +17,13 @@ public class historyNews {
         this.image = image;
     }
 
-    public historyNews(int id, String title_historyNews, String desc_historyNews, String time_historyNews, String tenDanhMuc) {
-        this.id = id;
-        this.title_historyNews = title_historyNews;
-        this.desc_historyNews = desc_historyNews;
-        this.time_historyNews = time_historyNews;
-        this.tenDanhMuc = tenDanhMuc;
-    }
+//    public historyNews(int id, String title_historyNews, String desc_historyNews, String time_historyNews, String tenDanhMuc) {
+//        this.id = id;
+//        this.title_historyNews = title_historyNews;
+//        this.desc_historyNews = desc_historyNews;
+//        this.time_historyNews = time_historyNews;
+//        this.tenDanhMuc = tenDanhMuc;
+//    }
 
     public historyNews() {
     }

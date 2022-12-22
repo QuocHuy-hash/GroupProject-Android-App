@@ -1,65 +1,41 @@
 package com.example.duan1.Fragment;
 
-
-import android.content.Context;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
-import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
-
 import com.example.duan1.Adapter.historyNewsAdapter;
 import com.example.duan1.MainActivity;
 import com.example.duan1.R;
 import com.example.duan1.model.BDSNews;
-import com.example.duan1.model.NewsTrangChu;
 import com.example.duan1.model.Users;
-import com.example.duan1.model.giaiTriNews;
 import com.example.duan1.model.historyNews;
-import com.example.duan1.model.thoiTrangNews;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 public class FragmentQuanLiTin extends Fragment {
+
     private RecyclerView rcvQuanLyTinDang;
     private historyNewsAdapter historyNewsAdapter;
     private List<historyNews> listHistoryNews;
-    private List<historyNews> listHistoryNewsBDS;
-    private List<historyNews> listHistoryNewsGT;
-    private List<historyNews> listHistoryNewsTT;
-
-    private Context mContext;
-
     public static String nameUser;
     public static int idUser;
-    private String name;
-    private List<String> listChild = new ArrayList<>();
-    private List<String> listChild1 = new ArrayList<>();
-    private List<String> listChild2 = new ArrayList<>();
+//    private String name;
     private FirebaseUser currentUser;
     private FirebaseAuth mAuth;
     private FirebaseDatabase database;
@@ -77,19 +53,11 @@ public class FragmentQuanLiTin extends Fragment {
             rcvQuanLyTinDang = view.findViewById(R.id.rcvQuanLyTin);
             mainActivity = (MainActivity) getActivity();
             listHistoryNews = new ArrayList<>();
-            listHistoryNewsBDS = new ArrayList<>();
-            listHistoryNewsTT = new ArrayList<>();
-            listHistoryNewsGT = new ArrayList<>();
 
-            mAuth = FirebaseAuth.getInstance();
-            currentUser = mAuth.getCurrentUser();
             database = FirebaseDatabase.getInstance();
             myRef = database.getReference("Users");
-            if (currentUser != null) {
-                getUser();
-            }else {
-                Toast.makeText(mContext, "current User Null", Toast.LENGTH_SHORT).show();
-            }
+
+            getUser();
 
             getListHistoryNews();
             historyNewsAdapter = new historyNewsAdapter(getContext(),mainActivity, listHistoryNews);
@@ -99,9 +67,7 @@ public class FragmentQuanLiTin extends Fragment {
                     rcvQuanLyTinDang.setLayoutManager(new LinearLayoutManager(getContext()));
                     rcvQuanLyTinDang.setAdapter(historyNewsAdapter);
                 }
-            }, 500);
-
-
+            }, 200);
         }
 
         return view;
@@ -127,7 +93,7 @@ public class FragmentQuanLiTin extends Fragment {
                     if (mListUser.get(i).getEmail().equals(email)) {
                         nameUser = (mListUser.get(i).getName());
                         idUser = mListUser.get(i).getId();
-                        name = nameUser;
+//                        name = nameUser;
                     }
                 }
             }
@@ -139,56 +105,6 @@ public class FragmentQuanLiTin extends Fragment {
         });
     }
     public void getListHistoryNews() {
-//        myData.addValueEventListener(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(@NonNull DataSnapshot snapshot) {
-//                listHistoryNewsGT.clear();
-//                for (DataSnapshot snapshot1: snapshot.getChildren()){
-//                    giaiTriNews giaiTriNews = snapshot1.getValue(giaiTriNews.class);
-//
-//                    if (giaiTriNews.getIdUser() == idUser) {
-//                        listHistoryNews.add(new historyNews(id, giaiTriNews.getTitle(),
-//                                giaiTriNews.getDescription(), giaiTriNews.getDate(),
-//                                giaiTriNews.getTenDanhMuc(),giaiTriNews.getImage()));
-//                        id++;
-//                    }else if(name.equals("Admin")){
-//                        listHistoryNews.add(new historyNews(id, giaiTriNews.getTitle(), giaiTriNews.getDescription() , giaiTriNews.getDate(), giaiTriNews.getTenDanhMuc()));
-//                        id++;
-//
-//                    }
-//                }
-//            }
-//            @Override
-//            public void onCancelled(@NonNull DatabaseError error) {
-//
-//            }
-//        });
-//
-//        myData2.addValueEventListener(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(@NonNull DataSnapshot snapshot) {
-//                listHistoryNewsTT.clear();
-//                for (DataSnapshot snapshot1: snapshot.getChildren()){
-//                    thoiTrangNews thoiTrangNews = snapshot1.getValue(com.example.duan1.model.thoiTrangNews.class);
-//                    if (thoiTrangNews.getIdUser() == idUser) {
-//                        listHistoryNews.add(new historyNews(id, thoiTrangNews.getTitlePost(),
-//                                thoiTrangNews.getDescriptionPost(), thoiTrangNews.getDate(),
-//                                thoiTrangNews.getTenDanhMuc(),thoiTrangNews.getImage()));
-//                        id++;
-//                    }else if(name.equals("Admin")){
-//                        listHistoryNews.add(new historyNews(id, thoiTrangNews.getTitlePost(), thoiTrangNews.getDescriptionPost() , thoiTrangNews.getDate(), thoiTrangNews.getTenDanhMuc()));
-//                        id++;
-//
-//                    }
-//
-//                }
-////                addData();
-//            }
-//            @Override
-//            public void onCancelled(@NonNull DatabaseError error) {
-//
-//            }
-//        });
             myData.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -199,9 +115,12 @@ public class FragmentQuanLiTin extends Fragment {
                             listHistoryNews.add(new historyNews(bdsNews.getId(), bdsNews.getTitle(),
                                     bdsNews.getDescription() , bdsNews.getDate(),
                                     bdsNews.getTenDanhMuc(), bdsNews.getImage()));
-                        }else if(name.equals("Admin")){
-                            listHistoryNews.add(new historyNews(bdsNews.getId(), bdsNews.getTitle(), bdsNews.getDescription() , bdsNews.getDate(), bdsNews.getTenDanhMuc()));
                         }
+//                        else if(name.equals("Admin")){
+//                            listHistoryNews.add(new historyNews(bdsNews.getId(), bdsNews.getTitle(),
+//                                    bdsNews.getDescription() , bdsNews.getDate(), bdsNews.getTenDanhMuc(),
+//                                    bdsNews.getImage()));
+//                        }
                     }
                     Collections.reverse(listHistoryNews);
                     historyNewsAdapter.notifyDataSetChanged();

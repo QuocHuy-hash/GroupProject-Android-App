@@ -268,12 +268,12 @@ public class chitiet_news extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for (DataSnapshot snapshot1 : snapshot.getChildren()) {
                     thoiTrangNews thoiTrangNews = snapshot1.getValue(thoiTrangNews.class);
-                    String title = thoiTrangNews.getTitlePost();
+                    String title = thoiTrangNews.getTitle();
                     String address = thoiTrangNews.getAddress();
                     String time = thoiTrangNews.getDate();
-                    String desc = thoiTrangNews.getDescriptionPost();
+                    String desc = thoiTrangNews.getDescription();
                     String nguoiBan = thoiTrangNews.getNameUser();
-                    if (title_new.equals(thoiTrangNews.getTitlePost())){
+                    if (title_new.equals(thoiTrangNews.getTitle())){
                         idUser = thoiTrangNews.getIdUser();
                         tvTitle.setText(title);
                         String price1 = en.format(thoiTrangNews.getPrice());
@@ -300,7 +300,7 @@ public class chitiet_news extends AppCompatActivity {
                         }
                     }
                     chitietdacdiemList.clear();
-                    newsTrangChuList1.add(new NewsTrangChu(thoiTrangNews.getTitlePost(), thoiTrangNews.getDescriptionPost()
+                    newsTrangChuList1.add(new NewsTrangChu(thoiTrangNews.getTitle(), thoiTrangNews.getDescription()
                             , thoiTrangNews.getDate(), thoiTrangNews.getPrice(), false, thoiTrangNews.getImage(), thoiTrangNews.getTenDanhMuc()));
                     chitietDacDiemAdapter = new chitietDacDiemAdapter(chitiet_news.this , chitietdacdiemList);
                     rcvDacdiem.setLayoutManager(new LinearLayoutManager(chitiet_news.this));

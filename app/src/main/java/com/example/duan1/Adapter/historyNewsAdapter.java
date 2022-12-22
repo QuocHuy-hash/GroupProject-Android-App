@@ -86,7 +86,7 @@ public class historyNewsAdapter extends RecyclerView.Adapter<historyNewsAdapter.
         holder.icon_option.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                XoaTin(giaiTriNews.getTitle_historyNews());
+                XoaTin(giaiTriNews.getId());
 //                System.out.println(giaiTriNews.getTitle_historyNews());
             }
         });
@@ -157,7 +157,7 @@ public class historyNewsAdapter extends RecyclerView.Adapter<historyNewsAdapter.
             return 0;
         }
     }
-private void XoaTin(String title){
+private void XoaTin(int idDelete){
     ProgressDialog progressDialog = new ProgressDialog(mainActivity);
     progressDialog.show();
         myData.addChildEventListener(new ChildEventListener() {
@@ -165,7 +165,7 @@ private void XoaTin(String title){
             @Override
             public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
                 giaiTriNews giaiTriNew = snapshot.getValue(giaiTriNews.class);
-                if(giaiTriNew.getTitle().equals(title)){
+                if(giaiTriNew.getId() == idDelete){
                     String id = String.valueOf(giaiTriNew.getId());
                         myData.child(id).removeValue();
                         Toast.makeText(mContext.getApplicationContext(), "Đã xóa Tin", Toast.LENGTH_SHORT).show();

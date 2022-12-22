@@ -74,7 +74,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="DESCRIPSION"
-        android:textColor="@color/gray_2"/>
+        android:textColor="@color/white"/>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -113,7 +113,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="TIME"
-            android:textColor="@color/gray_2"/>
+            android:textColor="@color/white"/>
     </LinearLayout>
 
 

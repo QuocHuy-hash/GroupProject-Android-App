@@ -112,7 +112,6 @@ public class Login extends AppCompatActivity {
 
     }
 
-
     private void initUi() {
         imgBack = findViewById(R.id.img_back);
         imgLoginFacebook = findViewById(R.id.img_login_facebook);
@@ -332,7 +331,6 @@ public class Login extends AppCompatActivity {
         Intent signInIntent = mGoogleSignInClient.getSignInIntent();
         startActivityForResult(signInIntent, RC_SIGN_IN);
     }
-
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {

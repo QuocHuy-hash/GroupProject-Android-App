@@ -1,0 +1,293 @@
+Index: app/src/main/java/com/example/duan1/Fragment/FragmentTrangChu.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.duan1.Fragment;\r\n\r\nimport android.annotation.SuppressLint;\r\nimport android.app.ProgressDialog;\r\nimport android.os.Bundle;\r\n\r\nimport androidx.annotation.NonNull;\r\nimport androidx.appcompat.widget.SearchView;\r\nimport androidx.fragment.app.Fragment;\r\nimport androidx.recyclerview.widget.DividerItemDecoration;\r\nimport androidx.recyclerview.widget.GridLayoutManager;\r\nimport androidx.recyclerview.widget.LinearLayoutManager;\r\nimport androidx.recyclerview.widget.RecyclerView;\r\nimport androidx.viewpager.widget.ViewPager;\r\n\r\nimport android.os.Handler;\r\nimport android.os.Looper;\r\nimport android.view.LayoutInflater;\r\nimport android.view.View;\r\nimport android.view.ViewGroup;\r\nimport android.widget.AdapterView;\r\nimport android.widget.ArrayAdapter;\r\nimport android.widget.Spinner;\r\nimport android.widget.Toast;\r\n\r\nimport com.example.duan1.Adapter.NewsTrangChuAdapter;\r\nimport com.example.duan1.Adapter.rsSearchAdapter;\r\nimport com.example.duan1.Adapter.slidersAdapter;\r\nimport com.example.duan1.MainActivity;\r\nimport com.example.duan1.R;\r\nimport com.example.duan1.model.BDSNews;\r\nimport com.example.duan1.model.NewsTrangChu;\r\nimport com.example.duan1.model.giaiTriNews;\r\nimport com.example.duan1.model.photosSlider;\r\nimport com.example.duan1.model.product_type;\r\nimport com.example.duan1.model.resultSearch;\r\nimport com.example.duan1.model.thoiTrangNews;\r\nimport com.google.firebase.database.DataSnapshot;\r\nimport com.google.firebase.database.DatabaseError;\r\nimport com.google.firebase.database.DatabaseReference;\r\nimport com.google.firebase.database.FirebaseDatabase;\r\nimport com.google.firebase.database.ValueEventListener;\r\n\r\n\r\nimport java.util.ArrayList;\r\nimport java.util.List;\r\nimport java.util.Timer;\r\nimport java.util.TimerTask;\r\n\r\n\r\nimport me.relex.circleindicator.CircleIndicator;\r\n\r\n\r\npublic class FragmentTrangChu extends Fragment {\r\n    private ViewPager viewPager;\r\n    private CircleIndicator circleIndicator;\r\n    private slidersAdapter slidersAdapter;\r\n    private rsSearchAdapter rsSearchAdapter;\r\n    private List<photosSlider> mListPhoto = new ArrayList<>();\r\n    private Timer mTimer;\r\n    private String loaiTin;\r\n    private SearchView searchView;\r\n    private Spinner spn_phanLoaiTin;\r\n    public MainActivity mainActivity;\r\n    private RecyclerView rcvNewsTrangChu ,rcvFilter;\r\n    private List<NewsTrangChu> newsTrangChuList = new ArrayList<>();\r\n    private List<NewsTrangChu> newsTrangChuListBDS = new ArrayList<>();\r\n    private List<NewsTrangChu> newsTrangChuListGT = new ArrayList<>();\r\n    private List<NewsTrangChu> newsTrangChuListTT = new ArrayList<>();\r\n    private NewsTrangChuAdapter mNewsTrangChuAdapter;\r\n    private List<String> listChild = new ArrayList<>();\r\n    private List<String> listChild1 = new ArrayList<>();\r\n    private List<String> listChild2 = new ArrayList<>();\r\n    private List<resultSearch> listFilter;\r\n    DatabaseReference myData = FirebaseDatabase.getInstance().getReference(\"Tin\").child(\"GiaiTri\");\r\n    DatabaseReference myData1 = FirebaseDatabase.getInstance().getReference(\"Tin\").child(\"BDS\");\r\n    DatabaseReference myData2 = FirebaseDatabase.getInstance().getReference(\"Tin\").child(\"ThoiTrang\");\r\n\r\n    @SuppressLint(\"MissingInflatedId\")\r\n    @Override\r\n    public View onCreateView(LayoutInflater inflater, ViewGroup container,\r\n                             Bundle savedInstanceState) {\r\n        View view = inflater.inflate(R.layout.fragment_trang_chu, container, false);\r\n        mainActivity = (MainActivity) getActivity();\r\n        rcvNewsTrangChu = view.findViewById(R.id.rcv_news_trangchu);\r\n        spn_phanLoaiTin = view.findViewById(R.id.spn_phanLoaiTin);\r\n        viewPager = view.findViewById(R.id.viewPager_slide);\r\n        rcvFilter = view.findViewById(R.id.rcvFilter);\r\n        circleIndicator = view.findViewById(R.id.circle_indicator);\r\n\r\n        slidersAdapter = new slidersAdapter(getContext(), getListPhoto());\r\n        viewPager.setAdapter(slidersAdapter);\r\n        searchView = view.findViewById(R.id.searchView);\r\n        circleIndicator.setViewPager(viewPager);\r\n        slidersAdapter.registerDataSetObserver(circleIndicator.getDataSetObserver());\r\n        searchView.clearFocus();\r\n        autoSliderImg();\r\n//        listChild1();\r\n//        listChild2();\r\n//        listChild3();\r\n        clickSpinerLoaiTin();\r\n//        newsTrangChuList.clear();\r\n        getListNews();\r\n//        getValuesSpinner();\r\n        searchNews();\r\n        new Handler().postDelayed(new Runnable() {\r\n            @Override\r\n            public void run() {\r\n                mNewsTrangChuAdapter = new NewsTrangChuAdapter(getContext());\r\n                GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), 2);\r\n                rcvNewsTrangChu.setLayoutManager(gridLayoutManager);\r\n                mNewsTrangChuAdapter.setDATA(newsTrangChuList);\r\n                rcvNewsTrangChu.setAdapter(mNewsTrangChuAdapter);\r\n            }\r\n        }, 500);\r\n//        mNewsTrangChuAdapter = new NewsTrangChuAdapter(getContext());\r\n//        GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), 2);\r\n//        rcvNewsTrangChu.setLayoutManager(gridLayoutManager);\r\n//        mNewsTrangChuAdapter.setDATA(newsTrangChuList);\r\n//        rcvNewsTrangChu.setAdapter(mNewsTrangChuAdapter);\r\n//        rcvNewsTrangChu.addOnItemTouchListener(new RecyclerView.SimpleOnItemTouchListener() {\r\n//            @Override\r\n//            public boolean onInterceptTouchEvent(@NonNull RecyclerView rv, @NonNull MotionEvent e) {\r\n//                return rv.getScrollState() == RecyclerView.SCROLL_STATE_DRAGGING;\r\n//            }\r\n//        });\r\n        return view;\r\n    }\r\n\r\n    private void searchNews() {\r\n        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {\r\n            @Override\r\n            public boolean onQueryTextSubmit(String query) {\r\n\r\n                return false;\r\n            }\r\n\r\n            @Override\r\n            public boolean onQueryTextChange(String newText) {\r\n\r\n                if(newText.isEmpty()) {\r\n                    rcvFilter.setVisibility(View.INVISIBLE);\r\n                }else {\r\n                    rcvFilter.setVisibility(View.VISIBLE);\r\n                    filterList(newText);\r\n                }\r\n\r\n                return false;\r\n            }\r\n        });\r\n\r\n    }\r\n\r\n    private void filterList(String newText) {\r\n         listFilter = new ArrayList<>();\r\n        for(int i = 0; i < newsTrangChuList.size(); i++) {\r\n            String title = newsTrangChuList.get(i).getTitle();\r\n            String product_type = newsTrangChuList.get(i).getTenDanhMuc();\r\n\r\n            if(title.toLowerCase().contains(newText.toLowerCase()) || product_type.toLowerCase().contains(newText.toLowerCase())){\r\n\r\n                listFilter.add(new resultSearch(newsTrangChuList.get(i).getTitle() ,newsTrangChuList.get(i).getTime()\r\n                , newsTrangChuList.get(i).getImage() , newsTrangChuList.get(i).getFee()));\r\n\r\n\r\n            }\r\n        }\r\n        if(listFilter.isEmpty()) {\r\n            Toast.makeText(mainActivity, \"Mời bạn nhập thông tin tìm kiếm\", Toast.LENGTH_SHORT).show();\r\n        }else {\r\n            rsSearchAdapter = new rsSearchAdapter(getContext() ,listFilter);\r\n            rcvFilter.setLayoutManager(new LinearLayoutManager(getContext()));\r\n            rcvFilter.setAdapter(rsSearchAdapter);\r\n//            RecyclerView.ItemDecoration decoration = new DividerItemDecoration(getContext() ,  DividerItemDecoration.VERTICAL);\r\n//            rcvFilter.addItemDecoration(decoration);\r\n        }\r\n    }\r\n\r\n    private void clickSpinerLoaiTin() {\r\n        product_type[] product_type = FragmentTrangChu.productType.getProductType();\r\n        ArrayAdapter<product_type> adapter = new ArrayAdapter<product_type>(getContext(),\r\n                android.R.layout.simple_spinner_item, product_type);\r\n        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);\r\n        spn_phanLoaiTin.setAdapter(adapter);\r\n\r\n        spn_phanLoaiTin.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {\r\n            @Override\r\n            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {\r\n                ProgressDialog progressDialog = new ProgressDialog(mainActivity);\r\n                progressDialog.setMessage(\"\");\r\n                progressDialog.show();\r\n                getValuesSpinner();\r\n                progressDialog.dismiss();\r\n            }\r\n\r\n            @Override\r\n            public void onNothingSelected(AdapterView<?> adapterView) {\r\n\r\n            }\r\n        });\r\n    }\r\n\r\n    private void getValuesSpinner() {\r\n        loaiTin = spn_phanLoaiTin.getSelectedItem().toString();\r\n        if (loaiTin.equals(\"Bất động sản\")) {\r\n            getListBDS();\r\n        } else if (loaiTin.equals(\"Giải trí\")) {\r\n            getListGiaiTri();\r\n        } else if (loaiTin.equals(\"Thời trang\")) {\r\n\r\n            getListThoitrang();\r\n        }else {\r\n            mNewsTrangChuAdapter = new NewsTrangChuAdapter(getContext());\r\n            GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), 2);\r\n            rcvNewsTrangChu.setLayoutManager(gridLayoutManager);\r\n            mNewsTrangChuAdapter.setDATA(newsTrangChuList);\r\n            rcvNewsTrangChu.setAdapter(mNewsTrangChuAdapter);\r\n        }\r\n    }\r\n\r\n    private void getListThoitrang() {\r\n        List<NewsTrangChu> listfilter = new ArrayList<>();\r\n        for (int i = 0; i < newsTrangChuList.size(); i++) {\r\n            String title = newsTrangChuList.get(i).getTenDanhMuc();\r\n            if (title.equals(\"Quần áo\") || title.equals(\"Đồng hồ\") || title.equals(\"Giày dép\")\r\n                    || title.equals(\"Túi xách\") || title.equals(\"Nước hoa\")\r\n            ) {\r\n                listfilter.add(new NewsTrangChu(newsTrangChuList.get(i).getTitle(), newsTrangChuList.get(i).getDescripsion()\r\n                        , newsTrangChuList.get(i).getTime(), newsTrangChuList.get(i).getFee(), false, newsTrangChuList.get(i).getImage(), newsTrangChuList.get(i).getTenDanhMuc()));\r\n            }\r\n        }\r\n        mNewsTrangChuAdapter = new NewsTrangChuAdapter(getContext());\r\n        GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), 2);\r\n        rcvNewsTrangChu.setLayoutManager(gridLayoutManager);\r\n        mNewsTrangChuAdapter.setDATA(listfilter);\r\n        rcvNewsTrangChu.setAdapter(mNewsTrangChuAdapter);\r\n    }\r\n\r\n\r\n    private void getListGiaiTri() {\r\n        List<NewsTrangChu> listfilter = new ArrayList<>();\r\n        for (int i = 0; i < newsTrangChuList.size(); i++) {\r\n            String title = newsTrangChuList.get(i).getTenDanhMuc();\r\n            if (title.equals(\"Nhạc cụ\") || title.equals(\"Sách\") || title.equals(\"Đồ thể thao, Dã ngoại\")\r\n                    || title.equals(\"Đồ sưu tầm  ,Đồ cổ\") || title.equals(\"Thiết bị chơi game\")\r\n            ) {\r\n                listfilter.add(new NewsTrangChu(newsTrangChuList.get(i).getTitle(), newsTrangChuList.get(i).getDescripsion()\r\n                        , newsTrangChuList.get(i).getTime(), newsTrangChuList.get(i).getFee(), false, newsTrangChuList.get(i).getImage(), newsTrangChuList.get(i).getTenDanhMuc()));\r\n            }\r\n        }\r\n        mNewsTrangChuAdapter = new NewsTrangChuAdapter(getContext());\r\n        GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), 2);\r\n        rcvNewsTrangChu.setLayoutManager(gridLayoutManager);\r\n        mNewsTrangChuAdapter.setDATA(listfilter);\r\n        rcvNewsTrangChu.setAdapter(mNewsTrangChuAdapter);\r\n    }\r\n\r\n    private void getListBDS() {\r\n        List<NewsTrangChu> listfilter = new ArrayList<>();\r\n        for (int i = 0; i < newsTrangChuList.size(); i++) {\r\n            String title = newsTrangChuList.get(i).getTenDanhMuc();\r\n            if (title.equals(\"Chung cư\") || title.equals(\"Nhà ở\") || title.equals(\"Đất\") || title.equals(\"Văn Phong\")\r\n                    || title.equals(\"Phòng trọ\")) {\r\n                listfilter.add(new NewsTrangChu(newsTrangChuList.get(i).getTitle(), newsTrangChuList.get(i).getDescripsion()\r\n                        , newsTrangChuList.get(i).getTime(), newsTrangChuList.get(i).getFee(), false, newsTrangChuList.get(i).getImage(), newsTrangChuList.get(i).getTenDanhMuc()));\r\n            }\r\n        }\r\n        mNewsTrangChuAdapter = new NewsTrangChuAdapter(getContext());\r\n        GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), 2);\r\n        rcvNewsTrangChu.setLayoutManager(gridLayoutManager);\r\n        mNewsTrangChuAdapter.setDATA(listfilter);\r\n        rcvNewsTrangChu.setAdapter(mNewsTrangChuAdapter);\r\n\r\n    }\r\n\r\n    public static class productType {\r\n        public static product_type[] getProductType() {\r\n            product_type prd1 = new product_type(\"Tất cả\");\r\n            product_type prd2 = new product_type(\"Bất động sản\");\r\n            product_type prd3 = new product_type(\"Thời trang\");\r\n            product_type prd4 = new product_type(\"Giải trí\");\r\n            return new product_type[]{prd1, prd2, prd3, prd4};\r\n        }\r\n    }\r\n\r\n    private void autoSliderImg() {\r\n\r\n        if (mTimer == null) {\r\n            mTimer = new Timer();\r\n        }\r\n\r\n        mTimer.schedule(new TimerTask() {\r\n            @Override\r\n            public void run() {\r\n                new Handler(Looper.getMainLooper()).post(new Runnable() {\r\n                    @Override\r\n                    public void run() {\r\n                        int currentitem = viewPager.getCurrentItem();\r\n                        int totalItem = mListPhoto.size() - 1;\r\n\r\n                        if (currentitem < totalItem) {\r\n                            currentitem++;\r\n                            viewPager.setCurrentItem(currentitem);\r\n                        } else {\r\n                            viewPager.setCurrentItem(0);\r\n                        }\r\n                    }\r\n                });\r\n            }\r\n        }, 500, 3000);\r\n    }\r\n\r\n    @Override\r\n    public void onDestroyView() {\r\n        super.onDestroyView();\r\n\r\n        if (mTimer != null) {\r\n            mTimer.cancel();\r\n            mTimer = null;\r\n        }\r\n    }\r\n\r\n    private List<photosSlider> getListPhoto() {\r\n//    List<photosSlider> list = new ArrayList<>();\r\n\r\n        mListPhoto.add(new photosSlider(R.drawable.img_slider1));\r\n        mListPhoto.add(new photosSlider(R.drawable.img_slider2));\r\n        mListPhoto.add(new photosSlider(R.drawable.img_slider3));\r\n        mListPhoto.add(new photosSlider(R.drawable.img_slider4));\r\n\r\n        return mListPhoto;\r\n    }\r\n\r\n    private void getListNews() {\r\n\r\n        myData1.addValueEventListener(new ValueEventListener() {\r\n            @Override\r\n            public void onDataChange(@NonNull DataSnapshot snapshot) {\r\n                newsTrangChuListBDS.clear();\r\n                for (DataSnapshot snapshot1: snapshot.getChildren()){\r\n                    BDSNews bdsNews = snapshot1.getValue(BDSNews.class);\r\n\r\n                    newsTrangChuList.add(new NewsTrangChu(bdsNews.getTitle(), bdsNews.getDescription(),\r\n                            bdsNews.getDate(), bdsNews.getPrice(), true, bdsNews.getImage(),\r\n                            bdsNews.getTenDanhMuc()));\r\n                    mNewsTrangChuAdapter.notifyDataSetChanged();\r\n//                    addData();\r\n                }\r\n            }\r\n\r\n            @Override\r\n            public void onCancelled(@NonNull DatabaseError error) {\r\n\r\n            }\r\n        });\r\n        myData.addValueEventListener(new ValueEventListener() {\r\n            @Override\r\n            public void onDataChange(@NonNull DataSnapshot snapshot) {\r\n                newsTrangChuListGT.clear();\r\n                for (DataSnapshot snapshot1: snapshot.getChildren()){\r\n                    giaiTriNews giaiTriNews = snapshot1.getValue(giaiTriNews.class);\r\n                    newsTrangChuList.add(new NewsTrangChu(giaiTriNews.getTitle(), giaiTriNews.getDescription(),\r\n                            giaiTriNews.getDate(), giaiTriNews.getPrice(), true,\r\n                            giaiTriNews.getImage(), giaiTriNews.getTenDanhMuc()));\r\n                    mNewsTrangChuAdapter.notifyDataSetChanged();\r\n//                    addData();\r\n                }\r\n\r\n            }\r\n\r\n            @Override\r\n            public void onCancelled(@NonNull DatabaseError error) {\r\n\r\n            }\r\n        });\r\n        myData2.addValueEventListener(new ValueEventListener() {\r\n            @Override\r\n            public void onDataChange(@NonNull DataSnapshot snapshot) {\r\n                newsTrangChuListTT.clear();\r\n                for (DataSnapshot snapshot1: snapshot.getChildren()){\r\n                    thoiTrangNews thoiTrangNews = snapshot1.getValue(thoiTrangNews.class);\r\n                    newsTrangChuList.add(new NewsTrangChu(thoiTrangNews.getTitlePost(),\r\n                            thoiTrangNews.getDescriptionPost(),\r\n                            thoiTrangNews.getDate(), thoiTrangNews.getPrice(), true,\r\n                            thoiTrangNews.getImage(), thoiTrangNews.getTenDanhMuc()));\r\n                            mNewsTrangChuAdapter.notifyDataSetChanged();\r\n//                    addData();\r\n                }\r\n\r\n            }\r\n\r\n            @Override\r\n            public void onCancelled(@NonNull DatabaseError error) {\r\n\r\n            }\r\n        });\r\n    }\r\n\r\n//    private void addData(){\r\n//        for (int i = 0; i < newsTrangChuListBDS.size(); i++){\r\n//            newsTrangChuList.add(newsTrangChuListBDS.get(i));\r\n//        }\r\n//        for (int i = 0; i < newsTrangChuListGT.size(); i++){\r\n//            newsTrangChuList.add(newsTrangChuListGT.get(i));\r\n//        }\r\n//        for (int i = 0; i < newsTrangChuListTT.size(); i++){\r\n//            newsTrangChuList.add(newsTrangChuListTT.get(i));\r\n//        }\r\n\r\n//    }\r\n\r\n//    private List<String> listChild1() {\r\n//        listChild.add(new String(\"NhacCu\"));\r\n//        listChild.add(new String(\"Sach\"));\r\n//        listChild.add(new String(\"DoTheThao&DaNgoai\"));\r\n//        listChild.add(new String(\"DoSuuTam&DoCo\"));\r\n//        listChild.add(new String(\"ThietBiChoiGame\"));\r\n//        listChild.add(new String(\"SoThichKhac\"));\r\n//\r\n//        return listChild;\r\n//    }\r\n//\r\n//    private List<String> listChild2() {\r\n//        listChild1.add(new String(\"QuanAo\"));\r\n//        listChild1.add(new String(\"DongHo\"));\r\n//        listChild1.add(new String(\"GiayDep\"));\r\n//        listChild1.add(new String(\"TuiXach\"));\r\n//        listChild1.add(new String(\"NuocHoa\"));\r\n//        listChild1.add(new String(\"PhuKienKhac\"));\r\n//\r\n//        return listChild1;\r\n//    }\r\n//\r\n//    private List<String> listChild3() {\r\n//        listChild2.add(new String(\"ChungCu\"));\r\n//        listChild2.add(new String(\"NhaO\"));\r\n//        listChild2.add(new String(\"Dat\"));\r\n//        listChild2.add(new String(\"VanPhong\"));\r\n//        listChild2.add(new String(\"PhongTro\"));\r\n//\r\n//        return listChild2;\r\n//\r\n//    }\r\n\r\n    @Override\r\n    public void onResume() {\r\n        super.onResume();\r\n        newsTrangChuList.clear();\r\n    }\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/duan1/Fragment/FragmentTrangChu.java b/app/src/main/java/com/example/duan1/Fragment/FragmentTrangChu.java
+--- a/app/src/main/java/com/example/duan1/Fragment/FragmentTrangChu.java	
++++ b/app/src/main/java/com/example/duan1/Fragment/FragmentTrangChu.java	
+@@ -16,6 +16,7 @@
+ import android.os.Handler;
+ import android.os.Looper;
+ import android.view.LayoutInflater;
++import android.view.MotionEvent;
+ import android.view.View;
+ import android.view.ViewGroup;
+ import android.widget.AdapterView;
+@@ -23,6 +24,7 @@
+ import android.widget.Spinner;
+ import android.widget.Toast;
+ 
++
+ import com.example.duan1.Adapter.NewsTrangChuAdapter;
+ import com.example.duan1.Adapter.rsSearchAdapter;
+ import com.example.duan1.Adapter.slidersAdapter;
+@@ -95,35 +97,17 @@
+         slidersAdapter.registerDataSetObserver(circleIndicator.getDataSetObserver());
+         searchView.clearFocus();
+         autoSliderImg();
+-//        listChild1();
+-//        listChild2();
+-//        listChild3();
+-        clickSpinerLoaiTin();
+-//        newsTrangChuList.clear();
++
+         getListNews();
+ //        getValuesSpinner();
+         searchNews();
+-        new Handler().postDelayed(new Runnable() {
+-            @Override
+-            public void run() {
+-                mNewsTrangChuAdapter = new NewsTrangChuAdapter(getContext());
+-                GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), 2);
++
++                mNewsTrangChuAdapter = new NewsTrangChuAdapter();
++                GridLayoutManager gridLayoutManager = new GridLayoutManager(mainActivity, 2);
+                 rcvNewsTrangChu.setLayoutManager(gridLayoutManager);
+-                mNewsTrangChuAdapter.setDATA(newsTrangChuList);
++                mNewsTrangChuAdapter.setDATA(mainActivity,newsTrangChuList);
+                 rcvNewsTrangChu.setAdapter(mNewsTrangChuAdapter);
+-            }
+-        }, 500);
+-//        mNewsTrangChuAdapter = new NewsTrangChuAdapter(getContext());
+-//        GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), 2);
+-//        rcvNewsTrangChu.setLayoutManager(gridLayoutManager);
+-//        mNewsTrangChuAdapter.setDATA(newsTrangChuList);
+-//        rcvNewsTrangChu.setAdapter(mNewsTrangChuAdapter);
+-//        rcvNewsTrangChu.addOnItemTouchListener(new RecyclerView.SimpleOnItemTouchListener() {
+-//            @Override
+-//            public boolean onInterceptTouchEvent(@NonNull RecyclerView rv, @NonNull MotionEvent e) {
+-//                return rv.getScrollState() == RecyclerView.SCROLL_STATE_DRAGGING;
+-//            }
+-//        });
++
+         return view;
+     }
+ 
+@@ -171,14 +155,14 @@
+             rsSearchAdapter = new rsSearchAdapter(getContext() ,listFilter);
+             rcvFilter.setLayoutManager(new LinearLayoutManager(getContext()));
+             rcvFilter.setAdapter(rsSearchAdapter);
+-//            RecyclerView.ItemDecoration decoration = new DividerItemDecoration(getContext() ,  DividerItemDecoration.VERTICAL);
+-//            rcvFilter.addItemDecoration(decoration);
++            RecyclerView.ItemDecoration decoration = new DividerItemDecoration(mainActivity ,  DividerItemDecoration.VERTICAL);
++            rcvFilter.addItemDecoration(decoration);
+         }
+     }
+ 
+     private void clickSpinerLoaiTin() {
+         product_type[] product_type = FragmentTrangChu.productType.getProductType();
+-        ArrayAdapter<product_type> adapter = new ArrayAdapter<product_type>(getContext(),
++        ArrayAdapter<product_type> adapter = new ArrayAdapter<product_type>(mainActivity,
+                 android.R.layout.simple_spinner_item, product_type);
+         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+         spn_phanLoaiTin.setAdapter(adapter);
+@@ -207,14 +191,13 @@
+         } else if (loaiTin.equals("Giải trí")) {
+             getListGiaiTri();
+         } else if (loaiTin.equals("Thời trang")) {
+-
+             getListThoitrang();
+         }else {
+-            mNewsTrangChuAdapter = new NewsTrangChuAdapter(getContext());
+-            GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), 2);
+-            rcvNewsTrangChu.setLayoutManager(gridLayoutManager);
+-            mNewsTrangChuAdapter.setDATA(newsTrangChuList);
+-            rcvNewsTrangChu.setAdapter(mNewsTrangChuAdapter);
++//            mNewsTrangChuAdapter = new NewsTrangChuAdapter(getContext());
++//            GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), 2);
++//            rcvNewsTrangChu.setLayoutManager(gridLayoutManager);
++            mNewsTrangChuAdapter.setDATA(mainActivity,newsTrangChuList);
++//            rcvNewsTrangChu.setAdapter(mNewsTrangChuAdapter);
+         }
+     }
+ 
+@@ -229,11 +212,11 @@
+                         , newsTrangChuList.get(i).getTime(), newsTrangChuList.get(i).getFee(), false, newsTrangChuList.get(i).getImage(), newsTrangChuList.get(i).getTenDanhMuc()));
+             }
+         }
+-        mNewsTrangChuAdapter = new NewsTrangChuAdapter(getContext());
+-        GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), 2);
+-        rcvNewsTrangChu.setLayoutManager(gridLayoutManager);
+-        mNewsTrangChuAdapter.setDATA(listfilter);
+-        rcvNewsTrangChu.setAdapter(mNewsTrangChuAdapter);
++//        mNewsTrangChuAdapter = new NewsTrangChuAdapter(getContext());
++//        GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), 2);
++//        rcvNewsTrangChu.setLayoutManager(gridLayoutManager);
++        mNewsTrangChuAdapter.setDATA(mainActivity,listfilter);
++//        rcvNewsTrangChu.setAdapter(mNewsTrangChuAdapter);
+     }
+ 
+ 
+@@ -248,11 +231,11 @@
+                         , newsTrangChuList.get(i).getTime(), newsTrangChuList.get(i).getFee(), false, newsTrangChuList.get(i).getImage(), newsTrangChuList.get(i).getTenDanhMuc()));
+             }
+         }
+-        mNewsTrangChuAdapter = new NewsTrangChuAdapter(getContext());
+-        GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), 2);
+-        rcvNewsTrangChu.setLayoutManager(gridLayoutManager);
+-        mNewsTrangChuAdapter.setDATA(listfilter);
+-        rcvNewsTrangChu.setAdapter(mNewsTrangChuAdapter);
++//        mNewsTrangChuAdapter = new NewsTrangChuAdapter(getContext());
++//        GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), 2);
++//        rcvNewsTrangChu.setLayoutManager(gridLayoutManager);
++        mNewsTrangChuAdapter.setDATA(mainActivity,listfilter);
++//        rcvNewsTrangChu.setAdapter(mNewsTrangChuAdapter);
+     }
+ 
+     private void getListBDS() {
+@@ -265,11 +248,11 @@
+                         , newsTrangChuList.get(i).getTime(), newsTrangChuList.get(i).getFee(), false, newsTrangChuList.get(i).getImage(), newsTrangChuList.get(i).getTenDanhMuc()));
+             }
+         }
+-        mNewsTrangChuAdapter = new NewsTrangChuAdapter(getContext());
+-        GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), 2);
+-        rcvNewsTrangChu.setLayoutManager(gridLayoutManager);
+-        mNewsTrangChuAdapter.setDATA(listfilter);
+-        rcvNewsTrangChu.setAdapter(mNewsTrangChuAdapter);
++//        mNewsTrangChuAdapter = new NewsTrangChuAdapter(getContext());
++//        GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), 2);
++//        rcvNewsTrangChu.setLayoutManager(gridLayoutManager);
++        mNewsTrangChuAdapter.setDATA(mainActivity,listfilter);
++//        rcvNewsTrangChu.setAdapter(mNewsTrangChuAdapter);
+ 
+     }
+ 
+Index: app/src/main/java/com/example/duan1/MainActivity.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.duan1;\r\n\r\nimport androidx.annotation.NonNull;\r\nimport androidx.appcompat.app.AppCompatActivity;\r\nimport androidx.appcompat.widget.SearchView;\r\n\r\nimport android.annotation.SuppressLint;\r\nimport android.app.AlertDialog;\r\nimport android.app.Dialog;\r\nimport android.app.SearchManager;\r\nimport android.content.Context;\r\nimport android.content.Intent;\r\nimport android.content.IntentFilter;\r\nimport android.graphics.drawable.ColorDrawable;\r\nimport android.net.ConnectivityManager;\r\nimport android.os.Bundle;\r\nimport android.view.Gravity;\r\nimport android.view.Menu;\r\nimport android.view.MenuItem;\r\nimport android.view.View;\r\nimport android.view.Window;\r\nimport android.view.WindowManager;\r\nimport android.widget.ImageView;\r\nimport android.widget.RelativeLayout;\r\nimport android.widget.TextView;\r\nimport android.widget.Toast;\r\n\r\nimport com.example.duan1.Broadcast.Broadcast;\r\nimport com.example.duan1.Fragment.FragmentDaoCho;\r\nimport com.example.duan1.Fragment.FragmentQuanLiTin;\r\nimport com.example.duan1.Fragment.FragmentThem;\r\nimport com.example.duan1.Fragment.FragmentTrangChu;\r\nimport com.example.duan1.model.Users;\r\n\r\nimport com.google.android.material.bottomnavigation.BottomNavigationView;\r\nimport com.google.android.material.floatingactionbutton.FloatingActionButton;\r\nimport com.google.android.material.navigation.NavigationBarView;\r\nimport com.google.firebase.auth.FirebaseAuth;\r\nimport com.google.firebase.auth.FirebaseUser;\r\nimport com.google.firebase.database.DataSnapshot;\r\nimport com.google.firebase.database.DatabaseError;\r\nimport com.google.firebase.database.DatabaseReference;\r\nimport com.google.firebase.database.FirebaseDatabase;\r\nimport com.google.firebase.database.ValueEventListener;\r\n\r\n\r\nimport java.util.ArrayList;\r\nimport java.util.List;\r\n\r\npublic class MainActivity extends AppCompatActivity {\r\n\r\n    BottomNavigationView bottomNavigationView;\r\n    FloatingActionButton floatingActionButton;\r\n    SearchView searchView;\r\n    FragmentTrangChu fragmentTrangChu = new FragmentTrangChu();\r\n    FragmentQuanLiTin fragmentQuanLiTin = new FragmentQuanLiTin();\r\n    FragmentDaoCho fragmentDaoCho = new FragmentDaoCho();\r\n    FragmentThem fragmentThem = new FragmentThem();\r\n    private FirebaseUser currentUser;\r\n    private FirebaseAuth mAuth;\r\n    private FirebaseDatabase database;\r\n    private DatabaseReference myRef;\r\n    public static String name;\r\n    public static int id;\r\n    private Broadcast broadcast;\r\n\r\n    @SuppressLint(\"MissingInflatedId\")\r\n    @Override\r\n    protected void onCreate(Bundle savedInstanceState) {\r\n        super.onCreate(savedInstanceState);\r\n        setContentView(R.layout.activity_main);\r\n        initUi();\r\n        searchView = findViewById(R.id.searchView);\r\n        mAuth = FirebaseAuth.getInstance();\r\n        currentUser = mAuth.getCurrentUser();\r\n\r\n        database = FirebaseDatabase.getInstance();\r\n        myRef = database.getReference(\"Users\");\r\n        if (currentUser != null) {\r\n            getUser();\r\n        }\r\n\r\n        floatingActionButton.setOnClickListener(new View.OnClickListener() {\r\n            @Override\r\n            public void onClick(View view) {\r\n//        currentUser = mAuth.getCurrentUser();\r\n\r\n                if (currentUser != null) {\r\n\r\n                    showDialogChooseListProduct();\r\n\r\n                } else {\r\n                    MainActivity.showDiaLogWarning(MainActivity.this, \"Vui lòng đăng nhập để có thể đăng bán sản phẩm\");\r\n                }\r\n            }\r\n        });\r\n\r\n\r\n        bottomNavigationView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {\r\n            @Override\r\n            public boolean onNavigationItemSelected(@NonNull MenuItem item) {\r\n                switch (item.getItemId()) {\r\n                    case R.id.home:\r\n                        getSupportFragmentManager().beginTransaction().replace(R.id.container, fragmentTrangChu).commit();\r\n\r\n                        return true;\r\n\r\n                    case R.id.believe:\r\n                        getSupportFragmentManager().beginTransaction().replace(R.id.container, fragmentQuanLiTin).commit();\r\n\r\n                        return true;\r\n\r\n                    case R.id.fab:\r\n                        return true;\r\n\r\n                    case R.id.market:\r\n                        getSupportFragmentManager().beginTransaction().replace(R.id.container, fragmentDaoCho).commit();\r\n\r\n                        return true;\r\n\r\n                    case R.id.more:\r\n                        getSupportFragmentManager().beginTransaction().replace(R.id.container, fragmentThem).commit();\r\n                        return true;\r\n                }\r\n\r\n                return false;\r\n            }\r\n        });\r\n\r\n    }\r\n\r\n    private void getUser() {\r\n        List<Users> mListUser = new ArrayList<>();\r\n\r\n        String email = currentUser.getEmail();\r\n        myRef.addValueEventListener(new ValueEventListener() {\r\n            @Override\r\n            public void onDataChange(@NonNull DataSnapshot snapshot) {\r\n                mListUser.clear();\r\n                for (DataSnapshot snapshot1 : snapshot.getChildren()) {\r\n                    Users user = snapshot1.getValue(Users.class);\r\n                    mListUser.add(user);\r\n                }\r\n\r\n                for (int i = 0; i < mListUser.size(); i++) {\r\n                    if (mListUser.get(i).getEmail().equals(email)) {\r\n                        name = (mListUser.get(i).getName());\r\n                        id = mListUser.get(i).getId();\r\n                    }\r\n                }\r\n            }\r\n\r\n            @Override\r\n            public void onCancelled(@NonNull DatabaseError error) {\r\n                Toast.makeText(MainActivity.this, \"Error get Id and Name from Firebase\", Toast.LENGTH_SHORT).show();\r\n            }\r\n        });\r\n    }\r\n\r\n    private void showDialogChooseListProduct() {\r\n        final Dialog dialog = new Dialog(this);\r\n        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);\r\n        dialog.setContentView(R.layout.layout_dialog_chon_danh_muc);\r\n        getUser();\r\n        Window window = dialog.getWindow();\r\n        if (window == null) {\r\n            return;\r\n        }\r\n        window.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT);\r\n        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));\r\n        WindowManager.LayoutParams windowAttributes = window.getAttributes();\r\n        windowAttributes.gravity = Gravity.BOTTOM;\r\n        window.setAttributes(windowAttributes);\r\n\r\n        RelativeLayout layout_batDongSan = dialog.findViewById(R.id.layout_batDongSan);\r\n        RelativeLayout layout_XeCo = dialog.findViewById(R.id.layout_XeCo);\r\n        RelativeLayout layout_thoiTrang = dialog.findViewById(R.id.layout_thoiTrang);\r\n        RelativeLayout layout_dienTu = dialog.findViewById(R.id.layout_dienTu);\r\n        RelativeLayout layout_giaiTri = dialog.findViewById(R.id.layout_giaiTri);\r\n        RelativeLayout layout_dienGiaDung = dialog.findViewById(R.id.layout_dienGiaDung);\r\n        ImageView icon_close = dialog.findViewById(R.id.icon_close);\r\n\r\n        icon_close.setOnClickListener(new View.OnClickListener() {\r\n            @Override\r\n            public void onClick(View view) {\r\n                dialog.dismiss();\r\n            }\r\n        });\r\n        layout_giaiTri.setOnClickListener(new View.OnClickListener() {\r\n            @Override\r\n            public void onClick(View view) {\r\n                Intent intent = new Intent(getApplicationContext(), chonDanhMucGiaiTriActivity.class);\r\n                Bundle bundle = new Bundle();\r\n                bundle.putString(\"Name\", name);\r\n                bundle.putInt(\"Id\", id);\r\n                intent.putExtras(bundle);\r\n                startActivity(intent);\r\n            }\r\n        });\r\n        layout_dienGiaDung.setOnClickListener(new View.OnClickListener() {\r\n            @Override\r\n            public void onClick(View view) {\r\n                Toast.makeText(MainActivity.this, \"Id : \" + id + \" NAme : \" + name, Toast.LENGTH_SHORT).show();\r\n                Intent intent = new Intent(getApplicationContext(), chonDanhMucDienMayActivity.class);\r\n                Bundle bundle = new Bundle();\r\n                bundle.putString(\"Name\", name);\r\n                bundle.putInt(\"Id\", id);\r\n                intent.putExtras(bundle);\r\n                startActivity(intent);\r\n            }\r\n        });\r\n        layout_batDongSan.setOnClickListener(new View.OnClickListener() {\r\n            @Override\r\n            public void onClick(View view) {\r\n                Toast.makeText(MainActivity.this, \"Id : \" + id + \" NAme : \" + name, Toast.LENGTH_SHORT).show();\r\n                Intent intent = new Intent(getApplicationContext(), chonDanhMucBDSActivity.class);\r\n                Bundle bundle = new Bundle();\r\n                bundle.putString(\"Name\", name);\r\n                bundle.putInt(\"Id\", id);\r\n                intent.putExtras(bundle);\r\n                startActivity(intent);\r\n            }\r\n        });\r\n        layout_XeCo.setOnClickListener(new View.OnClickListener() {\r\n            @Override\r\n            public void onClick(View view) {\r\n                Toast.makeText(MainActivity.this, \"Id : \" + id + \" NAme : \" + name, Toast.LENGTH_SHORT).show();\r\n\r\n                Intent intent = new Intent(getApplicationContext(), chonDanhMucXeCoActivity.class);\r\n                Bundle bundle = new Bundle();\r\n                bundle.putString(\"Name\", name);\r\n                bundle.putInt(\"Id\", id);\r\n                intent.putExtras(bundle);\r\n                startActivity(intent);\r\n            }\r\n        });\r\n        layout_thoiTrang.setOnClickListener(new View.OnClickListener() {\r\n            @Override\r\n            public void onClick(View view) {\r\n                Intent intent = new Intent(getApplicationContext(), chonDanhMucThoiTrangAcrivity.class);\r\n                Bundle bundle = new Bundle();\r\n                bundle.putString(\"Name\", name);\r\n                bundle.putInt(\"Id\", id);\r\n                intent.putExtras(bundle);\r\n                startActivity(intent);\r\n            }\r\n        });\r\n        layout_dienTu.setOnClickListener(new View.OnClickListener() {\r\n            @Override\r\n            public void onClick(View view) {\r\n                Toast.makeText(MainActivity.this, \"Id : \" + id + \" NAme : \" + name, Toast.LENGTH_SHORT).show();\r\n                Intent intent = new Intent(getApplicationContext(), chonDanhMucDoDienTuActivity.class);\r\n                Bundle bundle = new Bundle();\r\n                bundle.putString(\"Name\", name);\r\n                bundle.putInt(\"Id\", id);\r\n                intent.putExtras(bundle);\r\n                startActivity(intent);\r\n            }\r\n        });\r\n        dialog.show();\r\n    }\r\n\r\n    private void initUi() {\r\n        bottomNavigationView = findViewById(R.id.bottomNavigationView);\r\n        floatingActionButton = findViewById(R.id.fab);\r\n        getSupportFragmentManager().beginTransaction().replace(R.id.container, fragmentTrangChu).commit();\r\n        broadcast = new Broadcast();\r\n    }\r\n\r\n    public static void showDiaLogWarning(Context context, String text) {\r\n        final AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);\r\n        alertDialog.setMessage(text).setTitle(\"Warning\").setIcon(R.drawable.ic_warning)\r\n                .setNegativeButton(\"Ok\", null);\r\n        alertDialog.show();\r\n    }\r\n\r\n    @Override\r\n    protected void onStart() {\r\n        IntentFilter intentFilter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);\r\n        registerReceiver(broadcast, intentFilter);\r\n        super.onStart();\r\n    }\r\n\r\n    @Override\r\n    protected void onStop() {\r\n        unregisterReceiver(broadcast);\r\n        super.onStop();\r\n    }\r\n\r\n\r\n\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/duan1/MainActivity.java b/app/src/main/java/com/example/duan1/MainActivity.java
+--- a/app/src/main/java/com/example/duan1/MainActivity.java	
++++ b/app/src/main/java/com/example/duan1/MainActivity.java	
+@@ -71,8 +71,7 @@
+         setContentView(R.layout.activity_main);
+         initUi();
+         searchView = findViewById(R.id.searchView);
+-        mAuth = FirebaseAuth.getInstance();
+-        currentUser = mAuth.getCurrentUser();
++
+ 
+         database = FirebaseDatabase.getInstance();
+         myRef = database.getReference("Users");
+@@ -83,8 +82,8 @@
+         floatingActionButton.setOnClickListener(new View.OnClickListener() {
+             @Override
+             public void onClick(View view) {
+-//        currentUser = mAuth.getCurrentUser();
+-
++                mAuth = FirebaseAuth.getInstance();
++                currentUser = mAuth.getCurrentUser();
+                 if (currentUser != null) {
+ 
+                     showDialogChooseListProduct();
+@@ -130,6 +129,8 @@
+     }
+ 
+     private void getUser() {
++        mAuth = FirebaseAuth.getInstance();
++        currentUser = mAuth.getCurrentUser();
+         List<Users> mListUser = new ArrayList<>();
+ 
+         String email = currentUser.getEmail();
+@@ -158,6 +159,8 @@
+     }
+ 
+     private void showDialogChooseListProduct() {
++        mAuth = FirebaseAuth.getInstance();
++        currentUser = mAuth.getCurrentUser();
+         final Dialog dialog = new Dialog(this);
+         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+         dialog.setContentView(R.layout.layout_dialog_chon_danh_muc);
+@@ -289,4 +292,6 @@
+ 
+ 
+ 
++
++
+ }
+Index: app/src/main/java/com/example/duan1/Fragment/FragmentQuanLiTin.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.duan1.Fragment;\r\n\r\n\r\nimport android.content.Context;\r\nimport android.os.Bundle;\r\n\r\nimport androidx.annotation.NonNull;\r\nimport androidx.annotation.Nullable;\r\nimport androidx.fragment.app.Fragment;\r\nimport androidx.recyclerview.widget.DividerItemDecoration;\r\nimport androidx.recyclerview.widget.LinearLayoutManager;\r\nimport androidx.recyclerview.widget.RecyclerView;\r\n\r\nimport android.os.Handler;\r\nimport android.view.LayoutInflater;\r\nimport android.view.View;\r\nimport android.view.ViewGroup;\r\nimport android.widget.Toast;\r\n\r\nimport com.example.duan1.Adapter.historyNewsAdapter;\r\nimport com.example.duan1.MainActivity;\r\nimport com.example.duan1.R;\r\nimport com.example.duan1.model.BDSNews;\r\nimport com.example.duan1.model.NewsTrangChu;\r\nimport com.example.duan1.model.giaiTriNews;\r\nimport com.example.duan1.model.historyNews;\r\nimport com.example.duan1.model.thoiTrangNews;\r\nimport com.google.firebase.auth.FirebaseAuth;\r\nimport com.google.firebase.auth.FirebaseUser;\r\nimport com.google.firebase.database.ChildEventListener;\r\nimport com.google.firebase.database.DataSnapshot;\r\nimport com.google.firebase.database.DatabaseError;\r\nimport com.google.firebase.database.DatabaseReference;\r\nimport com.google.firebase.database.FirebaseDatabase;\r\n\r\nimport com.google.firebase.database.ValueEventListener;\r\nimport com.google.firebase.storage.FirebaseStorage;\r\nimport com.google.firebase.storage.StorageReference;\r\n\r\nimport java.util.ArrayList;\r\nimport java.util.List;\r\n\r\npublic class FragmentQuanLiTin extends Fragment {\r\n    private RecyclerView rcvQuanLyTinDang;\r\n    private historyNewsAdapter historyNewsAdapter;\r\n    private List<historyNews> listHistoryNews;\r\n    private List<historyNews> listHistoryNewsBDS;\r\n    private List<historyNews> listHistoryNewsGT;\r\n    private List<historyNews> listHistoryNewsTT;\r\n\r\n    private Context mContext;\r\n\r\n    private String nameUser;\r\n    private int idUser;\r\n    private List<String> listChild = new ArrayList<>();\r\n    private List<String> listChild1 = new ArrayList<>();\r\n    private List<String> listChild2 = new ArrayList<>();\r\n\r\n    int id = 0;\r\n\r\n    DatabaseReference myData = FirebaseDatabase.getInstance().getReference(\"Tin\").child(\"GiaiTri\");\r\n    DatabaseReference myData1 = FirebaseDatabase.getInstance().getReference(\"Tin\").child(\"BDS\");\r\n    DatabaseReference myData2 = FirebaseDatabase.getInstance().getReference(\"Tin\").child(\"ThoiTrang\");\r\n    MainActivity mainActivity;\r\n    @Override\r\n    public View onCreateView(LayoutInflater inflater, ViewGroup container,\r\n                             Bundle savedInstanceState) {\r\n        View view = inflater.inflate(R.layout.fragment_quan_li_tin, container, false);\r\n\r\n        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();\r\n        if (user != null){\r\n            rcvQuanLyTinDang = view.findViewById(R.id.rcvQuanLyTin);\r\n            mainActivity = (MainActivity) getActivity();\r\n            listHistoryNews = new ArrayList<>();\r\n            listHistoryNewsBDS = new ArrayList<>();\r\n            listHistoryNewsTT = new ArrayList<>();\r\n            listHistoryNewsGT = new ArrayList<>();\r\n            idUser = mainActivity.id;\r\n            nameUser = mainActivity.name;\r\n//            listChild1();\r\n//            listChild2();\r\n//            listChild3();\r\n            getListHistoryNews();\r\n            new Handler().postDelayed(new Runnable() {\r\n                @Override\r\n                public void run() {\r\n                    historyNewsAdapter = new historyNewsAdapter(getContext(),mainActivity, listHistoryNews);\r\n                    rcvQuanLyTinDang.setLayoutManager(new LinearLayoutManager(getContext()));\r\n                    rcvQuanLyTinDang.setAdapter(historyNewsAdapter);\r\n//                    RecyclerView.ItemDecoration decoration = new DividerItemDecoration(getContext() , DividerItemDecoration.VERTICAL);\r\n//                    rcvQuanLyTinDang.addItemDecoration(decoration);\r\n                }\r\n            }, 500);\r\n        }\r\n\r\n        return view;\r\n    }\r\n\r\n    public void getListHistoryNews() {\r\n        myData.addValueEventListener(new ValueEventListener() {\r\n            @Override\r\n            public void onDataChange(@NonNull DataSnapshot snapshot) {\r\n                listHistoryNewsGT.clear();\r\n                for (DataSnapshot snapshot1: snapshot.getChildren()){\r\n                    giaiTriNews giaiTriNews = snapshot1.getValue(giaiTriNews.class);\r\n\r\n                    if (giaiTriNews.getIdUser() == idUser) {\r\n                        listHistoryNews.add(new historyNews(id, giaiTriNews.getTitle(),\r\n                                giaiTriNews.getDescription(), giaiTriNews.getDate(),\r\n                                giaiTriNews.getTenDanhMuc(),giaiTriNews.getImage()));\r\n                        id++;\r\n                    }\r\n                }\r\n//                addData();\r\n            }\r\n            @Override\r\n            public void onCancelled(@NonNull DatabaseError error) {\r\n\r\n            }\r\n        });\r\n\r\n        myData2.addValueEventListener(new ValueEventListener() {\r\n            @Override\r\n            public void onDataChange(@NonNull DataSnapshot snapshot) {\r\n                listHistoryNewsTT.clear();\r\n                for (DataSnapshot snapshot1: snapshot.getChildren()){\r\n                    thoiTrangNews thoiTrangNews = snapshot1.getValue(com.example.duan1.model.thoiTrangNews.class);\r\n                    if (thoiTrangNews.getIdUser() == idUser) {\r\n                        listHistoryNews.add(new historyNews(id, thoiTrangNews.getTitlePost(),\r\n                                thoiTrangNews.getDescriptionPost(), thoiTrangNews.getDate(),\r\n                                thoiTrangNews.getTenDanhMuc(),thoiTrangNews.getImage()));\r\n                        id++;\r\n                    }\r\n\r\n                }\r\n//                addData();\r\n            }\r\n            @Override\r\n            public void onCancelled(@NonNull DatabaseError error) {\r\n\r\n            }\r\n        });\r\n            myData1.addValueEventListener(new ValueEventListener() {\r\n                @Override\r\n                public void onDataChange(@NonNull DataSnapshot snapshot) {\r\n                    listHistoryNewsBDS.clear();\r\n                    for (DataSnapshot snapshot1: snapshot.getChildren()){\r\n                        BDSNews bdsNews = snapshot1.getValue(BDSNews.class);\r\n                        if (bdsNews.getIdUser() == idUser) {\r\n                            listHistoryNews.add(new historyNews(id, bdsNews.getTitle(),\r\n                                    bdsNews.getDescription() , bdsNews.getDate(),\r\n                                    bdsNews.getTenDanhMuc(), bdsNews.getImage()));\r\n                            id++;\r\n                        }\r\n                    }\r\n//                    addData();\r\n                }\r\n                @Override\r\n                public void onCancelled(@NonNull DatabaseError error) {\r\n\r\n                }\r\n            });\r\n    }\r\n\r\n\r\n//    private void addData(){\r\n//        for (int i = 0; i < listHistoryNewsBDS.size(); i++){\r\n//            listHistoryNews.add(listHistoryNewsBDS.get(i));\r\n//        }\r\n//        for (int i = 0; i < listHistoryNewsGT.size(); i++){\r\n//\r\n//            listHistoryNews.add(listHistoryNewsGT.get(i));\r\n//        }\r\n//        for (int i = 0; i < listHistoryNewsTT.size(); i++){\r\n//            listHistoryNews.add(listHistoryNewsTT.get(i));\r\n//        }\r\n//    }\r\n\r\n//    private List<String> listChild1() {\r\n//        listChild.add(new String(\"Nhạc cụ\"));\r\n//        listChild.add(new String(\"Sách\"));\r\n//        listChild.add(new String(\"Đồ thể thao, Dã ngoại\"));\r\n//        listChild.add(new String(\"Đồ sưu tầm  ,Đồ cổ\"));\r\n//        listChild.add(new String(\"Thiết bị chơi game\"));\r\n//        listChild.add(new String(\"Sở thích khác\"));\r\n//\r\n//        return listChild;\r\n//    }\r\n//\r\n//    private List<String> listChild2() {\r\n//        listChild1.add(new String(\"Quần áo\"));\r\n//        listChild1.add(new String(\"Đồng hồ\"));\r\n//        listChild1.add(new String(\"Giày dép\"));\r\n//        listChild1.add(new String(\"Túi xách\"));\r\n//        listChild1.add(new String(\"Nước hoa\"));\r\n//        listChild1.add(new String(\"Phụ kiện khác\"));\r\n//\r\n//        return listChild1;\r\n//    }\r\n//\r\n//    private List<String> listChild3() {\r\n//        listChild2.add(new String(\"Chung cư\"));\r\n//        listChild2.add(new String(\"Nhà ở\"));\r\n//        listChild2.add(new String(\"Đất\"));\r\n//        listChild2.add(new String(\"Văn Phòng\"));\r\n//        listChild2.add(new String(\"Phòng trọ\"));\r\n//\r\n//        return listChild2;\r\n//    }\r\n\r\n\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/duan1/Fragment/FragmentQuanLiTin.java b/app/src/main/java/com/example/duan1/Fragment/FragmentQuanLiTin.java
+--- a/app/src/main/java/com/example/duan1/Fragment/FragmentQuanLiTin.java	
++++ b/app/src/main/java/com/example/duan1/Fragment/FragmentQuanLiTin.java	
+@@ -1,12 +1,21 @@
+ package com.example.duan1.Fragment;
+ 
+ 
++import static android.app.Activity.RESULT_OK;
++
+ import android.content.Context;
++import android.content.Intent;
+ import android.os.Bundle;
+ 
++import androidx.activity.result.ActivityResult;
++import androidx.activity.result.ActivityResultCallback;
++import androidx.activity.result.ActivityResultLauncher;
++import androidx.activity.result.contract.ActivityResultContracts;
+ import androidx.annotation.NonNull;
+ import androidx.annotation.Nullable;
+ import androidx.fragment.app.Fragment;
++import androidx.fragment.app.FragmentManager;
++import androidx.fragment.app.FragmentTransaction;
+ import androidx.recyclerview.widget.DividerItemDecoration;
+ import androidx.recyclerview.widget.LinearLayoutManager;
+ import androidx.recyclerview.widget.RecyclerView;
+@@ -62,6 +71,18 @@
+     DatabaseReference myData1 = FirebaseDatabase.getInstance().getReference("Tin").child("BDS");
+     DatabaseReference myData2 = FirebaseDatabase.getInstance().getReference("Tin").child("ThoiTrang");
+     MainActivity mainActivity;
++
++    private ActivityResultLauncher<Intent> mActivityResultLauncher = registerForActivityResult(
++            new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
++                @Override
++                public void onActivityResult(ActivityResult result) {
++                    if (result.getResultCode() == RESULT_OK){
++                        Restart();
++                    }
++                }
++            });
++
++
+     @Override
+     public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                              Bundle savedInstanceState) {
+@@ -87,8 +108,8 @@
+                     historyNewsAdapter = new historyNewsAdapter(getContext(),mainActivity, listHistoryNews);
+                     rcvQuanLyTinDang.setLayoutManager(new LinearLayoutManager(getContext()));
+                     rcvQuanLyTinDang.setAdapter(historyNewsAdapter);
+-//                    RecyclerView.ItemDecoration decoration = new DividerItemDecoration(getContext() , DividerItemDecoration.VERTICAL);
+-//                    rcvQuanLyTinDang.addItemDecoration(decoration);
++                    RecyclerView.ItemDecoration decoration = new DividerItemDecoration(getContext() , DividerItemDecoration.VERTICAL);
++                    rcvQuanLyTinDang.addItemDecoration(decoration);
+                 }
+             }, 500);
+         }
+@@ -208,5 +229,16 @@
+ //        return listChild2;
+ //    }
+ 
++    private void Restart(){
++        FragmentManager fragmentManager;
++        fragmentManager = mainActivity.getSupportFragmentManager();
++        FragmentTransaction fragmentTransaction1 = fragmentManager.beginTransaction();
++        fragmentTransaction1.replace(R.id.container, new FragmentQuanLiTin());
++        fragmentTransaction1.detach(FragmentQuanLiTin.this);
++        fragmentTransaction1.commit();
++    }
++
++
++
+ 
+ }
+\ No newline at end of file
