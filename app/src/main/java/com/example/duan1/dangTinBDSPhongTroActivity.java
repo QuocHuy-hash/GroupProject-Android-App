@@ -51,19 +51,18 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 
-public class dangTinBDSPhongTroActivity extends AppCompatActivity implements com.example.duan1.Adapter.photoAdapter.CountOfImageWhenRemove {
+public class dangTinBDSPhongTroActivity extends AppCompatActivity implements photoAdapter.CountOfImageWhenRemove {
     private TextView tvTenDanhMuc;
     private ImageView imgBackPage;
     private EditText title_post, description, address, dienTich, price;
     private LinearLayout addImageProduct;
     private Button btnDangTin, btnSuaTin;
-    private com.example.duan1.Adapter.photoAdapter photoAdapter;
+    private photoAdapter photoAdapter;
     private RecyclerView rcvView_select_img_PhongTro;
     private ArrayList<Uri> imageUri;
     private int REQUEST_PERMISSION_CODE = 35;
     private int PICK_IMAGE = 1;
-    private int update_count = 0, idUser;
-    private int maxID;
+    private int update_count = 0, idUser, maxID, idEdit;
     private ProgressDialog progressDialog;
     private String strTitle, strDesc, strAddress, strDienTich, strPrice, tenDanhMuc, nameUser, date, title_Post1;
     private Double dbPrice;
@@ -83,7 +82,6 @@ public class dangTinBDSPhongTroActivity extends AppCompatActivity implements com
         imageFolder = FirebaseStorage.getInstance().getReference().child("Image.jpg");
         myData = FirebaseDatabase.getInstance().getReference("Tin").child("BDS");
         imageUri = new ArrayList<>();
-
 
         nameUser = mainActivity.name;
         idUser = mainActivity.id;
@@ -128,17 +126,14 @@ public class dangTinBDSPhongTroActivity extends AppCompatActivity implements com
 
                 } else {
                     progressDialog.show();
-                    maxID = bdsNewsId.getId();
-
-                    upImage(maxID);
-
-                    String strId = String.valueOf(maxID);
+                    String strId = String.valueOf(idEdit);
                     myData.child(strId).setValue(
-                            new BDSNews(maxID, strTitle, strDesc, dbPrice, strDienTich, strAddress,
+                            new BDSNews(idEdit, strTitle, strDesc, dbPrice, strDienTich, strAddress,
                                     idUser, nameUser,tenDanhMuc, date
                             )).addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void unused) {
+                            upImage(idEdit);
                             Toast.makeText(dangTinBDSPhongTroActivity.this, "Sửa tin thành công", Toast.LENGTH_SHORT).show();
                             progressDialog.dismiss();
                         }
@@ -150,20 +145,19 @@ public class dangTinBDSPhongTroActivity extends AppCompatActivity implements com
 
     private void setTextInput() {
         FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
-        DatabaseReference databaseReference1 = firebaseDatabase.getReference("Tin").child("BDS");
+        DatabaseReference databaseReference1 = firebaseDatabase.getReference("Tin");
         databaseReference1.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
                 BDSNews bdsNews = snapshot.getValue(BDSNews.class);
                 listBDS.add(bdsNews);
-                if(bdsNews.getTitle().equals(title_Post1)){
+                if(bdsNews.getId() == idEdit){
                     title_post.setText(bdsNews.getTitle());
                     description.setText(bdsNews.getDescription());
                     address.setText(bdsNews.getAdress());
                     dienTich.setText(bdsNews.getDienTich());
                     String strPrice = String.valueOf(bdsNews.getPrice());
                     price.setText(strPrice);
-                    bdsNewsId = bdsNews;
                 }
 
 
@@ -196,7 +190,6 @@ public class dangTinBDSPhongTroActivity extends AppCompatActivity implements com
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
         Calendar c = Calendar.getInstance();
         date = sdf.format(c.getTime());
-        System.out.println("Date : " + date);
     }
 
     private void clickBackPage() {
@@ -297,7 +290,7 @@ public class dangTinBDSPhongTroActivity extends AppCompatActivity implements com
                         maxID = bdsNewsId.getId() + 1;
                     }
 
-                    upImage(maxID);
+
 
                     String strId = String.valueOf(maxID);
 
@@ -307,6 +300,7 @@ public class dangTinBDSPhongTroActivity extends AppCompatActivity implements com
                             )).addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void unused) {
+                            upImage(maxID);
                             Toast.makeText(dangTinBDSPhongTroActivity.this, "Đăng tin thành công", Toast.LENGTH_SHORT).show();
                             progressDialog.dismiss();
                         }
@@ -320,7 +314,7 @@ public class dangTinBDSPhongTroActivity extends AppCompatActivity implements com
     private List<BDSNews> getListBds() {
         listBDS = new ArrayList<>();
         FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
-        DatabaseReference databaseReference = firebaseDatabase.getReference("Tin").child("BDS");
+        DatabaseReference databaseReference = firebaseDatabase.getReference("Tin");
         databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -346,6 +340,7 @@ public class dangTinBDSPhongTroActivity extends AppCompatActivity implements com
         tvTenDanhMuc = findViewById(R.id.tvTenDanhMuc);
         Intent intent = getIntent();
         title_Post1 = intent.getStringExtra("title1");
+        idEdit = intent.getIntExtra("idPT", 0);
         tvTenDanhMuc.setText("Danh Mục - " + intent.getStringExtra("tenDanhMuc"));
         imgBackPage = findViewById(R.id.icon_back);
         addImageProduct = findViewById(R.id.addImageProduct);

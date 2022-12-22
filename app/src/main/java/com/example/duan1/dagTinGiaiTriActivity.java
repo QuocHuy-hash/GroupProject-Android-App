@@ -71,12 +71,11 @@ public class dagTinGiaiTriActivity extends AppCompatActivity implements com.exam
     private ArrayList<Uri> imageUri;
     private int REQUEST_PERMISSION_CODE = 35;
     private int PICK_IMAGE = 1;
-    private int update_count = 0 , maxID  , idUser , id;
+    private int maxID  , idUser , idEdit;
     private ProgressDialog progressDialog;
     private List<giaiTriNews> listGiaiTri;
     MainActivity mainActivity;
     giaiTriNews giaiTriNewsId;
-    giaiTriNews giaiTriNewsIdEdit;
     private DatabaseReference myData;
     private StorageReference imageFolder;
     private Bitmap bitmapselect;
@@ -89,11 +88,14 @@ public class dagTinGiaiTriActivity extends AppCompatActivity implements com.exam
         setContentView(R.layout.activity_dag_tin_giai_tri);
 
         imageFolder = FirebaseStorage.getInstance().getReference().child("Image.jpg");
-        myData = FirebaseDatabase.getInstance().getReference("Tin").child("GiaiTri");
+        myData = FirebaseDatabase.getInstance().getReference("Tin");
         imageUri = new ArrayList<>();
 
         idUser = mainActivity.id;
         nameUser = mainActivity.name;
+
+        Intent intentID = getIntent();
+        idEdit = intentID.getIntExtra("idGT", 0);
 
         initUi();
         clickBackPage();
@@ -150,16 +152,14 @@ public class dagTinGiaiTriActivity extends AppCompatActivity implements com.exam
 
                 } else {
                     progressDialog.show();
-                    id = giaiTriNewsIdEdit.getId();
 
-                    upImage(id);
-
-                    String strId = String.valueOf(id);
-                    myData.child(strId ).setValue(new giaiTriNews(id ,strTitlePost , strDescription ,strAddress, dbPrice
-                                    ,strLoaiSanPham ,idUser ,nameUser , tenDanhMuc, date))
+                    String strId = String.valueOf(idEdit);
+                    myData.child(strId ).setValue(new giaiTriNews(idEdit ,strTitlePost , strDescription ,strAddress, dbPrice
+                                    ,strLoaiSanPham ,idUser ,nameUser , tenDanhMuc, "GiaiTri", date, " "))
                             .addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
                                 public void onSuccess(Void unused) {
+                                    upImage(idEdit);
                                     Toast.makeText(dagTinGiaiTriActivity.this, "Sửa tin thành công", Toast.LENGTH_SHORT).show();
                                     progressDialog.dismiss();
                                 }
@@ -172,18 +172,17 @@ public class dagTinGiaiTriActivity extends AppCompatActivity implements com.exam
 
     private void setTextInput() {
         FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
-        DatabaseReference databaseReference = firebaseDatabase.getReference("Tin").child("GiaiTri");
+        DatabaseReference databaseReference = firebaseDatabase.getReference("Tin");
         databaseReference.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-                giaiTriNews giaiTriNews = snapshot.getValue(com.example.duan1.model.giaiTriNews.class);
-                if(giaiTriNews.getTitle().equals(title_Post)) {
+                giaiTriNews giaiTriNews = snapshot.getValue(giaiTriNews.class);
+                if(giaiTriNews.getId() == idEdit) {
                     edtTitlePost.setText(giaiTriNews.getTitle());
                     edtDescription.setText(giaiTriNews.getDescription());
                     String price = String.valueOf(giaiTriNews.getPrice());
                     edtPrice.setText(price);
                     edtAddress.setText(giaiTriNews.getAddress());
-                    giaiTriNewsIdEdit = giaiTriNews;
                 }
             }
 
@@ -331,14 +330,15 @@ public class dagTinGiaiTriActivity extends AppCompatActivity implements com.exam
                         maxID = giaiTriNewsId.getId() +1;
                     }
 
-                    upImage(maxID);
 
                     String strId = String.valueOf(maxID);
+
                     myData.child(strId ).setValue(new giaiTriNews(maxID ,strTitlePost , strDescription ,strAddress, dbPrice
-                                      ,strLoaiSanPham ,idUser ,nameUser , tenDanhMuc ,date))
+                                      ,strLoaiSanPham ,idUser ,nameUser , tenDanhMuc, "GiaiTri",date, " "))
                             .addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
                                 public void onSuccess(Void unused) {
+                                    upImage(maxID);
                                     Toast.makeText(dagTinGiaiTriActivity.this, "Đăng tin thành công", Toast.LENGTH_SHORT).show();
                                     progressDialog.dismiss();
                                 }
@@ -350,11 +350,10 @@ public class dagTinGiaiTriActivity extends AppCompatActivity implements com.exam
 
     }
 
-
     private List<giaiTriNews> getListGiaiTri() {
         listGiaiTri = new ArrayList<>();
         FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
-        DatabaseReference databaseReference = firebaseDatabase.getReference("Tin").child("GiaiTri");
+        DatabaseReference databaseReference = firebaseDatabase.getReference("Tin");
         databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -381,6 +380,7 @@ public class dagTinGiaiTriActivity extends AppCompatActivity implements com.exam
         Intent intent = getIntent();
         title_Post = intent.getStringExtra("title");
         tvTenDanhMuc.setText("Danh Mục - " + intent.getStringExtra("tenDanhMuc"));
+
         imgBackPage = findViewById(R.id.icon_back);
         spn_product_type = findViewById(R.id.spn_product_type);
         layout_spnTypeProduct = findViewById(R.id.layout_spnTypeProduct);
@@ -450,7 +450,7 @@ public class dagTinGiaiTriActivity extends AppCompatActivity implements com.exam
                         @Override
                         public void onSuccess(Uri uri) {
                             String strImage = String.valueOf(uri);
-                            UpdateImageUrl(strImage, id);
+                            myData.child(id+"/image").setValue(strImage);
                             progressDialog.dismiss();
                         }
                     }).addOnFailureListener(new OnFailureListener() {
@@ -469,9 +469,6 @@ public class dagTinGiaiTriActivity extends AppCompatActivity implements com.exam
 
     }
 
-    private void UpdateImageUrl(String url, int id) {
-        myData.child(id+"/image").setValue(url);
-    }
 
     @Override
     protected void onStart() {

@@ -11,6 +11,7 @@ import android.os.Handler;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -254,13 +255,8 @@ public class Register extends AppCompatActivity {
                                 } else {
                                     Toast.makeText(Register.this, "Tạo tài khoản thất bại!",
                                             Toast.LENGTH_SHORT).show();
-                                    System.out.println(task.getException());
+                                    progressDialog.dismiss();
                                 }
-
-
-
-
-
 
                             }
                         });

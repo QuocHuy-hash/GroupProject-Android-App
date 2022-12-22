@@ -19,6 +19,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -71,7 +72,7 @@ public class dangTinBDSActivity extends AppCompatActivity implements com.example
     private ArrayList<Uri> imageUri;
     private int REQUEST_PERMISSION_CODE = 35;
     private int PICK_IMAGE = 1;
-    private int update_count = 0, idUser, idEdit;
+    private int update_count = 0, idUser;
     private List<BDSNews> listBDS;
     private MainActivity mainActivity;
     BDSNews bdsNewsId;
@@ -81,6 +82,8 @@ public class dangTinBDSActivity extends AppCompatActivity implements com.example
     private Bitmap bitmapselect;
     private Calendar calendar = Calendar.getInstance();
     private Broadcast broadcast;
+    private int idEdit = 0;
+    private String urlImage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,11 +91,12 @@ public class dangTinBDSActivity extends AppCompatActivity implements com.example
         setContentView(R.layout.activity_dang_tin_bdsactivity);
 
         imageFolder = FirebaseStorage.getInstance().getReference().child("Image.jpg");
-        myData = FirebaseDatabase.getInstance().getReference("Tin").child("BDS");
+        myData = FirebaseDatabase.getInstance().getReference("Tin");
         imageUri = new ArrayList<>();
 
         nameUser = mainActivity.name;
         idUser = mainActivity.id;
+
         initUi();
         eventClickSpinner();
         getListBds();
@@ -145,16 +149,15 @@ public class dangTinBDSActivity extends AppCompatActivity implements com.example
                 } else {
                     progressDialog.show();
 
-                    upImage(idEdit);
-
                     String strId = String.valueOf(idEdit);
-                    myData.child(strId ).setValue(
+                    myData.child(strId).setValue(
                                     new BDSNews(idEdit ,strTitlePost , strDescription , dbPrice
                                             ,strDienTich ,strAddress ,strTenKhu ,strLoaiHinhDat ,
-                                            strSoPhongNgu,strSoPhongWc ,idUser,nameUser ,tenDanhMuc, date ))
+                                            strSoPhongNgu,strSoPhongWc ,idUser,nameUser ,tenDanhMuc,"BDS", date ))
                             .addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
                                 public void onSuccess(Void unused) {
+                                    upImage(idEdit);
                                     Toast.makeText(dangTinBDSActivity.this, "Sửa tin thành công", Toast.LENGTH_SHORT).show();
                                     progressDialog.dismiss();
                                 }
@@ -166,12 +169,13 @@ public class dangTinBDSActivity extends AppCompatActivity implements com.example
 
     private void setTextInput() {
         FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
-        DatabaseReference databaseReference = firebaseDatabase.getReference("Tin").child("BDS");
+        DatabaseReference databaseReference = firebaseDatabase.getReference("Tin");
         databaseReference.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
                 BDSNews bdsNews = snapshot.getValue(BDSNews.class);
-                if (title_Post.equals(bdsNews.getTitle())) {
+                if (idEdit == bdsNews.getId()) {
+                    Toast.makeText(dangTinBDSActivity.this, "In set data", Toast.LENGTH_SHORT).show();
                     edtTitlePost.setText(bdsNews.getTitle());
                     edtAddress.setText(bdsNews.getAdress());
                     edtDienTich.setText(bdsNews.getDienTich());
@@ -182,8 +186,7 @@ public class dangTinBDSActivity extends AppCompatActivity implements com.example
                     edtTenKhuDanCu.setText(bdsNews.getTenPhanKhu());
                     String price = String.valueOf(bdsNews.getPrice());
                     edtPrice.setText(price);
-
-                    idEdit = bdsNews.getId();
+                    urlImage = bdsNews.getImage();
                 }
             }
 
@@ -233,7 +236,7 @@ public class dangTinBDSActivity extends AppCompatActivity implements com.example
         spn_Direction.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                Toast.makeText(dangTinBDSActivity.this, "Hướng " + i, Toast.LENGTH_SHORT).show();
+                //code hướng
             }
 
             @Override
@@ -286,7 +289,7 @@ public class dangTinBDSActivity extends AppCompatActivity implements com.example
                     myData.child(strId).setValue(
                                     new BDSNews(maxID, strTitlePost, strDescription, dbPrice
                                             , strDienTich, strAddress, strTenKhu, strLoaiHinhDat,
-                                            strSoPhongNgu, strSoPhongWc, idUser, nameUser, tenDanhMuc, date))
+                                            strSoPhongNgu, strSoPhongWc, idUser, nameUser, tenDanhMuc,"BDS", date))
                             .addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
                                 public void onSuccess(Void unused) {
@@ -295,7 +298,6 @@ public class dangTinBDSActivity extends AppCompatActivity implements com.example
                                     finish();
                                 }
                             });
-
                 }
             }
         });
@@ -307,7 +309,7 @@ public class dangTinBDSActivity extends AppCompatActivity implements com.example
     private List<BDSNews> getListBds() {
         listBDS = new ArrayList<>();
         FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
-        DatabaseReference databaseReference = firebaseDatabase.getReference("Tin").child("BDS");
+        DatabaseReference databaseReference = firebaseDatabase.getReference("Tin");
         databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -334,6 +336,8 @@ public class dangTinBDSActivity extends AppCompatActivity implements com.example
         tvTenDanhMuc = findViewById(R.id.tvTenDanhMuc);
         Intent intent = getIntent();
         title_Post = intent.getStringExtra("title");
+        idEdit = intent.getIntExtra("idBDS", 0);
+
         tvTenDanhMuc.setText("Danh Mục - " + intent.getStringExtra("tenDanhMuc"));
         imgBackPage = findViewById(R.id.icon_back);
         addImageProduct = findViewById(R.id.addImageProduct);
@@ -407,7 +411,6 @@ public class dangTinBDSActivity extends AppCompatActivity implements com.example
                 } else {
                     Toast.makeText(this, "Chỉ đăng tối đa 9 hình ảnh", Toast.LENGTH_SHORT).show();
                 }
-
 
             }
             photoAdapter.notifyDataSetChanged();

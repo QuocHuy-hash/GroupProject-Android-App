@@ -10,14 +10,14 @@ public class giaiTriNews {
     private int idUser;
     private String nameUser;
     private String tenDanhMuc;
+    private String danhmucchinh;
     private String date;
     private String image;
 
     public giaiTriNews() {
     }
 
-    public giaiTriNews(int id, String title, String description, String address, double price,
-                       String typeProduct, int idUser, String nameUser, String tenDanhMuc, String date) {
+    public giaiTriNews(int id, String title, String description, String address, double price, String typeProduct, int idUser, String nameUser, String tenDanhMuc, String danhmucchinh, String date, String image) {
         this.id = id;
         this.title = title;
         this.description = description;
@@ -27,21 +27,7 @@ public class giaiTriNews {
         this.idUser = idUser;
         this.nameUser = nameUser;
         this.tenDanhMuc = tenDanhMuc;
-        this.date = date;
-    }
-
-    public giaiTriNews(int id, String title, String description, String address, double price,
-                       String typeProduct, int idUser, String nameUser, String tenDanhMuc,
-                       String date, String image) {
-        this.id = id;
-        this.title = title;
-        this.description = description;
-        this.address = address;
-        this.price = price;
-        this.typeProduct = typeProduct;
-        this.idUser = idUser;
-        this.nameUser = nameUser;
-        this.tenDanhMuc = tenDanhMuc;
+        this.danhmucchinh = danhmucchinh;
         this.date = date;
         this.image = image;
     }
@@ -132,5 +118,13 @@ public class giaiTriNews {
 
     public void setImage(String image) {
         this.image = image;
+    }
+
+    public String getDanhmucchinh() {
+        return danhmucchinh;
+    }
+
+    public void setDanhmucchinh(String danhmucchinh) {
+        this.danhmucchinh = danhmucchinh;
     }
 }

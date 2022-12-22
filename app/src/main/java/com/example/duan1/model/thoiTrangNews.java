@@ -1,14 +1,9 @@
 package com.example.duan1.model;
 
-import android.net.Uri;
-
-import java.util.ArrayList;
-import java.util.List;
-
 public class thoiTrangNews {
     private int id;
-    private String titlePost;
-    private String descriptionPost;
+    private String title;
+    private String description;
     private String typeproduct;
     private double price;
     private String address;
@@ -21,27 +16,11 @@ public class thoiTrangNews {
     public thoiTrangNews() {
     }
 
-    public thoiTrangNews(int id, String titlePost, String descriptionPost, String typeproduct,
-                         double price, String address, int idUser, String nameUser,
-                         String tenDanhMuc, String date, String image) {
+    public thoiTrangNews(int id, String title, String description, String typeproduct, double price,
+                         String address, int idUser, String nameUser, String tenDanhMuc, String date) {
         this.id = id;
-        this.titlePost = titlePost;
-        this.descriptionPost = descriptionPost;
-        this.typeproduct = typeproduct;
-        this.price = price;
-        this.address = address;
-        this.idUser = idUser;
-        this.nameUser = nameUser;
-        this.tenDanhMuc = tenDanhMuc;
-        this.date = date;
-        this.image = image;
-    }
-
-    public thoiTrangNews(int id, String titlePost, String descriptionPost, String typeproduct
-            , double price, String address, int idUser, String nameUser, String tenDanhMuc , String date) {
-        this.id = id;
-        this.titlePost = titlePost;
-        this.descriptionPost = descriptionPost;
+        this.title = title;
+        this.description = description;
         this.typeproduct = typeproduct;
         this.price = price;
         this.address = address;
@@ -51,20 +30,66 @@ public class thoiTrangNews {
         this.date = date;
     }
 
-    public String getDate() {
-        return date;
+    //    public thoiTrangNews(int id, String title, String description, String typeproduct
+//            , double price, String address, int idUser, String nameUser, String tenDanhMuc , String date) {
+//        this.id = id;
+//        this.title = title;
+//        this.description = description;
+//        this.typeproduct = typeproduct;
+//        this.price = price;
+//        this.address = address;
+//        this.idUser = idUser;
+//        this.nameUser = nameUser;
+//        this.tenDanhMuc = tenDanhMuc;
+//        this.date = date;
+//    }
+
+    public int getId() {
+        return id;
     }
 
-    public void setDate(String date) {
-        this.date = date;
+    public void setId(int id) {
+        this.id = id;
     }
 
-    public String getTenDanhMuc() {
-        return tenDanhMuc;
+    public String getTitle() {
+        return title;
     }
 
-    public void setTenDanhMuc(String tenDanhMuc) {
-        this.tenDanhMuc = tenDanhMuc;
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getTypeproduct() {
+        return typeproduct;
+    }
+
+    public void setTypeproduct(String typeproduct) {
+        this.typeproduct = typeproduct;
+    }
+
+    public double getPrice() {
+        return price;
+    }
+
+    public void setPrice(double price) {
+        this.price = price;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
     }
 
     public int getIdUser() {
@@ -83,51 +108,20 @@ public class thoiTrangNews {
         this.nameUser = nameUser;
     }
 
-    public int getId() {
-        return id;
+    public String getTenDanhMuc() {
+        return tenDanhMuc;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setTenDanhMuc(String tenDanhMuc) {
+        this.tenDanhMuc = tenDanhMuc;
     }
 
-    public String getTitlePost() {
-        return titlePost;
+    public String getDate() {
+        return date;
     }
 
-    public void setTitlePost(String titlePost) {
-        this.titlePost = titlePost;
-    }
-
-    public String getDescriptionPost() {
-        return descriptionPost;
-    }
-
-    public void setDescriptionPost(String descriptionPost) {
-        this.descriptionPost = descriptionPost;
-    }
-
-    public String getTypeproduct() {
-        return typeproduct;
-    }
-
-    public void setTypeproduct(String typeproduct) {
-        this.typeproduct = typeproduct;
-    }
-    public double getPrice() {
-        return price;
-    }
-
-    public void setPrice(double price) {
-        this.price = price;
-    }
-
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
+    public void setDate(String date) {
+        this.date = date;
     }
 
     public String getImage() {

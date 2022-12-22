@@ -1,5 +1,6 @@
 package com.example.duan1.Adapter;
 
+import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -15,10 +16,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.duan1.Fragment.FragmentQuanLiTin;
+import com.bumptech.glide.Glide;
 import com.example.duan1.MainActivity;
 import com.example.duan1.R;
-import com.example.duan1.chitiet_news;
 import com.example.duan1.dagTinGiaiTriActivity;
 import com.example.duan1.dangTinBDSActivity;
 import com.example.duan1.dangTinBDSDatActivity;
@@ -33,6 +33,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
 import java.text.NumberFormat;
@@ -48,11 +49,9 @@ public class historyNewsAdapter extends RecyclerView.Adapter<historyNewsAdapter.
     private List<String> listChild2 = new ArrayList<>();
 
     private MainActivity mainActivity;
-    private String name = FragmentQuanLiTin.nameUser;
+//    private String name = FragmentQuanLiTin.nameUser;
 
-    DatabaseReference myData = FirebaseDatabase.getInstance().getReference("Tin").child("GiaiTri");
-    DatabaseReference myData1 = FirebaseDatabase.getInstance().getReference("Tin").child("BDS");
-    DatabaseReference myData2 = FirebaseDatabase.getInstance().getReference("Tin").child("ThoiTrang");
+    DatabaseReference myData = FirebaseDatabase.getInstance().getReference("Tin");
 
     public historyNewsAdapter(Context mContext, MainActivity mainActivity, List<historyNews> listHistory) {
         this.mContext = mContext;
@@ -76,7 +75,6 @@ public class historyNewsAdapter extends RecyclerView.Adapter<historyNewsAdapter.
         historyNews giaiTriNews =  listHistory.get(position);
         String tenDanhMuc = giaiTriNews.getTenDanhMuc();
         String Title_Post = giaiTriNews.getTitle_historyNews();
-        System.out.println("");
         listChild1();
         listChild2();
         listChild3();
@@ -84,29 +82,25 @@ public class historyNewsAdapter extends RecyclerView.Adapter<historyNewsAdapter.
         holder.desc_historyNews.setText(giaiTriNews.getDesc_historyNews());
         holder.time_historyNews.setText(giaiTriNews.getTime_historyNews());
         String strImage = giaiTriNews.getImage();
-        Picasso.with(mContext)
-                .load(strImage)
-                .placeholder(R.drawable.ic_message)
-                .error(R.drawable.ic_message)
-                .into(holder.imgSP);
+        Glide.with(mContext).load(strImage).into(holder.imgSP);
         holder.icon_option.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                XoaTin(giaiTriNews.getTitle_historyNews());
+                XoaTin(giaiTriNews.getId());
 //                System.out.println(giaiTriNews.getTitle_historyNews());
             }
         });
         int id = giaiTriNews.getId();
-        if(name.equals("Admin")){
-            holder.layout_item.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Intent intent = new Intent(mContext , chitiet_news.class);
-                    intent.putExtra("title" , giaiTriNews.getTitle_historyNews());
-                    mContext.startActivity(intent);
-                }
-            });
-        }else {
+//        if(name.equals("Admin")){
+//            holder.layout_item.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View view) {
+//                    Intent intent = new Intent(mContext , chitiet_news.class);
+//                    intent.putExtra("title" , giaiTriNews.getTitle_historyNews());
+//                    mContext.startActivity(intent);
+//                }
+//            });
+//        }else {
 
         holder.layout_item.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -117,25 +111,28 @@ public class historyNewsAdapter extends RecyclerView.Adapter<historyNewsAdapter.
                     Intent intent = new Intent(mContext , dangTinThoiTrangActivity.class);
                     intent.putExtra("title1" , Title_Post);
                     intent.putExtra("tenDanhMuc" , tenDanhMuc);
-
+                    intent.putExtra("idTT", id);
                     mContext.startActivity(intent);
                 }else if(tenDanhMuc.equals("Phòng trọ")) {
                     Intent intent = new Intent(mContext , dangTinBDSPhongTroActivity.class);
                     intent.putExtra("title1" , Title_Post);
                     intent.putExtra("tenDanhMuc" , tenDanhMuc);
+                    intent.putExtra("idBDS", id);
                     mContext.startActivity(intent);
                 }else if(tenDanhMuc.equals("Đất")) {
                     Intent intent = new Intent(mContext , dangTinBDSDatActivity.class);
                     intent.putExtra("title" , Title_Post);
                     intent.putExtra("tenDanhMuc" , tenDanhMuc);
-                    intent.putExtra("id", id);
+                    intent.putExtra("idD", id);
                     mContext.startActivity(intent);
                 }else if(tenDanhMuc.equals("Văn Phòng")
                         || tenDanhMuc.equalsIgnoreCase("Nhà ở")
                         || tenDanhMuc.equalsIgnoreCase("Chung cư")){
+
                     Intent intent = new Intent(mContext , dangTinBDSActivity.class);
                     intent.putExtra("title" , Title_Post);
                     intent.putExtra("tenDanhMuc" , tenDanhMuc);
+                    intent.putExtra("idBDS", id);
                     mContext.startActivity(intent);
                 }else if(mainActivity.name.equals("Admin")){
                     Toast.makeText(mContext, "đang chờ layout", Toast.LENGTH_SHORT).show();
@@ -144,13 +141,14 @@ public class historyNewsAdapter extends RecyclerView.Adapter<historyNewsAdapter.
                     Intent intent = new Intent(mContext , dagTinGiaiTriActivity.class);
                     intent.putExtra("title" , Title_Post);
                     intent.putExtra("tenDanhMuc" , tenDanhMuc);
+                    intent.putExtra("idGT", id);
                     mContext.startActivity(intent);
                 }
             }
         });
-        }
-
+//        }
     }
+
     @Override
     public int getItemCount() {
         if (listHistory != null) {
@@ -159,89 +157,20 @@ public class historyNewsAdapter extends RecyclerView.Adapter<historyNewsAdapter.
             return 0;
         }
     }
-private void XoaTin(String title){
+private void XoaTin(int idDelete){
     ProgressDialog progressDialog = new ProgressDialog(mainActivity);
     progressDialog.show();
         myData.addChildEventListener(new ChildEventListener() {
+            @SuppressLint("NotifyDataSetChanged")
             @Override
             public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
                 giaiTriNews giaiTriNew = snapshot.getValue(giaiTriNews.class);
-                if(giaiTriNew.getTitle().equals(title)){
+                if(giaiTriNew.getId() == idDelete){
                     String id = String.valueOf(giaiTriNew.getId());
                         myData.child(id).removeValue();
                         Toast.makeText(mContext.getApplicationContext(), "Đã xóa Tin", Toast.LENGTH_SHORT).show();
                     progressDialog.dismiss();
-                }
-            }
 
-            @Override
-            public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-
-            }
-
-            @Override
-            public void onChildRemoved(@NonNull DataSnapshot snapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
-
-
-
-
-        myData1.addChildEventListener(new ChildEventListener() {
-            @Override
-            public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-                BDSNews bdsNews = snapshot.getValue(BDSNews.class);
-                if(bdsNews.getTitle().equals(title)){
-                    String id = String.valueOf(bdsNews.getId());
-                    myData1.child(id).removeValue();
-                    notifyDataSetChanged();
-                    Toast.makeText(mContext.getApplicationContext(), "Đã xóa Tin", Toast.LENGTH_SHORT).show();
-                    progressDialog.dismiss();
-                }
-            }
-
-            @Override
-            public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-
-            }
-
-            @Override
-            public void onChildRemoved(@NonNull DataSnapshot snapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
-
-        myData2.addChildEventListener(new ChildEventListener() {
-            @Override
-            public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-                thoiTrangNews thoiTrangNews = snapshot.getValue(com.example.duan1.model.thoiTrangNews.class);
-                if(thoiTrangNews.getTitlePost().equals(title)){
-                    String id = String.valueOf(thoiTrangNews.getId());
-                    myData2.child(id).removeValue();
-                    notifyDataSetChanged();
-                    Toast.makeText(mContext, "Xóa Thành công", Toast.LENGTH_SHORT).show();
-                    progressDialog.dismiss();
                 }
             }
 

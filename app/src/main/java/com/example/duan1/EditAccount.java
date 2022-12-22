@@ -144,7 +144,6 @@ public class EditAccount extends AppCompatActivity {
                                 }
                             });
 
-
                         }catch (IOException e){
                             e.printStackTrace();
                             progressDialog.dismiss();
@@ -168,7 +167,6 @@ public class EditAccount extends AppCompatActivity {
                 progressDialog.dismiss();
             }
         }, 500);
-
     }
 
     //ánh xạ
@@ -240,7 +238,6 @@ public class EditAccount extends AppCompatActivity {
                 resetPassword();
             }
         });
-
     }
 
     private void resetPassword() {

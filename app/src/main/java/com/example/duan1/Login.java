@@ -17,6 +17,7 @@ import android.os.PersistableBundle;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
@@ -85,7 +86,6 @@ public class Login extends AppCompatActivity {
                         Toast.makeText(Login.this, "Đăng nhập thành công!", Toast.LENGTH_SHORT).show();
                         Intent intent = new Intent(Login.this, MainActivity.class);
                         setResult(RESULT_OK, intent);
-
                         finish();
                     }
 
@@ -111,7 +111,6 @@ public class Login extends AppCompatActivity {
 
 
     }
-
 
     private void initUi() {
         imgBack = findViewById(R.id.img_back);
@@ -268,7 +267,6 @@ public class Login extends AppCompatActivity {
                         .addOnCompleteListener(Login.this, new OnCompleteListener<AuthResult>() {
                             @Override
                             public void onComplete(@NonNull Task<AuthResult> task) {
-
                                 Handler handler = new Handler();
                                 handler.postDelayed(new Runnable() {
                                     @Override
@@ -305,14 +303,14 @@ public class Login extends AppCompatActivity {
                                                         if (mListUser.get(i).getEmail().equals(email) && mListUser.get(i).getPassword().equals(password)) {
                                                             Toast.makeText(Login.this, "Đăng nhập thành công!", Toast.LENGTH_SHORT).show();
                                                             Intent intent = new Intent(Login.this, MainActivity.class);
-                                                            intent.putExtra("statusLogin", 1);
+//                                                            intent.putExtra("statusLogin", 1);
                                                             setResult(RESULT_OK, intent);
                                                             finish();
 
                                                         }
                                                     }
                                                 }
-                                            },1500);
+                                            },500);
 
 
                                         } else {
@@ -334,7 +332,6 @@ public class Login extends AppCompatActivity {
         startActivityForResult(signInIntent, RC_SIGN_IN);
     }
 
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -349,9 +346,7 @@ public class Login extends AppCompatActivity {
                 Toast.makeText(Login.this, "Đăng nhập thành công!", Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(Login.this, MainActivity.class);
                 setResult(RESULT_OK, intent);
-                intent.putExtra("statusLogin", 1);
-                startActivity(intent);
-//                finish();
+                finish();
             } catch (ApiException e) {
                 Toast.makeText(this, "signInResult:failed code=" + e.getStatusCode(), Toast.LENGTH_SHORT).show();
             }

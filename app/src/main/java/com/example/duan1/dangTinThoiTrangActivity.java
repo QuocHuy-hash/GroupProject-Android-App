@@ -79,7 +79,7 @@ public class dangTinThoiTrangActivity extends AppCompatActivity implements photo
     private Bitmap bitmapselect;
     private int REQUEST_PERMISSION_CODE = 35;
     private int PICK_IMAGE = 1;
-    private int update_count = 0, maxID;
+    private int update_count = 0, maxID, idEdit;
     private ArrayList<Uri> imageUri = new ArrayList<>();
     private ProgressDialog progressDialog;
     DatabaseReference myData;
@@ -92,7 +92,7 @@ public class dangTinThoiTrangActivity extends AppCompatActivity implements photo
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dang_tin_thoi_trang);
         imageFolder = FirebaseStorage.getInstance().getReference().child("Image").child("images" + System.currentTimeMillis() +"jpg");
-        myData = FirebaseDatabase.getInstance().getReference("Tin").child("ThoiTrang");
+        myData = FirebaseDatabase.getInstance().getReference("Tin");
 
         nameUser = mainActivity.name;
         idUser = mainActivity.id;
@@ -113,7 +113,6 @@ public class dangTinThoiTrangActivity extends AppCompatActivity implements photo
             setTextInput();
             suaTin();
         }
-
     }
 
     private void suaTin() {
@@ -134,22 +133,18 @@ public class dangTinThoiTrangActivity extends AppCompatActivity implements photo
                 } catch (Exception e) {
                     System.err.println("Lỗi Parse kiểu dữ liệu");
                 }
-
                 strLoaiSanPham = spn_product_type.getSelectedItem().toString();
                 strAddress = edtAddress.getText().toString();
 
                 if (strTitlePost.isEmpty() || strDescription.isEmpty() || strPrice.isEmpty()
                         || strAddress.isEmpty()) {
                     MainActivity.showDiaLogWarning(dangTinThoiTrangActivity.this, "vui lòng nhập đầy đủ thông tin");
-
                 } else {
-                    progressDialog.show();
-                    maxID = newsFashion.getId();
 
-                    upImage(maxID);
+                progressDialog.show();
 
-                String strId = String.valueOf(maxID);
-                myData.child(strId ).setValue(new thoiTrangNews(maxID ,
+                String strId = String.valueOf(idEdit);
+                myData.child(strId ).setValue(new thoiTrangNews(idEdit ,
                         strTitlePost,
                         strDescription,
                         strLoaiSanPham,
@@ -159,6 +154,7 @@ public class dangTinThoiTrangActivity extends AppCompatActivity implements photo
                         nameUser,tenDanhMuc,date)) .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void unused) {
+                        upImage(idEdit);
                         Toast.makeText(dangTinThoiTrangActivity.this, "Sửa tin thành công", Toast.LENGTH_SHORT).show();
                         progressDialog.dismiss();
                     }
@@ -170,19 +166,18 @@ public class dangTinThoiTrangActivity extends AppCompatActivity implements photo
 
     private void setTextInput() {
         FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
-        DatabaseReference databaseReference1 = firebaseDatabase.getReference("Tin").child("ThoiTrang");
+        DatabaseReference databaseReference1 = firebaseDatabase.getReference("Tin");
         databaseReference1.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-                thoiTrangNews thoiTrangNews = snapshot.getValue(com.example.duan1.model.thoiTrangNews.class);
+                thoiTrangNews thoiTrangNews = snapshot.getValue(thoiTrangNews.class);
                 listFashion.add(thoiTrangNews);
-                if(thoiTrangNews.getTitlePost().equals(title_Post1)) {
-                    edtTitlePost.setText(thoiTrangNews.getTitlePost());
+                if(thoiTrangNews.getId() == idEdit) {
+                    edtTitlePost.setText(thoiTrangNews.getTitle());
                     edtAddress.setText(thoiTrangNews.getAddress());
-                    edtDescription.setText(thoiTrangNews.getDescriptionPost());
+                    edtDescription.setText(thoiTrangNews.getDescription());
                     String price = String.valueOf(thoiTrangNews.getPrice());
                     edtPrice.setText(price);
-                    newsFashion = thoiTrangNews;
 
                 }
 
@@ -214,7 +209,7 @@ public class dangTinThoiTrangActivity extends AppCompatActivity implements photo
 
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
         Calendar c = Calendar.getInstance();
-         date = sdf.format(c.getTime());
+        date = sdf.format(c.getTime());
     }
 
 
@@ -252,10 +247,7 @@ public class dangTinThoiTrangActivity extends AppCompatActivity implements photo
                     maxID = 0;
                 }else {
                     maxID = newsFashion.getId() + 1;
-
                 }
-                upImage(maxID);
-
                     String strId = String.valueOf(maxID);
                     myData.child(strId ).setValue(new thoiTrangNews(maxID ,
                                     strTitlePost,
@@ -267,6 +259,7 @@ public class dangTinThoiTrangActivity extends AppCompatActivity implements photo
                                     nameUser,tenDanhMuc, date)) .addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
                                 public void onSuccess(Void unused) {
+                                    upImage(maxID);
                                     Toast.makeText(dangTinThoiTrangActivity.this, "Đăng tin thành công", Toast.LENGTH_SHORT).show();
                                     progressDialog.dismiss();
                                 }
@@ -330,7 +323,7 @@ public class dangTinThoiTrangActivity extends AppCompatActivity implements photo
     private List<thoiTrangNews> getListFashion() {
          listFashion = new ArrayList<>();
         FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
-        DatabaseReference databaseReference = firebaseDatabase.getReference("Tin").child("ThoiTrang");
+        DatabaseReference databaseReference = firebaseDatabase.getReference("Tin");
 
         databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
@@ -452,6 +445,7 @@ public class dangTinThoiTrangActivity extends AppCompatActivity implements photo
         tvTenDanhMuc = findViewById(R.id.tvTenDanhMucTT);
         Intent intent = getIntent();
         title_Post1 = intent.getStringExtra("title1");
+        idEdit = intent.getIntExtra("idTT", 0);
         tvTenDanhMuc.setText("Danh Mục - " + intent.getStringExtra("tenDanhMuc"));
         imgBackPage = findViewById(R.id.icon_backTT);
         spn_product_type = findViewById(R.id.spn_product_type);
