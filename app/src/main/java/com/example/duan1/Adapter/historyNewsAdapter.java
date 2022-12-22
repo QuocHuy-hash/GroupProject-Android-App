@@ -14,6 +14,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -55,7 +56,7 @@ public class historyNewsAdapter extends RecyclerView.Adapter<historyNewsAdapter.
 
     public historyNewsAdapter(Context mContext, MainActivity mainActivity, List<historyNews> listHistory) {
         this.mContext = mContext;
-        this.listHistory =listHistory;
+        this.listHistory = listHistory;
         this.mainActivity = mainActivity;
         notifyDataSetChanged();
     }
@@ -117,7 +118,7 @@ public class historyNewsAdapter extends RecyclerView.Adapter<historyNewsAdapter.
                     Intent intent = new Intent(mContext , dangTinBDSPhongTroActivity.class);
                     intent.putExtra("title1" , Title_Post);
                     intent.putExtra("tenDanhMuc" , tenDanhMuc);
-                    intent.putExtra("idBDS", id);
+                    intent.putExtra("idPT", id);
                     mContext.startActivity(intent);
                 }else if(tenDanhMuc.equals("Đất")) {
                     Intent intent = new Intent(mContext , dangTinBDSDatActivity.class);
@@ -201,7 +202,7 @@ private void XoaTin(int idDelete){
     public class HolderView extends RecyclerView.ViewHolder {
         private TextView title_historyNews, desc_historyNews, time_historyNews;
         private ImageView icon_option, imgSP;
-    private RelativeLayout layout_item;
+    private CardView layout_item;
         public HolderView(@NonNull View itemView) {
             super(itemView);
             title_historyNews = itemView.findViewById(R.id.title_historyNews);

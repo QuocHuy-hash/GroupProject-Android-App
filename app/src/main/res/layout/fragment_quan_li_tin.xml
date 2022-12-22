@@ -4,7 +4,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".Fragment.FragmentQuanLiTin">
+    tools:context=".Fragment.FragmentQuanLiTin"
+    android:background="#E8E7E6"
+    >
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -51,5 +53,7 @@
             android:id="@+id/rcvQuanLyTin"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:paddingBottom="50dp"/>
+            android:paddingBottom="50dp"
+            android:paddingLeft="10dp"
+            />
 </LinearLayout>

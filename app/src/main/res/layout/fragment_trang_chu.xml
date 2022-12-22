@@ -24,7 +24,6 @@
 
     <ScrollView
         android:id="@+id/scrView"
-        android:layout_marginTop="10dp"
         android:layout_below="@+id/rcvFilter"
         android:layout_alignParentTop="true"
         android:layout_width="match_parent"
@@ -39,7 +38,7 @@
             <androidx.viewpager.widget.ViewPager
                 android:id="@+id/viewPager_slide"
                 android:layout_width="match_parent"
-                android:layout_height="220dp"/>
+                android:layout_height="200dp"/>
             <me.relex.circleindicator.CircleIndicator
                 android:id="@+id/circle_indicator"
                 android:layout_width="100dp"
@@ -207,6 +206,10 @@
                 android:layout_marginBottom="60dp"
                 android:paddingLeft="13dp"
                 android:paddingTop="10dp"
+                android:scrollbars="none"
+                app:fastScrollEnabled="false"
+                android:fadeScrollbars="false"
+                
                 />
         </LinearLayout>
 

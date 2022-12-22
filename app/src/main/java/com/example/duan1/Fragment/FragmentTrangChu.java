@@ -96,19 +96,24 @@ public class FragmentTrangChu extends Fragment {
         searchView.clearFocus();
 
         getListNews();
-
+        mNewsTrangChuAdapter = new NewsTrangChuAdapter(mainActivity, newsTrangChuList);
         autoSliderImg();
 
         clickSpinerLoaiTin();
 
         searchNews();
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
 
-        mNewsTrangChuAdapter = new NewsTrangChuAdapter(mainActivity, newsTrangChuList);
-        GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), 2);
-        rcvNewsTrangChu.setLayoutManager(gridLayoutManager);
-        rcvNewsTrangChu.setAdapter(mNewsTrangChuAdapter);
-        rcvNewsTrangChu.getRecycledViewPool().setMaxRecycledViews(2 , 10);
-        mNewsTrangChuAdapter.notifyItemInserted(newsTrangChuList.size());
+                GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), 2);
+                rcvNewsTrangChu.setLayoutManager(gridLayoutManager);
+                rcvNewsTrangChu.setAdapter(mNewsTrangChuAdapter);
+            }
+        },200);
+
+//        rcvNewsTrangChu.getRecycledViewPool().setMaxRecycledViews(2 , 10);
+//        mNewsTrangChuAdapter.notifyItemInserted(newsTrangChuList.size());
 //
         return view;
     }

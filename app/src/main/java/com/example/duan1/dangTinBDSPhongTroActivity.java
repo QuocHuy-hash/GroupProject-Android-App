@@ -80,7 +80,7 @@ public class dangTinBDSPhongTroActivity extends AppCompatActivity implements pho
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dang_tin_bdsphong_tro);
         imageFolder = FirebaseStorage.getInstance().getReference().child("Image.jpg");
-        myData = FirebaseDatabase.getInstance().getReference("Tin").child("BDS");
+        myData = FirebaseDatabase.getInstance().getReference("Tin");
         imageUri = new ArrayList<>();
 
         nameUser = mainActivity.name;
