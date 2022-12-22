@@ -15,39 +15,16 @@ public class BDSNews {
     private int idUser;
     private String nameUser;
     private String tenDanhMuc;
+    private String danhMucChinh;
     private String date;
     private String image;
-
-    public BDSNews(int maxID, String strTitlePost, String strDescription, double dbPrice, String strDienTich,
-                   String strAddress, String strTenKhu, String strLoaiHinhDat, String strSoPhongNgu,
-                   String strSoPhongWc, int idUser, String nameUser, String tenDanhMuc, String date, String s) {
-    }
 
     public BDSNews() {
     }
 
-    public BDSNews(int id, String title, String description, double price, String dienTich, String adress, String tenPhanKhu, String loaiDat, String direction, String soPhongNgu, String soPhongWc, int idUser, String nameUser, String tenDanhMuc, String date, String image) {
-        this.id = id;
-        this.title = title;
-        this.description = description;
-        this.price = price;
-        this.dienTich = dienTich;
-        this.adress = adress;
-        this.tenPhanKhu = tenPhanKhu;
-        this.loaiDat = loaiDat;
-        this.direction = direction;
-        this.soPhongNgu = soPhongNgu;
-        this.soPhongWc = soPhongWc;
-        this.idUser = idUser;
-        this.nameUser = nameUser;
-        this.tenDanhMuc = tenDanhMuc;
-        this.date = date;
-        this.image = image;
-    }
-
-        public BDSNews(int maxID, String strTitlePost, String strDescription, double dbPrice, String strDienTich,
+    public BDSNews(int maxID, String strTitlePost, String strDescription, double dbPrice, String strDienTich,
                    String strAddress, String strTenKhu, String strLoaiHinhDat,
-                   String strSoPhongNgu, String strSoPhongWc, int idUser, String nameUser , String tenDanhMuc, String date ) {
+                   String strSoPhongNgu, String strSoPhongWc, int idUser, String nameUser , String tenDanhMuc, String danhMucChinh, String date ) {
         this.id = maxID;
         this.title = strTitlePost;
         this.description = strDescription;
@@ -61,9 +38,8 @@ public class BDSNews {
         this.idUser = idUser;
         this.nameUser = nameUser;
         this.tenDanhMuc = tenDanhMuc;
+        this.danhMucChinh = danhMucChinh;
         this.date = date;
-
-
     }
 
 
@@ -99,6 +75,13 @@ public class BDSNews {
         this.nameUser = nameUser;
         this.tenDanhMuc = tenDanhMuc;
         this.date = date;
+    }
+
+    public BDSNews(String date, int idUser, double dbPrice, String strDescription, String strLoaiHinhDat, String strTitlePost, String strSoPhongWc, String strTenKhu, String strTenKhu1, String bds, String strDienTich, String nameUser, String strSoPhongNgu, String tenDanhMuc, int maxID) {
+
+    }
+
+    public BDSNews(int idEdit, String strTitlePost, int idUser, String bds, String strAddress, String date, String date1, String strDescription, String tenDanhMuc, String strDienTich, String strSoPhongNgu, String nameUser, String strSoPhongWc, String strLoaiHinhDat, String strTenKhu) {
     }
 
     public String getDate() {
@@ -227,5 +210,13 @@ public class BDSNews {
 
     public void setImage(String image) {
         this.image = image;
+    }
+
+    public String getDanhMucChinh() {
+        return danhMucChinh;
+    }
+
+    public void setDanhMucChinh(String danhMucChinh) {
+        this.danhMucChinh = danhMucChinh;
     }
 }

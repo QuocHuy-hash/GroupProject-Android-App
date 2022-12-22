@@ -94,8 +94,6 @@ public class NewsTrangChuAdapter extends RecyclerView.Adapter<NewsTrangChuAdapte
         }else {
             return 0;
         }
-
-
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {

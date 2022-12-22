@@ -145,9 +145,6 @@ public class MainActivity extends AppCompatActivity {
         }
         myRef = database.getReference("Users");
         String email = currentUser.getEmail();
-
-
-
         myRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {

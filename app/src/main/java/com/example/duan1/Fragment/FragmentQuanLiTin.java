@@ -7,6 +7,8 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -39,6 +41,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class FragmentQuanLiTin extends Fragment {
@@ -61,11 +64,8 @@ public class FragmentQuanLiTin extends Fragment {
     private FirebaseAuth mAuth;
     private FirebaseDatabase database;
     private DatabaseReference myRef;
-    int id = 0;
 
-    DatabaseReference myData = FirebaseDatabase.getInstance().getReference("Tin").child("GiaiTri");
-    DatabaseReference myData1 = FirebaseDatabase.getInstance().getReference("Tin").child("BDS");
-    DatabaseReference myData2 = FirebaseDatabase.getInstance().getReference("Tin").child("ThoiTrang");
+    DatabaseReference myData = FirebaseDatabase.getInstance().getReference("Tin");
     MainActivity mainActivity;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -81,7 +81,6 @@ public class FragmentQuanLiTin extends Fragment {
             listHistoryNewsTT = new ArrayList<>();
             listHistoryNewsGT = new ArrayList<>();
 
-//            getUser();
             mAuth = FirebaseAuth.getInstance();
             currentUser = mAuth.getCurrentUser();
             database = FirebaseDatabase.getInstance();
@@ -92,24 +91,28 @@ public class FragmentQuanLiTin extends Fragment {
                 Toast.makeText(mContext, "current User Null", Toast.LENGTH_SHORT).show();
             }
 
-
             getListHistoryNews();
+            historyNewsAdapter = new historyNewsAdapter(getContext(),mainActivity, listHistoryNews);
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    historyNewsAdapter = new historyNewsAdapter(getContext(),mainActivity, listHistoryNews);
                     rcvQuanLyTinDang.setLayoutManager(new LinearLayoutManager(getContext()));
                     rcvQuanLyTinDang.setAdapter(historyNewsAdapter);
-
                 }
             }, 500);
+
+
         }
 
         return view;
     }
     private void getUser() {
+        mAuth = FirebaseAuth.getInstance();
+        currentUser = mAuth.getCurrentUser();
+        if (currentUser == null){
+            return;
+        }
         List<Users> mListUser = new ArrayList<>();
-
         String email = currentUser.getEmail();
         myRef.addValueEventListener(new ValueEventListener() {
             @Override
@@ -136,75 +139,73 @@ public class FragmentQuanLiTin extends Fragment {
         });
     }
     public void getListHistoryNews() {
-        myData.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                listHistoryNewsGT.clear();
-                for (DataSnapshot snapshot1: snapshot.getChildren()){
-                    giaiTriNews giaiTriNews = snapshot1.getValue(giaiTriNews.class);
-
-                    if (giaiTriNews.getIdUser() == idUser) {
-                        listHistoryNews.add(new historyNews(id, giaiTriNews.getTitle(),
-                                giaiTriNews.getDescription(), giaiTriNews.getDate(),
-                                giaiTriNews.getTenDanhMuc(),giaiTriNews.getImage()));
-                        id++;
-                    }else if(name.equals("Admin")){
-                        listHistoryNews.add(new historyNews(id, giaiTriNews.getTitle(), giaiTriNews.getDescription() , giaiTriNews.getDate(), giaiTriNews.getTenDanhMuc()));
-                        id++;
-
-                    }
-                }
-//                addData();
-            }
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
-
-        myData2.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                listHistoryNewsTT.clear();
-                for (DataSnapshot snapshot1: snapshot.getChildren()){
-                    thoiTrangNews thoiTrangNews = snapshot1.getValue(com.example.duan1.model.thoiTrangNews.class);
-                    if (thoiTrangNews.getIdUser() == idUser) {
-                        listHistoryNews.add(new historyNews(id, thoiTrangNews.getTitlePost(),
-                                thoiTrangNews.getDescriptionPost(), thoiTrangNews.getDate(),
-                                thoiTrangNews.getTenDanhMuc(),thoiTrangNews.getImage()));
-                        id++;
-                    }else if(name.equals("Admin")){
-                        listHistoryNews.add(new historyNews(id, thoiTrangNews.getTitlePost(), thoiTrangNews.getDescriptionPost() , thoiTrangNews.getDate(), thoiTrangNews.getTenDanhMuc()));
-                        id++;
-
-                    }
-
-                }
-//                addData();
-            }
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
-            myData1.addValueEventListener(new ValueEventListener() {
+//        myData.addValueEventListener(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(@NonNull DataSnapshot snapshot) {
+//                listHistoryNewsGT.clear();
+//                for (DataSnapshot snapshot1: snapshot.getChildren()){
+//                    giaiTriNews giaiTriNews = snapshot1.getValue(giaiTriNews.class);
+//
+//                    if (giaiTriNews.getIdUser() == idUser) {
+//                        listHistoryNews.add(new historyNews(id, giaiTriNews.getTitle(),
+//                                giaiTriNews.getDescription(), giaiTriNews.getDate(),
+//                                giaiTriNews.getTenDanhMuc(),giaiTriNews.getImage()));
+//                        id++;
+//                    }else if(name.equals("Admin")){
+//                        listHistoryNews.add(new historyNews(id, giaiTriNews.getTitle(), giaiTriNews.getDescription() , giaiTriNews.getDate(), giaiTriNews.getTenDanhMuc()));
+//                        id++;
+//
+//                    }
+//                }
+//            }
+//            @Override
+//            public void onCancelled(@NonNull DatabaseError error) {
+//
+//            }
+//        });
+//
+//        myData2.addValueEventListener(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(@NonNull DataSnapshot snapshot) {
+//                listHistoryNewsTT.clear();
+//                for (DataSnapshot snapshot1: snapshot.getChildren()){
+//                    thoiTrangNews thoiTrangNews = snapshot1.getValue(com.example.duan1.model.thoiTrangNews.class);
+//                    if (thoiTrangNews.getIdUser() == idUser) {
+//                        listHistoryNews.add(new historyNews(id, thoiTrangNews.getTitlePost(),
+//                                thoiTrangNews.getDescriptionPost(), thoiTrangNews.getDate(),
+//                                thoiTrangNews.getTenDanhMuc(),thoiTrangNews.getImage()));
+//                        id++;
+//                    }else if(name.equals("Admin")){
+//                        listHistoryNews.add(new historyNews(id, thoiTrangNews.getTitlePost(), thoiTrangNews.getDescriptionPost() , thoiTrangNews.getDate(), thoiTrangNews.getTenDanhMuc()));
+//                        id++;
+//
+//                    }
+//
+//                }
+////                addData();
+//            }
+//            @Override
+//            public void onCancelled(@NonNull DatabaseError error) {
+//
+//            }
+//        });
+            myData.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
-                    listHistoryNewsBDS.clear();
+                    listHistoryNews.clear();
                     for (DataSnapshot snapshot1: snapshot.getChildren()){
                         BDSNews bdsNews = snapshot1.getValue(BDSNews.class);
                         if (bdsNews.getIdUser() == idUser) {
-                            listHistoryNews.add(new historyNews(id, bdsNews.getTitle(),
+                            listHistoryNews.add(new historyNews(bdsNews.getId(), bdsNews.getTitle(),
                                     bdsNews.getDescription() , bdsNews.getDate(),
                                     bdsNews.getTenDanhMuc(), bdsNews.getImage()));
-                            id++;
                         }else if(name.equals("Admin")){
-                            listHistoryNews.add(new historyNews(id, bdsNews.getTitle(), bdsNews.getDescription() , bdsNews.getDate(), bdsNews.getTenDanhMuc()));
-                            id++;
-
+                            listHistoryNews.add(new historyNews(bdsNews.getId(), bdsNews.getTitle(), bdsNews.getDescription() , bdsNews.getDate(), bdsNews.getTenDanhMuc()));
                         }
                     }
-//                    addData();
+                    Collections.reverse(listHistoryNews);
+                    historyNewsAdapter.notifyDataSetChanged();
+
                 }
                 @Override
                 public void onCancelled(@NonNull DatabaseError error) {
@@ -212,7 +213,6 @@ public class FragmentQuanLiTin extends Fragment {
                 }
             });
     }
-
 
 
 }

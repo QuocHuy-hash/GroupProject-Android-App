@@ -46,6 +46,7 @@ import com.google.firebase.database.ValueEventListener;
 
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -67,17 +68,13 @@ public class FragmentTrangChu extends Fragment {
     public MainActivity mainActivity;
     private RecyclerView rcvNewsTrangChu, rcvFilter;
     private List<NewsTrangChu> newsTrangChuList = new ArrayList<>();
-    //    private List<NewsTrangChu> newsTrangChuListBDS = new ArrayList<>();
-//    private List<NewsTrangChu> newsTrangChuListGT = new ArrayList<>();
-//    private List<NewsTrangChu> newsTrangChuListTT = new ArrayList<>();
     private NewsTrangChuAdapter mNewsTrangChuAdapter;
     private List<String> listChild = new ArrayList<>();
     private List<String> listChild1 = new ArrayList<>();
     private List<String> listChild2 = new ArrayList<>();
     private List<resultSearch> listFilter;
-    DatabaseReference myData = FirebaseDatabase.getInstance().getReference("Tin").child("GiaiTri");
-    DatabaseReference myData1 = FirebaseDatabase.getInstance().getReference("Tin").child("BDS");
-    DatabaseReference myData2 = FirebaseDatabase.getInstance().getReference("Tin").child("ThoiTrang");
+
+    DatabaseReference myData = FirebaseDatabase.getInstance().getReference("Tin");
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -97,21 +94,21 @@ public class FragmentTrangChu extends Fragment {
         circleIndicator.setViewPager(viewPager);
         slidersAdapter.registerDataSetObserver(circleIndicator.getDataSetObserver());
         searchView.clearFocus();
+
+        getListNews();
+
         autoSliderImg();
 
         clickSpinerLoaiTin();
 
-        getListNews();
-
         searchNews();
 
-        mNewsTrangChuAdapter = new NewsTrangChuAdapter(getContext(), newsTrangChuList);
+        mNewsTrangChuAdapter = new NewsTrangChuAdapter(mainActivity, newsTrangChuList);
         GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), 2);
         rcvNewsTrangChu.setLayoutManager(gridLayoutManager);
         rcvNewsTrangChu.setAdapter(mNewsTrangChuAdapter);
         rcvNewsTrangChu.getRecycledViewPool().setMaxRecycledViews(2 , 10);
         mNewsTrangChuAdapter.notifyItemInserted(newsTrangChuList.size());
-
 //
         return view;
     }
@@ -137,7 +134,6 @@ public class FragmentTrangChu extends Fragment {
                 return false;
             }
         });
-
     }
 
     private void filterList(String newText) {
@@ -150,8 +146,6 @@ public class FragmentTrangChu extends Fragment {
 
                 listFilter.add(new resultSearch(newsTrangChuList.get(i).getTitle(), newsTrangChuList.get(i).getTime()
                         , newsTrangChuList.get(i).getImage(), newsTrangChuList.get(i).getFee()));
-
-
             }
         }
         if (listFilter.isEmpty()) {
@@ -203,8 +197,6 @@ public class FragmentTrangChu extends Fragment {
             mNewsTrangChuAdapter = new NewsTrangChuAdapter(getContext(), newsTrangChuList);
             rcvNewsTrangChu.setLayoutManager(new WrapContentLinearLayoutManager(getContext(), 2));
             rcvNewsTrangChu.setAdapter(mNewsTrangChuAdapter);
-
-
         }
     }
 
@@ -237,11 +229,11 @@ public class FragmentTrangChu extends Fragment {
                         , newsTrangChuList.get(i).getTime(), newsTrangChuList.get(i).getFee(), false, newsTrangChuList.get(i).getImage(), newsTrangChuList.get(i).getTenDanhMuc()));
             }
         }
-        mNewsTrangChuAdapter = new NewsTrangChuAdapter(getContext(), listfilter);
+        mNewsTrangChuAdapter = new NewsTrangChuAdapter(getContext(),listfilter);
+
         rcvNewsTrangChu.setLayoutManager(new GridLayoutManager(getContext() , 2));
         rcvNewsTrangChu.getRecycledViewPool().clear();
         rcvNewsTrangChu.setAdapter(mNewsTrangChuAdapter);
-
 
     }
 
@@ -257,13 +249,10 @@ public class FragmentTrangChu extends Fragment {
 
             }
         }
-        mNewsTrangChuAdapter = new NewsTrangChuAdapter(getContext(), listfilter);
+        mNewsTrangChuAdapter = new NewsTrangChuAdapter(getContext(),listfilter);
         rcvNewsTrangChu.setLayoutManager(new GridLayoutManager(getContext() , 2));
         rcvNewsTrangChu.getRecycledViewPool().clear();
-//        mNewsTrangChuAdapter.setDATA(listfilter);
         rcvNewsTrangChu.setAdapter(mNewsTrangChuAdapter);
-
-
     }
 
     public static class productType {
@@ -326,19 +315,19 @@ public class FragmentTrangChu extends Fragment {
 
     private void getListNews() {
 
-        myData1.addValueEventListener(new ValueEventListener() {
+        myData.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-//                newsTrangChuListBDS.clear();
+                newsTrangChuList.clear();
                 for (DataSnapshot snapshot1 : snapshot.getChildren()) {
                     BDSNews bdsNews = snapshot1.getValue(BDSNews.class);
 
                     newsTrangChuList.add(new NewsTrangChu(bdsNews.getTitle(), bdsNews.getDescription(),
                             bdsNews.getDate(), bdsNews.getPrice(), true, bdsNews.getImage(),
                             bdsNews.getTenDanhMuc()));
-                    mNewsTrangChuAdapter.notifyDataSetChanged();
-//                    addData();
                 }
+                Collections.reverse(newsTrangChuList);
+                mNewsTrangChuAdapter.notifyDataSetChanged();
             }
 
             @Override
@@ -346,53 +335,46 @@ public class FragmentTrangChu extends Fragment {
 
             }
         });
-        myData.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-//                newsTrangChuListGT.clear();
-                for (DataSnapshot snapshot1 : snapshot.getChildren()) {
-                    giaiTriNews giaiTriNews = snapshot1.getValue(giaiTriNews.class);
-                    newsTrangChuList.add(new NewsTrangChu(giaiTriNews.getTitle(), giaiTriNews.getDescription(),
-                            giaiTriNews.getDate(), giaiTriNews.getPrice(), true,
-                            giaiTriNews.getImage(), giaiTriNews.getTenDanhMuc()));
-                    mNewsTrangChuAdapter.notifyDataSetChanged();
-//                    addData();
-                }
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
-        myData2.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-//                newsTrangChuListTT.clear();
-                for (DataSnapshot snapshot1 : snapshot.getChildren()) {
-                    thoiTrangNews thoiTrangNews = snapshot1.getValue(thoiTrangNews.class);
-                    newsTrangChuList.add(new NewsTrangChu(thoiTrangNews.getTitlePost(),
-                            thoiTrangNews.getDescriptionPost(),
-                            thoiTrangNews.getDate(), thoiTrangNews.getPrice(), true,
-                            thoiTrangNews.getImage(), thoiTrangNews.getTenDanhMuc()));
-                    mNewsTrangChuAdapter.notifyDataSetChanged();
-                }
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
-    }
-
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        newsTrangChuList.clear();
+//        myData.addValueEventListener(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(@NonNull DataSnapshot snapshot) {
+////                newsTrangChuListGT.clear();
+//                for (DataSnapshot snapshot1 : snapshot.getChildren()) {
+//                    giaiTriNews giaiTriNews = snapshot1.getValue(giaiTriNews.class);
+//                    newsTrangChuList.add(new NewsTrangChu(giaiTriNews.getTitle(), giaiTriNews.getDescription(),
+//                            giaiTriNews.getDate(), giaiTriNews.getPrice(), true,
+//                            giaiTriNews.getImage(), giaiTriNews.getTenDanhMuc()));
+//                    mNewsTrangChuAdapter.notifyDataSetChanged();
+////                    addData();
+//                }
+//
+//            }
+//
+//            @Override
+//            public void onCancelled(@NonNull DatabaseError error) {
+//
+//            }
+//        });
+//        myData2.addValueEventListener(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(@NonNull DataSnapshot snapshot) {
+////                newsTrangChuListTT.clear();
+//                for (DataSnapshot snapshot1 : snapshot.getChildren()) {
+//                    thoiTrangNews thoiTrangNews = snapshot1.getValue(thoiTrangNews.class);
+//                    newsTrangChuList.add(new NewsTrangChu(thoiTrangNews.getTitlePost(),
+//                            thoiTrangNews.getDescriptionPost(),
+//                            thoiTrangNews.getDate(), thoiTrangNews.getPrice(), true,
+//                            thoiTrangNews.getImage(), thoiTrangNews.getTenDanhMuc()));
+//                    mNewsTrangChuAdapter.notifyDataSetChanged();
+//                }
+//
+//            }
+//
+//            @Override
+//            public void onCancelled(@NonNull DatabaseError error) {
+//
+//            }
+//        });
     }
 
     public class WrapContentLinearLayoutManager extends GridLayoutManager {
