@@ -61,8 +61,10 @@ public class FragmentQuanLiTin extends Fragment {
             myRef = database.getReference("Users");
 
             getUser();
-            rcvQuanLyTinDang.setLayoutManager(new LinearLayoutManager(mainActivity));
+
             getListHistoryNews();
+            LinearLayoutManager linearLayoutManager = new LinearLayoutManager(mainActivity);
+            rcvQuanLyTinDang.setLayoutManager(linearLayoutManager);
             historyNewsAdapter = new historyNewsAdapter(getContext(),mainActivity, listHistoryNews);
             new Handler().postDelayed(new Runnable() {
                 @Override

@@ -21,6 +21,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AnimationUtils;
+import android.view.animation.LayoutAnimationController;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
@@ -94,23 +96,20 @@ public class FragmentTrangChu extends Fragment {
         circleIndicator.setViewPager(viewPager);
         slidersAdapter.registerDataSetObserver(circleIndicator.getDataSetObserver());
         searchView.clearFocus();
-
-        getListNews();
-        mNewsTrangChuAdapter = new NewsTrangChuAdapter(mainActivity, newsTrangChuList);
+        searchNews();
         autoSliderImg();
-
         clickSpinerLoaiTin();
 
-        searchNews();
+        getListNews();
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(mainActivity, 2);
+        rcvNewsTrangChu.setLayoutManager(gridLayoutManager);
+        mNewsTrangChuAdapter = new NewsTrangChuAdapter(mainActivity, newsTrangChuList);
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-
-                GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), 2);
-                rcvNewsTrangChu.setLayoutManager(gridLayoutManager);
-                rcvNewsTrangChu.setAdapter(mNewsTrangChuAdapter);
+                setAnimation();
             }
-        },200);
+        },100);
 
 //        rcvNewsTrangChu.getRecycledViewPool().setMaxRecycledViews(2 , 10);
 //        mNewsTrangChuAdapter.notifyItemInserted(newsTrangChuList.size());
@@ -118,11 +117,18 @@ public class FragmentTrangChu extends Fragment {
         return view;
     }
 
+    private void setAnimation() {
+        LayoutAnimationController layoutAnimationController = AnimationUtils.loadLayoutAnimation(
+                mainActivity, R.anim.layout_animation_up_to_down
+        );
+        rcvNewsTrangChu.setLayoutAnimation(layoutAnimationController);
+        rcvNewsTrangChu.setAdapter(mNewsTrangChuAdapter);
+    }
+
     private void searchNews() {
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-
                 return false;
             }
 
@@ -159,9 +165,8 @@ public class FragmentTrangChu extends Fragment {
             rsSearchAdapter = new rsSearchAdapter(getContext(), listFilter);
             rcvFilter.setLayoutManager(new LinearLayoutManager(getContext()));
             rcvFilter.setAdapter(rsSearchAdapter);
-
-            RecyclerView.ItemDecoration decoration = new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL);
-            rcvFilter.addItemDecoration(decoration);
+//            RecyclerView.ItemDecoration decoration = new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL);
+//            rcvFilter.addItemDecoration(decoration);
         }
     }
 
@@ -196,7 +201,6 @@ public class FragmentTrangChu extends Fragment {
         } else if (loaiTin.equals("Giải trí")) {
             getListGiaiTri();
         } else if (loaiTin.equals("Thời trang")) {
-
             getListThoitrang();
         } else {
             mNewsTrangChuAdapter = new NewsTrangChuAdapter(getContext(), newsTrangChuList);
@@ -326,7 +330,6 @@ public class FragmentTrangChu extends Fragment {
                 newsTrangChuList.clear();
                 for (DataSnapshot snapshot1 : snapshot.getChildren()) {
                     BDSNews bdsNews = snapshot1.getValue(BDSNews.class);
-
                     newsTrangChuList.add(new NewsTrangChu(bdsNews.getTitle(), bdsNews.getDescription(),
                             bdsNews.getDate(), bdsNews.getPrice(), true, bdsNews.getImage(),
                             bdsNews.getTenDanhMuc()));
