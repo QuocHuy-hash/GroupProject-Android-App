@@ -85,7 +85,6 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 mAuth = FirebaseAuth.getInstance();
                 currentUser = mAuth.getCurrentUser();
-
                 if (currentUser != null) {
 
                     showDialogChooseListProduct();
@@ -298,6 +297,7 @@ public class MainActivity extends AppCompatActivity {
         unregisterReceiver(broadcast);
         super.onStop();
     }
+
 
 
 }
