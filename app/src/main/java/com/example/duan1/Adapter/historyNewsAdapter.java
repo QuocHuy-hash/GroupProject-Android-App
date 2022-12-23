@@ -1,12 +1,17 @@
 package com.example.duan1.Adapter;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AnimationUtils;
+import android.view.animation.LayoutAnimationController;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -14,6 +19,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -55,7 +61,7 @@ public class historyNewsAdapter extends RecyclerView.Adapter<historyNewsAdapter.
 
     public historyNewsAdapter(Context mContext, MainActivity mainActivity, List<historyNews> listHistory) {
         this.mContext = mContext;
-        this.listHistory =listHistory;
+        this.listHistory = listHistory;
         this.mainActivity = mainActivity;
         notifyDataSetChanged();
     }
@@ -86,10 +92,37 @@ public class historyNewsAdapter extends RecyclerView.Adapter<historyNewsAdapter.
         holder.icon_option.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                XoaTin(giaiTriNews.getId());
-//                System.out.println(giaiTriNews.getTitle_historyNews());
+                AlertDialog.Builder builder = new AlertDialog.Builder(mainActivity);
+                builder.setMessage("Bạn có chắc chắn muốn xóa tin này?")
+                        .setPositiveButton("Xóa", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                // START THE GAME!
+                                LayoutAnimationController layoutAnimationController = AnimationUtils.loadLayoutAnimation(
+                                        mainActivity, R.anim.layout_delete_item_right_to_left
+                                );
+                                holder.layout_item.setLayoutAnimation(layoutAnimationController);
+                                new Handler().postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        XoaTin(giaiTriNews.getId());
+                                    }
+                                },500);
+
+                            }
+                        })
+                        .setNegativeButton("Trở lại", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                // User cancelled the dialog
+                                dialog.dismiss();
+                            }
+                        });
+                builder.create();
+                builder.show();
+
+
             }
         });
+
         int id = giaiTriNews.getId();
 //        if(name.equals("Admin")){
 //            holder.layout_item.setOnClickListener(new View.OnClickListener() {
@@ -117,7 +150,7 @@ public class historyNewsAdapter extends RecyclerView.Adapter<historyNewsAdapter.
                     Intent intent = new Intent(mContext , dangTinBDSPhongTroActivity.class);
                     intent.putExtra("title1" , Title_Post);
                     intent.putExtra("tenDanhMuc" , tenDanhMuc);
-                    intent.putExtra("idBDS", id);
+                    intent.putExtra("idPT", id);
                     mContext.startActivity(intent);
                 }else if(tenDanhMuc.equals("Đất")) {
                     Intent intent = new Intent(mContext , dangTinBDSDatActivity.class);
@@ -158,50 +191,29 @@ public class historyNewsAdapter extends RecyclerView.Adapter<historyNewsAdapter.
         }
     }
 private void XoaTin(int idDelete){
-    ProgressDialog progressDialog = new ProgressDialog(mainActivity);
-    progressDialog.show();
-        myData.addChildEventListener(new ChildEventListener() {
-            @SuppressLint("NotifyDataSetChanged")
-            @Override
-            public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-                giaiTriNews giaiTriNew = snapshot.getValue(giaiTriNews.class);
-                if(giaiTriNew.getId() == idDelete){
-                    String id = String.valueOf(giaiTriNew.getId());
-                        myData.child(id).removeValue();
-                        Toast.makeText(mContext.getApplicationContext(), "Đã xóa Tin", Toast.LENGTH_SHORT).show();
-                    progressDialog.dismiss();
-
+    myData.addValueEventListener(new ValueEventListener() {
+        @Override
+        public void onDataChange(@NonNull DataSnapshot snapshot) {
+            for (DataSnapshot snapshot1: snapshot.getChildren()){
+                giaiTriNews giaiTriNews = snapshot1.getValue(giaiTriNews.class);
+                if(giaiTriNews.getId() == idDelete){
+                    String id = String.valueOf(giaiTriNews.getId());
+                    myData.child(id).removeValue();
+                    Toast.makeText(mContext.getApplicationContext(), "Đã xóa Tin", Toast.LENGTH_SHORT).show();
                 }
             }
+        }
+        @Override
+        public void onCancelled(@NonNull DatabaseError error) {
 
-            @Override
-            public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-
-            }
-
-            @Override
-            public void onChildRemoved(@NonNull DataSnapshot snapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
-
-
+        }
+    });
 }
 
     public class HolderView extends RecyclerView.ViewHolder {
         private TextView title_historyNews, desc_historyNews, time_historyNews;
         private ImageView icon_option, imgSP;
-    private RelativeLayout layout_item;
+    private CardView layout_item;
         public HolderView(@NonNull View itemView) {
             super(itemView);
             title_historyNews = itemView.findViewById(R.id.title_historyNews);

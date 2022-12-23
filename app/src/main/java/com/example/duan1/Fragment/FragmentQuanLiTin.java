@@ -4,12 +4,15 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AnimationUtils;
+import android.view.animation.LayoutAnimationController;
 import android.widget.Toast;
 import com.example.duan1.Adapter.historyNewsAdapter;
 import com.example.duan1.MainActivity;
@@ -60,16 +63,17 @@ public class FragmentQuanLiTin extends Fragment {
             getUser();
 
             getListHistoryNews();
+            LinearLayoutManager linearLayoutManager = new LinearLayoutManager(mainActivity);
+            rcvQuanLyTinDang.setLayoutManager(linearLayoutManager);
             historyNewsAdapter = new historyNewsAdapter(getContext(),mainActivity, listHistoryNews);
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    rcvQuanLyTinDang.setLayoutManager(new LinearLayoutManager(getContext()));
-                    rcvQuanLyTinDang.setAdapter(historyNewsAdapter);
+                    setAnimation(R.anim.layout_animation_left_to_right);
                 }
-            }, 200);
-        }
+            }, 100);
 
+        }
         return view;
     }
     private void getUser() {
@@ -122,6 +126,7 @@ public class FragmentQuanLiTin extends Fragment {
 //                                    bdsNews.getImage()));
 //                        }
                     }
+
                     Collections.reverse(listHistoryNews);
                     historyNewsAdapter.notifyDataSetChanged();
 
@@ -132,6 +137,15 @@ public class FragmentQuanLiTin extends Fragment {
                 }
             });
     }
+
+    private void setAnimation(int animResource){
+        LayoutAnimationController layoutAnimationController = AnimationUtils.loadLayoutAnimation(
+                mainActivity, animResource
+        );
+        rcvQuanLyTinDang.setLayoutAnimation(layoutAnimationController);
+        rcvQuanLyTinDang.setAdapter(historyNewsAdapter);
+    }
+
 
 
 }
